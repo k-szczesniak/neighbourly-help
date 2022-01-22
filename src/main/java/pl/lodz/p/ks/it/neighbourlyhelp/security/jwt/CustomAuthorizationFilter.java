@@ -9,7 +9,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
-import org.springframework.web.server.ServerWebExchange;
 import pl.lodz.p.ks.it.neighbourlyhelp.exception.JwtTokenMalformedException;
 import pl.lodz.p.ks.it.neighbourlyhelp.exception.JwtTokenMissingException;
 
@@ -44,7 +43,7 @@ public class CustomAuthorizationFilter extends OncePerRequestFilter {
 
         if (authorizationHeader == null ||
                 !authorizationHeader.startsWith(jwtUtil.getTokenPrefix()) ||
-                isApiSecured.test(request)) {
+                !isApiSecured.test(request)) {
             filterChain.doFilter(request, response);
             return;
         }
@@ -74,13 +73,5 @@ public class CustomAuthorizationFilter extends OncePerRequestFilter {
 
 
         filterChain.doFilter(request, response);
-    }
-
-    private void populateRequestWithHeaders(ServerWebExchange exchange, String token) {
-        Claims claims = tokenVerifier.getClaims(token);
-        exchange.getRequest().mutate()
-                .header("iat", String.valueOf(claims.get("iat")))
-                .header("roles", String.valueOf(claims.get("authorities")))
-                .build();
     }
 }
