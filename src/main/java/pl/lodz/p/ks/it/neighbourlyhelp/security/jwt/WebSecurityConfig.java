@@ -58,6 +58,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                 .authorizeRequests()
                 .antMatchers(AUTH_WHITELIST).permitAll()
+                .antMatchers("/api/token/refresh/**").permitAll()
                 .antMatchers("/api/ping").hasAnyAuthority("USER", "ADMIN")
                 .anyRequest().authenticated()
                 .and()
