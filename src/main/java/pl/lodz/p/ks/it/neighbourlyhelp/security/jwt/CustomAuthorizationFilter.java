@@ -37,7 +37,7 @@ public class CustomAuthorizationFilter extends OncePerRequestFilter {
 
         String authorizationHeader = request.getHeader(AUTHORIZATION);
 
-        final List<String> permitAllEndpoints = List.of("/register", "/login");
+        final List<String> permitAllEndpoints = List.of("/register", "/login", "/api/token/refresh");
         Predicate<HttpServletRequest> isApiSecured = r -> permitAllEndpoints.stream()
                 .noneMatch(uri -> r.getServletPath().contains(uri));
 
@@ -52,26 +52,24 @@ public class CustomAuthorizationFilter extends OncePerRequestFilter {
 
         try {
             tokenVerifier.validateToken(token);
+            Claims body = tokenVerifier.getClaims(token);
+
+            String username = body.getSubject();
+
+            var authorities = (List<Map<String, String>>) body.get("authorities");
+            Set<SimpleGrantedAuthority> simpleGrantedAuthorities = authorities.stream()
+                    .map(m -> new SimpleGrantedAuthority(m.get("authority")))
+                    .collect(Collectors.toSet());
+
+            Authentication authentication =
+                    new UsernamePasswordAuthenticationToken(username, null, simpleGrantedAuthorities);
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+
+            filterChain.doFilter(request, response);
         } catch (JwtTokenMalformedException | JwtTokenMissingException e) {
-            response.sendError(HttpStatus.BAD_REQUEST.value(), e.getMessage());
+            response.sendError(HttpStatus.UNAUTHORIZED.value(), e.getMessage());
             log.info(e.getMessage());
         }
 
-        Claims body = tokenVerifier.getClaims(token);
-        String username = body.getSubject();
-
-        var authorities = (List<Map<String, String>>) body.get("authorities");
-
-        Set<SimpleGrantedAuthority> simpleGrantedAuthorities = authorities.stream()
-                .map(m -> new SimpleGrantedAuthority(m.get("authority")))
-                .collect(Collectors.toSet());
-
-        Authentication authentication =
-                new UsernamePasswordAuthenticationToken(username, null, simpleGrantedAuthorities);
-
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-
-
-        filterChain.doFilter(request, response);
     }
 }
