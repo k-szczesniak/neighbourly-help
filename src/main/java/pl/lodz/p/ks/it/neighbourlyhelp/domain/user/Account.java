@@ -126,24 +126,23 @@ public class Account extends AbstractEntity implements UserDetails {
 
     @Setter
     @Enumerated(EnumType.STRING)
-    private AccountRole accountRole;
+    private AccessLevel accessLevel;
 
     @Setter
     @Min(value = 0)
     @Column(name = "failed_login_attempts_counter", columnDefinition = "integer default 0")
     private Integer failedLoginAttemptsCounter = 0;
 
-    public Account(String firstName, String lastName, String email, String password, AccountRole accountRole) {
+    public Account(String firstName, String lastName, String email, String password) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
         this.password = password;
-        this.accountRole = accountRole;
     }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        SimpleGrantedAuthority authority = new SimpleGrantedAuthority(accountRole.name());
+        SimpleGrantedAuthority authority = new SimpleGrantedAuthority(accessLevel.name());
         return Collections.singletonList(authority);
     }
 

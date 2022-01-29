@@ -8,8 +8,8 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import pl.lodz.p.ks.it.neighbourlyhelp.domain.token.ConfirmationToken;
+import pl.lodz.p.ks.it.neighbourlyhelp.domain.user.AccessLevel;
 import pl.lodz.p.ks.it.neighbourlyhelp.domain.user.Account;
-import pl.lodz.p.ks.it.neighbourlyhelp.domain.user.AccountRole;
 import pl.lodz.p.ks.it.neighbourlyhelp.repository.AccountRepository;
 
 import java.time.LocalDateTime;
@@ -38,7 +38,7 @@ public class AccountService implements UserDetailsService {
 
     public void addAdminPermissions(String email) {
         Account accountToUpdate = (Account) loadUserByUsername(email);
-        accountToUpdate.setAccountRole(AccountRole.ADMIN);
+        accountToUpdate.setAccessLevel(AccessLevel.ADMIN);
         accountRepository.save(accountToUpdate);
     }
 

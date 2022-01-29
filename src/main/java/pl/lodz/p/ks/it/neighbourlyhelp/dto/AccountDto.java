@@ -4,7 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import pl.lodz.p.ks.it.neighbourlyhelp.domain.user.AccountRole;
+import pl.lodz.p.ks.it.neighbourlyhelp.domain.user.AccessLevel;
 import pl.lodz.p.ks.it.neighbourlyhelp.validator.Email;
 import pl.lodz.p.ks.it.neighbourlyhelp.validator.Firstname;
 import pl.lodz.p.ks.it.neighbourlyhelp.validator.Lastname;
@@ -22,7 +22,7 @@ public class AccountDto {
     @Email
     private String email;
     @Role
-    private AccountRole accountRole;
+    private AccessLevel accessLevel;
     private Boolean locked;
     private Boolean enabled;
 }
