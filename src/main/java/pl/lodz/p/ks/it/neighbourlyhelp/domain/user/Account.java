@@ -4,6 +4,7 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -19,6 +20,7 @@ import pl.lodz.p.ks.it.neighbourlyhelp.validator.Password;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -31,6 +33,7 @@ import javax.persistence.TemporalType;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
+import javax.xml.bind.annotation.XmlTransient;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -128,7 +131,7 @@ public class Account extends AbstractEntity implements UserDetails {
     private String lastFailedLoginIpAddress;
 
     @Setter
-    @OneToMany(cascade = {CascadeType.REMOVE, CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH}, mappedBy = "account")
+    @OneToMany(cascade = {CascadeType.REMOVE, CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH}, mappedBy = "account", fetch = FetchType.EAGER) //TODO: fetchType changed to EAGER
     private Set<Role> roleList = new HashSet<>();
 
     @Setter
@@ -180,5 +183,18 @@ public class Account extends AbstractEntity implements UserDetails {
     @Override
     public boolean isEnabled() {
         return enabled;
+    }
+
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this)
+                .append(super.toString())
+                .append("id", id)
+                .toString();
+    }
+
+    @XmlTransient
+    public Set<Role> getRoleList() {
+        return roleList;
     }
 }
