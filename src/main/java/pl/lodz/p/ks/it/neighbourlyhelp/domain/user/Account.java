@@ -7,6 +7,7 @@ import lombok.Setter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import pl.lodz.p.ks.it.neighbourlyhelp.entities.Role;
 import pl.lodz.p.ks.it.neighbourlyhelp.utils.common.AbstractEntity;
 import pl.lodz.p.ks.it.neighbourlyhelp.validator.ContactNumber;
 import pl.lodz.p.ks.it.neighbourlyhelp.validator.Email;
@@ -15,14 +16,14 @@ import pl.lodz.p.ks.it.neighbourlyhelp.validator.Language;
 import pl.lodz.p.ks.it.neighbourlyhelp.validator.Lastname;
 import pl.lodz.p.ks.it.neighbourlyhelp.validator.Password;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Index;
+import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -30,9 +31,11 @@ import javax.persistence.TemporalType;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
+import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 @Getter
 @EqualsAndHashCode
@@ -125,8 +128,8 @@ public class Account extends AbstractEntity implements UserDetails {
     private String lastFailedLoginIpAddress;
 
     @Setter
-    @Enumerated(EnumType.STRING)
-    private AccessLevel accessLevel;
+    @OneToMany(cascade = {CascadeType.REMOVE, CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH}, mappedBy = "account")
+    private Set<Role> roleList = new HashSet<>();
 
     @Setter
     @Min(value = 0)
@@ -142,8 +145,11 @@ public class Account extends AbstractEntity implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        SimpleGrantedAuthority authority = new SimpleGrantedAuthority(accessLevel.name());
-        return Collections.singletonList(authority);
+        Collection<SimpleGrantedAuthority> authorities = new ArrayList<>();
+        roleList.stream().forEach(role -> {
+            authorities.add(new SimpleGrantedAuthority(role.getAccessLevel().name()));
+        });
+        return authorities;
     }
 
     @Override
