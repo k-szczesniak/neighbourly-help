@@ -4,11 +4,9 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import pl.lodz.p.ks.it.neighbourlyhelp.domain.user.AccountRole;
 import pl.lodz.p.ks.it.neighbourlyhelp.validator.Email;
 import pl.lodz.p.ks.it.neighbourlyhelp.validator.Firstname;
 import pl.lodz.p.ks.it.neighbourlyhelp.validator.Lastname;
-import pl.lodz.p.ks.it.neighbourlyhelp.validator.Role;
 
 @Data
 @Builder
@@ -21,8 +19,6 @@ public class AccountDto {
     private String lastName;
     @Email
     private String email;
-    @Role
-    private AccountRole accountRole;
     private Boolean locked;
     private Boolean enabled;
 }
