@@ -55,6 +55,7 @@ public class Account extends AbstractEntity implements UserDetails {
     public static final String TABLE_NAME = "account";
     public static final String IX_ACCOUNT_ID = "ix_account_id";
     public static final String IX_UQ_EMAIL = "ix_uq_email";
+    public static final String ROLE_PREFIX = "ROLE_";
 
     @Id
     @SequenceGenerator(
@@ -150,7 +151,7 @@ public class Account extends AbstractEntity implements UserDetails {
     public Collection<? extends GrantedAuthority> getAuthorities() {
         Collection<SimpleGrantedAuthority> authorities = new ArrayList<>();
         roleList.stream().forEach(role -> {
-            authorities.add(new SimpleGrantedAuthority(role.getAccessLevel().name()));
+            authorities.add(new SimpleGrantedAuthority(ROLE_PREFIX + role.getAccessLevel().name()));
         });
         return authorities;
     }
