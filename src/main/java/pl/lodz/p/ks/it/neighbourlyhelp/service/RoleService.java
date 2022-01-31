@@ -2,6 +2,7 @@ package pl.lodz.p.ks.it.neighbourlyhelp.service;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.java.Log;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import pl.lodz.p.ks.it.neighbourlyhelp.domain.user.AccessLevel;
 import pl.lodz.p.ks.it.neighbourlyhelp.domain.user.Account;
@@ -10,7 +11,6 @@ import pl.lodz.p.ks.it.neighbourlyhelp.exception.AppBaseException;
 import pl.lodz.p.ks.it.neighbourlyhelp.exception.RoleException;
 import pl.lodz.p.ks.it.neighbourlyhelp.repository.AccountRepository;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.HashSet;
 
 @Service
@@ -22,12 +22,10 @@ public class RoleService {
 
     private final AccountService accountService;
 
-    private final HttpServletRequest servletRequest; // !!!!!!!!!!
-
     public void revokeAccessLevel(String email, AccessLevel accessLevel) throws AppBaseException {
         Account account = (Account) accountService.loadUserByUsername(email);
 
-        if(!account.isEnabled()) {
+        if (!account.isEnabled()) {
             throw RoleException.accountNotConfirmed();
         }
 
@@ -40,7 +38,7 @@ public class RoleService {
             throw RoleException.alreadyRevoked();
         }
 
-//        role.setModifiedBy((Account) accountService.loadUserByUsername(servletRequest.getUserPrincipal().getName())); //TODO: check what getUserPrincipal().getName() return
+        role.setModifiedBy((Account) accountService.loadUserByUsername(SecurityContextHolder.getContext().getAuthentication().getName()));
         role.setEnabled(false);
         account.setRoleList(new HashSet<>(account.getRoleList()));
         accountRepository.save(account);
