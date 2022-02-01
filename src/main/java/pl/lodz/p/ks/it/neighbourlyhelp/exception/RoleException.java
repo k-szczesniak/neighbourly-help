@@ -1,9 +1,12 @@
 package pl.lodz.p.ks.it.neighbourlyhelp.exception;
 
+// todo: translate javadoc to english
 public class RoleException extends AppBaseException {
 
     private static final String ALREADY_REVOKED = "exception.role_exception.already_revoked";
     private static final String ACCOUNT_NOT_CONFIRMED = "exception.role_exception.account_not_confirmed";
+    private static final String ALREADY_GRANTED = "exception.role_exception.already_granted";
+    private static final String UNSUPPORTED_ACCESS_LEVEL = "exception.role_exception.unsupported_access_level";
 
     public RoleException() {
     }
@@ -36,5 +39,23 @@ public class RoleException extends AppBaseException {
      */
     public static RoleException accountNotConfirmed() {
         return new RoleException(ACCOUNT_NOT_CONFIRMED);
+    }
+
+    /**
+     * Tworzy wyjątek, gdy rola jest już przydzielona użytkownikowi.
+     *
+     * @return wyjątek RoleException
+     */
+    public static RoleException alreadyGranted() {
+        return new RoleException(ALREADY_GRANTED);
+    }
+
+    /**
+     * Tworzy wyjątek, gdy poziom dostępu nie jest obsługiwany.
+     *
+     * @return wyjątek RoleException
+     */
+    public static RoleException unsupportedAccessLevel() {
+        return new RoleException(UNSUPPORTED_ACCESS_LEVEL);
     }
 }
