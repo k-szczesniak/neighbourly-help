@@ -4,8 +4,8 @@ import lombok.AllArgsConstructor;
 import lombok.extern.java.Log;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import pl.lodz.p.ks.it.neighbourlyhelp.domain.token.ConfirmationToken;
 import pl.lodz.p.ks.it.neighbourlyhelp.dto.RegisterAccountDto;
+import pl.lodz.p.ks.it.neighbourlyhelp.entities.ConfirmationToken;
 import pl.lodz.p.ks.it.neighbourlyhelp.exception.RegistrationException;
 
 import java.time.LocalDateTime;

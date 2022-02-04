@@ -8,6 +8,7 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import pl.lodz.p.ks.it.neighbourlyhelp.entities.ConfirmationToken;
 import pl.lodz.p.ks.it.neighbourlyhelp.entities.Role;
 import pl.lodz.p.ks.it.neighbourlyhelp.utils.common.AbstractEntity;
 import pl.lodz.p.ks.it.neighbourlyhelp.validator.ContactNumber;
@@ -136,6 +137,11 @@ public class Account extends AbstractEntity implements UserDetails {
     private Set<Role> roleList = new HashSet<>();
 
     @Setter
+    @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH, CascadeType.REMOVE},
+            mappedBy = "account", orphanRemoval = true)
+    private Set<ConfirmationToken> confirmationTokenList = new HashSet<>();
+
+    @Setter
     @Min(value = 0)
     @Column(name = "failed_login_attempts_counter", columnDefinition = "integer default 0")
     private Integer failedLoginAttemptsCounter = 0;
@@ -197,5 +203,10 @@ public class Account extends AbstractEntity implements UserDetails {
     @XmlTransient
     public Set<Role> getRoleList() {
         return roleList;
+    }
+
+    @XmlTransient
+    public Set<ConfirmationToken> getConfirmationTokenList() {
+        return confirmationTokenList;
     }
 }

@@ -2,7 +2,7 @@ package pl.lodz.p.ks.it.neighbourlyhelp.service;
 
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
-import pl.lodz.p.ks.it.neighbourlyhelp.domain.token.ConfirmationToken;
+import pl.lodz.p.ks.it.neighbourlyhelp.entities.ConfirmationToken;
 import pl.lodz.p.ks.it.neighbourlyhelp.repository.ConfirmationTokenRepository;
 
 import java.time.LocalDateTime;

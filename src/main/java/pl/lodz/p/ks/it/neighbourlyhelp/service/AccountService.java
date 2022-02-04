@@ -7,8 +7,9 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
-import pl.lodz.p.ks.it.neighbourlyhelp.domain.token.ConfirmationToken;
 import pl.lodz.p.ks.it.neighbourlyhelp.domain.user.Account;
+import pl.lodz.p.ks.it.neighbourlyhelp.entities.ConfirmationToken;
+import pl.lodz.p.ks.it.neighbourlyhelp.entities.TokenType;
 import pl.lodz.p.ks.it.neighbourlyhelp.repository.AccountRepository;
 
 import java.time.LocalDateTime;
@@ -56,8 +57,7 @@ public class AccountService implements UserDetailsService {
         accountRepository.save(account);
 
         String token = UUID.randomUUID().toString();
-        ConfirmationToken confirmationToken = new ConfirmationToken(token, LocalDateTime.now(), LocalDateTime.now().plusMinutes(15),
-                account);
+        ConfirmationToken confirmationToken = new ConfirmationToken(token, false, TokenType.ACCOUNT_ACTIVATION, account, account, LocalDateTime.now(), LocalDateTime.now().plusMinutes(15));
         confirmationTokenService.saveConfirmationToken(confirmationToken);
         return token;
     }
@@ -66,4 +66,3 @@ public class AccountService implements UserDetailsService {
         return accountRepository.enableUser(email);
     }
 }
-
