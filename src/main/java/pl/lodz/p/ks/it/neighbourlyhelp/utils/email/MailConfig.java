@@ -3,6 +3,7 @@ package pl.lodz.p.ks.it.neighbourlyhelp.utils.email;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import pl.lodz.p.ks.it.neighbourlyhelp.utils.I18n;
 
@@ -17,6 +18,14 @@ public class MailConfig {
 
     private static final String MAIL_CONTENT_SCHEME = "mail.%s.content";
     private static final String MAIL_SUBJECT_SCHEME = "mail.%s.subject";
+
+    @Getter
+    @Value("${mail.endpoint.activate}")
+    private String mailEndpointActivate;
+
+    @Getter
+    @Value("${mail.uri}")
+    private String mailUri;
 
     /**
      * Zwraca temat wiadomości

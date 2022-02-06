@@ -2,10 +2,9 @@ package pl.lodz.p.ks.it.neighbourlyhelp.service;
 
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
-import pl.lodz.p.ks.it.neighbourlyhelp.domain.token.ConfirmationToken;
+import pl.lodz.p.ks.it.neighbourlyhelp.entities.ConfirmationToken;
 import pl.lodz.p.ks.it.neighbourlyhelp.repository.ConfirmationTokenRepository;
 
-import java.time.LocalDateTime;
 import java.util.Optional;
 
 @Service
@@ -20,10 +19,5 @@ public class ConfirmationTokenService {
 
     public Optional<ConfirmationToken> getToken(String token) {
         return confirmationTokenRepository.findByToken(token);
-    }
-
-    public int setConfirmedAt(String token) {
-        return confirmationTokenRepository.updateConfirmedAt(
-                token, LocalDateTime.now());
     }
 }

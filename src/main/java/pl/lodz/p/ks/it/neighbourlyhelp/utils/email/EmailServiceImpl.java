@@ -46,10 +46,24 @@ public class EmailServiceImpl implements EmailService {
      * @param account odbiorca wiadomości.
      * @throws AppBaseException wysyłanie wiadomości email nie powiodło się.
      */
+    @Override
     public void sendActivationSuccessEmail(Account account) throws AppBaseException {
         String lang = account.getLanguage();
         String successContent = mailConfig.getContentForType(lang, MailConfig.MailType.ACTIVATE_SUCCESS, account.getEmail());
         String successSubject = mailConfig.getSubjectForType(lang, MailConfig.MailType.ACTIVATE_SUCCESS);
         send(account.getEmail(), successSubject, successContent);
+    }
+
+    @Override
+    public void sendActivationEmail(Account account, String activationLink) throws AppBaseException {
+        String lang = account.getLanguage();
+        String activationContent = mailConfig.getContentForType(lang, MailConfig.MailType.ACTIVATE_ACCOUNT, account.getFirstName(),
+                wrapCode(activationLink, mailConfig.getMailEndpointActivate()));
+        String activationSubject = mailConfig.getSubjectForType(lang, MailConfig.MailType.ACTIVATE_ACCOUNT);
+        send(account.getEmail(), activationSubject, activationContent);
+    }
+
+    private String wrapCode(String code, String endpoint) {
+        return String.join("/", mailConfig.getMailUri(), endpoint, code);
     }
 }
