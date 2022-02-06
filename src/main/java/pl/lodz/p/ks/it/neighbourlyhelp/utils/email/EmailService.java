@@ -8,4 +8,6 @@ public interface EmailService {
     void send(String to, String subject, String content) throws AppBaseException;
 
     void sendActivationSuccessEmail(Account account) throws AppBaseException;
+
+    void sendActivationEmail(Account account, String activationLink) throws AppBaseException;
 }

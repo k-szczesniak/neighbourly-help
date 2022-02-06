@@ -3,7 +3,7 @@ package pl.lodz.p.ks.it.neighbourlyhelp.security.jwt;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.Jwts;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import lombok.extern.java.Log;
 import org.springframework.http.MediaType;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -22,7 +22,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-@Slf4j
+@Log
 @RequiredArgsConstructor
 public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 

@@ -1,5 +1,6 @@
 package pl.lodz.p.ks.it.neighbourlyhelp.entities;
 
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -92,8 +93,9 @@ public class ConfirmationToken extends AbstractEntity {
     private LocalDateTime expiresAt;
 
     @Setter
-    private LocalDateTime confirmedAt;
+    private LocalDateTime confirmedAt; // TODO: 06.02.2022 the same date as modificationDate from abstract -> maybe remove
 
+    @Builder
     public ConfirmationToken(String token, boolean used, TokenType tokenType, Account account, Account createdBy, LocalDateTime createdAt, LocalDateTime expiresAt) {
         this.token = token;
         this.used = used;

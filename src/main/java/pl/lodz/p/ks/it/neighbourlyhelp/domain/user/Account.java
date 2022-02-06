@@ -48,7 +48,8 @@ import java.util.Set;
         @Index(columnList = "id", name = Account.IX_ACCOUNT_ID, unique = true),
         @Index(columnList = "email", name = Account.IX_UQ_EMAIL, unique = true),
 }, uniqueConstraints = {
-        @UniqueConstraint(columnNames = {"email"}, name = Account.IX_UQ_EMAIL)
+        @UniqueConstraint(columnNames = {"email"}, name = Account.IX_UQ_EMAIL),
+        @UniqueConstraint(columnNames = {"contact_number"}, name = Account.IX_UQ_CONTACT_NUMBER)
 })
 @Entity
 public class Account extends AbstractEntity implements UserDetails {
@@ -56,6 +57,7 @@ public class Account extends AbstractEntity implements UserDetails {
     public static final String TABLE_NAME = "account";
     public static final String IX_ACCOUNT_ID = "ix_account_id";
     public static final String IX_UQ_EMAIL = "ix_uq_email";
+    public static final String IX_UQ_CONTACT_NUMBER = "ix_uq_contact_number";
     public static final String ROLE_PREFIX = "ROLE_";
 
     @Id
@@ -104,11 +106,17 @@ public class Account extends AbstractEntity implements UserDetails {
     @Column(name = "contact_number")
     private String contactNumber;
 
+    /**
+     * specify if account was locked
+     */
     @Setter
     @NotNull
     @Column(name = "locked", nullable = false)
     private Boolean locked = false;
 
+    /**
+     * specify if account was confirmed
+     */
     @Setter
     @NotNull
     @Column(name = "enabled", nullable = false)
