@@ -63,6 +63,22 @@ public class EmailServiceImpl implements EmailService {
         send(account.getEmail(), activationSubject, activationContent);
     }
 
+    @Override
+    public void sendDenyAccessLevelEmail(Account account, String accessLevel) throws AppBaseException {
+        String lang = account.getLanguage();
+        String denyAccessContent = mailConfig.getContentForType(lang, MailConfig.MailType.DENY_ACCESS, account.getEmail(), accessLevel);
+        String denyAccessSubject = mailConfig.getSubjectForType(lang, MailConfig.MailType.DENY_ACCESS);
+        send(account.getEmail(), denyAccessSubject, denyAccessContent);
+    }
+
+    @Override
+    public void sendGrantAccessLevelEmail(Account account, String accessLevel) throws AppBaseException {
+        String lang = account.getLanguage();
+        String grantAccessContent = mailConfig.getContentForType(lang, MailConfig.MailType.GRANT_ACCESS, account.getEmail(), accessLevel);
+        String grantAccessSubject = mailConfig.getSubjectForType(lang, MailConfig.MailType.GRANT_ACCESS);
+        send(account.getEmail(), grantAccessSubject, grantAccessContent);
+    }
+
     private String wrapCode(String code, String endpoint) {
         return String.join("/", mailConfig.getMailUri(), endpoint, code);
     }

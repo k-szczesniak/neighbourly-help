@@ -2,17 +2,19 @@ package pl.lodz.p.ks.it.neighbourlyhelp.service;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.java.Log;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import pl.lodz.p.ks.it.neighbourlyhelp.domain.user.AccessLevel;
 import pl.lodz.p.ks.it.neighbourlyhelp.domain.user.Account;
 import pl.lodz.p.ks.it.neighbourlyhelp.entities.AdminData;
 import pl.lodz.p.ks.it.neighbourlyhelp.entities.ClientData;
-import pl.lodz.p.ks.it.neighbourlyhelp.entities.ManagerData;
+import pl.lodz.p.ks.it.neighbourlyhelp.entities.ModeratorData;
 import pl.lodz.p.ks.it.neighbourlyhelp.entities.Role;
 import pl.lodz.p.ks.it.neighbourlyhelp.exception.AppBaseException;
 import pl.lodz.p.ks.it.neighbourlyhelp.exception.RoleException;
 import pl.lodz.p.ks.it.neighbourlyhelp.repository.AccountRepository;
+import pl.lodz.p.ks.it.neighbourlyhelp.utils.email.EmailService;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -24,8 +26,8 @@ import java.util.stream.Collectors;
 public class RoleService {
 
     private final AccountRepository accountRepository;
-
     private final AccountService accountService;
+    private final EmailService emailService;
 
     /**
      * Revoke access level of user.
@@ -34,7 +36,7 @@ public class RoleService {
      * @param accessLevel access level
      * @throws AppBaseException when it was impossible to revoke the access level
      */
-    // TODO: add check permission annotation
+    @Secured("ROLE_ADMIN")
     public void revokeAccessLevel(String email, AccessLevel accessLevel) throws AppBaseException {
         Account account = (Account) accountService.loadUserByUsername(email);
 
@@ -55,7 +57,7 @@ public class RoleService {
         role.setEnabled(false);
         account.setRoleList(new HashSet<>(account.getRoleList()));
         accountRepository.save(account);
-//        TODO: send email
+        emailService.sendDenyAccessLevelEmail(account, accessLevel.toString());
     }
 
     /**
@@ -65,7 +67,7 @@ public class RoleService {
      * @param accessLevel access level
      * @throws AppBaseException when it was impossible to add the access level to user
      */
-    // TODO: add check permission annotation
+    @Secured("ROLE_ADMIN")
     public void grantAccessLevel(String email, AccessLevel accessLevel) throws AppBaseException {
         Account account = (Account) accountService.loadUserByUsername(email);
 
@@ -98,7 +100,7 @@ public class RoleService {
         role.setEnabled(true);
         account.setRoleList(new HashSet<>(account.getRoleList()));
         accountRepository.save(account);
-//        TODO: send email
+        emailService.sendGrantAccessLevelEmail(account, accessLevel.toString());
     }
 
     /**
@@ -113,7 +115,7 @@ public class RoleService {
             case ADMIN:
                 return new AdminData();
             case MODERATOR:
-                return new ManagerData(); // TODO: change to ModeratorData
+                return new ModeratorData();
             case CLIENT:
                 return new ClientData();
         }
