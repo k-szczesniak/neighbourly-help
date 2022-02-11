@@ -2,6 +2,7 @@ package pl.lodz.p.ks.it.neighbourlyhelp.service;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.java.Log;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -44,6 +45,7 @@ public class AccountService implements UserDetailsService {
                 .orElseThrow(() -> new UsernameNotFoundException(String.format(USER_NOT_FOUND_MSG, email)));
     }
 
+    @Secured("ROLE_ADMIN")
     public List<Account> getAllAccounts() {
         return accountRepository.findAll();
     }
