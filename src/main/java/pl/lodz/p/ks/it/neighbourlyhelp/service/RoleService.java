@@ -36,7 +36,7 @@ public class RoleService {
      */
     // TODO: add check permission annotation
     public void revokeAccessLevel(String email, AccessLevel accessLevel) throws AppBaseException {
-        Account account = (Account) accountService.loadUserByUsername(email);
+        Account account = (Account) accountService.getAccountByEmail(email);
 
         if (!account.isEnabled()) {
             throw RoleException.accountNotConfirmed();
@@ -67,7 +67,7 @@ public class RoleService {
      */
     // TODO: add check permission annotation
     public void grantAccessLevel(String email, AccessLevel accessLevel) throws AppBaseException {
-        Account account = (Account) accountService.loadUserByUsername(email);
+        Account account = (Account) accountService.getAccountByEmail(email);
 
         if (!account.isEnabled()) {
             throw RoleException.accountNotConfirmed();
@@ -121,7 +121,7 @@ public class RoleService {
     }
 
     private Account getEditorName() {
-        return (Account) accountService.loadUserByUsername(SecurityContextHolder.getContext().getAuthentication().getName());
+        return accountService.getAccountByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
     }
 
 }

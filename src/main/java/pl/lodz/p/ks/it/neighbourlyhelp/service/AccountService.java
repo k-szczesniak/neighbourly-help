@@ -3,8 +3,6 @@ package pl.lodz.p.ks.it.neighbourlyhelp.service;
 import lombok.AllArgsConstructor;
 import lombok.extern.java.Log;
 import org.springframework.security.access.annotation.Secured;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -31,30 +29,23 @@ import java.util.UUID;
 @AllArgsConstructor
 @Log
 @Transactional(propagation = Propagation.MANDATORY)
-public class AccountService implements UserDetailsService {
+public class AccountService {
 
-    private final static String USER_NOT_FOUND_MSG = "user with email %s not found";
     private final AccountRepository accountRepository;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final ConfirmationTokenRepository confirmationTokenRepository;
     private final EmailService emailService;
+    private final UserDetailsServiceImpl userService;
 
-    @Override
-    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        return accountRepository.findByEmail(email)
-                .orElseThrow(() -> new UsernameNotFoundException(String.format(USER_NOT_FOUND_MSG, email)));
+    // TODO: 12.02.2022 add permission annotation
+    public Account getAccountByEmail(String email) throws UsernameNotFoundException {
+        return (Account) userService.loadUserByUsername(email);
     }
 
     @Secured("ROLE_ADMIN")
     public List<Account> getAllAccounts() {
         return accountRepository.findAll();
     }
-
-//    public void addAdminPermissions(String email) {
-//        Account accountToUpdate = (Account) loadUserByUsername(email);
-//        accountToUpdate.setAccessLevel(AccessLevel.ADMIN);
-//        accountRepository.save(accountToUpdate);
-//    }
 
     @PermitAll
     public void register(Account account) throws AppBaseException {
