@@ -42,7 +42,7 @@ public class HelloApi {
 
     @GetMapping("/api/two")
     public String two() throws AppBaseException {
-        Account account = (Account) accountService.loadUserByUsername("adam@nowak.pl");
+        Account account = accountService.getAccountByEmail("adam@nowak.pl");
         emailService.sendActivationSuccessEmail(account);
         return String.valueOf(rand.nextInt(100));
     }

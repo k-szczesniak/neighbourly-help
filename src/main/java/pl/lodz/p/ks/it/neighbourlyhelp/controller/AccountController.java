@@ -76,7 +76,7 @@ public class AccountController {
                 String refreshToken = refreshTokenDto.getRefreshToken();
                 tokenVerifier.validateToken(refreshToken);
                 String email = tokenVerifier.getClaims(refreshToken).getSubject();
-                UserDetails user = accountService.loadUserByUsername(email);
+                UserDetails user = accountService.getAccountByEmail(email);
                 String accessToken = Jwts.builder()
                         .setSubject(user.getUsername())
                         .claim("authorities", user.getAuthorities())

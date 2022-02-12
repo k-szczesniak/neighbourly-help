@@ -11,7 +11,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import pl.lodz.p.ks.it.neighbourlyhelp.service.AccountService;
+import pl.lodz.p.ks.it.neighbourlyhelp.service.UserDetailsServiceImpl;
 
 import javax.crypto.SecretKey;
 
@@ -24,7 +24,7 @@ import javax.crypto.SecretKey;
         jsr250Enabled = true)
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
-    private final AccountService accountService;
+    private final UserDetailsServiceImpl userService;
 
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
@@ -80,7 +80,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     public DaoAuthenticationProvider daoAuthenticationProvider() {
         DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
         provider.setPasswordEncoder(bCryptPasswordEncoder);
-        provider.setUserDetailsService(accountService);
+        provider.setUserDetailsService(userService);
         return provider;
     }
 }
