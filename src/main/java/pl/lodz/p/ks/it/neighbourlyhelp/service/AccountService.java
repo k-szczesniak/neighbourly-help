@@ -1,9 +1,9 @@
 package pl.lodz.p.ks.it.neighbourlyhelp.service;
 
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.java.Log;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -23,36 +23,34 @@ import pl.lodz.p.ks.it.neighbourlyhelp.utils.email.EmailService;
 
 import javax.annotation.security.PermitAll;
 import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
 @Service
-@AllArgsConstructor
+@RequiredArgsConstructor
 @Log
 @Transactional(propagation = Propagation.MANDATORY)
-public class AccountService implements UserDetailsService {
+public class AccountService {
 
-    private final static String USER_NOT_FOUND_MSG = "user with email %s not found";
     private final AccountRepository accountRepository;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final ConfirmationTokenRepository confirmationTokenRepository;
     private final EmailService emailService;
+    private final UserDetailsServiceImpl userService;
 
-    @Override
-    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        return accountRepository.findByEmail(email)
-                .orElseThrow(() -> new UsernameNotFoundException(String.format(USER_NOT_FOUND_MSG, email)));
+    @Value("${incorrectLoginAttemptsLimit}")
+    private String INCORRECT_LOGIN_ATTEMPTS_LIMIT;
+
+    // TODO: 12.02.2022 add permission annotation
+    public Account getAccountByEmail(String email) throws UsernameNotFoundException {
+        return (Account) userService.loadUserByUsername(email);
     }
 
+    @Secured("ROLE_ADMIN")
     public List<Account> getAllAccounts() {
         return accountRepository.findAll();
     }
-
-//    public void addAdminPermissions(String email) {
-//        Account accountToUpdate = (Account) loadUserByUsername(email);
-//        accountToUpdate.setAccessLevel(AccessLevel.ADMIN);
-//        accountRepository.save(accountToUpdate);
-//    }
 
     @PermitAll
     public void register(Account account) throws AppBaseException {
@@ -84,6 +82,7 @@ public class AccountService implements UserDetailsService {
         emailService.sendActivationEmail(account, confirmationToken.getToken());
     }
 
+    @PermitAll
     public void confirmToken(String token) throws AppBaseException {
         ConfirmationToken confirmationToken = confirmationTokenRepository.findByToken(token)
                 .orElseThrow(NotFoundException::confirmationTokenNotFound);
@@ -129,4 +128,29 @@ public class AccountService implements UserDetailsService {
         emailService.sendActivationSuccessEmail(account);
     }
 
+    //    @PermitAll
+//    @PreAuthorize("isAnonymous()")
+    // TODO: 16.02.2022 repair security annotation
+    public void updateInvalidAuth(Account account, String ipAddress, Date authDate) throws AppBaseException {
+        account.setLastFailedLoginIpAddress(ipAddress);
+        account.setLastFailedLoginDate(authDate);
+        int incorrectLoginAttempts = account.getFailedLoginAttemptsCounter() + 1;
+        if (incorrectLoginAttempts == Integer.parseInt(INCORRECT_LOGIN_ATTEMPTS_LIMIT)) {
+            account.setLocked(true);
+            account.setModifiedBy(null);
+            emailService.sendLockAccountEmail(account);
+        }
+        account.setFailedLoginAttemptsCounter(incorrectLoginAttempts);
+
+        accountRepository.saveAndFlush(account);
+    }
+
+    public void updateValidAuth(Account account, String ipAddress, Date authDate, String lang) {
+        account.setLastSuccessfulLoginIpAddress(ipAddress);
+        account.setLastSuccessfulLoginDate(authDate);
+        account.setFailedLoginAttemptsCounter(0);
+        account.setLanguage(lang.substring(0, 2));
+
+        accountRepository.saveAndFlush(account);
+    }
 }

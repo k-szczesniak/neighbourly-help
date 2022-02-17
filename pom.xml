@@ -102,6 +102,13 @@
             <version>3.0.0</version>
         </dependency>
 
+        <!--        Dependency to generate api specification v3-->
+        <!--        <dependency>-->
+        <!--            <groupId>org.springdoc</groupId>-->
+        <!--            <artifactId>springdoc-openapi-ui</artifactId>-->
+        <!--            <version>1.6.5</version>-->
+        <!--        </dependency>-->
+
         <!-- Tests dependencies-->
         <dependency>
             <groupId>org.springframework.security</groupId>
