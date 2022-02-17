@@ -20,7 +20,11 @@ public interface AccountEndpoint {
     @Secured("ROLE_ADMIN")
     List<AccountDto> getAllAccounts() throws AppBaseException;
 
-//    @PreAuthorize("isAnonymous()")
-        // TODO: 16.02.2022 repair security annotation
+    //    @PreAuthorize("isAnonymous()")
+    // TODO: 16.02.2022 repair security annotation
     void updateInvalidAuth(String email, String ipAddress, Date authDate) throws AppBaseException;
+
+    //    @PreAuthorize("isAnonymous()")
+    // TODO: 16.02.2022 repair security annotation
+    void updateValidAuth(String email, String ipAddress, Date authDate);
 }

@@ -145,4 +145,12 @@ public class AccountService {
         accountRepository.saveAndFlush(account);
     }
 
+    public void updateValidAuth(Account account, String ipAddress, Date authDate, String lang) {
+        account.setLastSuccessfulLoginIpAddress(ipAddress);
+        account.setLastSuccessfulLoginDate(authDate);
+        account.setFailedLoginAttemptsCounter(0);
+        account.setLanguage(lang.substring(0, 2));
+
+        accountRepository.saveAndFlush(account);
+    }
 }

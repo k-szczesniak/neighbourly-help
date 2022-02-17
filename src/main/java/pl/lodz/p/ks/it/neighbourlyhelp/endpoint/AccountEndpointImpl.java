@@ -60,4 +60,11 @@ public class AccountEndpointImpl implements AccountEndpoint {
         Account account = accountService.getAccountByEmail(email);
         accountService.updateInvalidAuth(account, ipAddress, authDate);
     }
+
+    @Override
+    public void updateValidAuth(String email, String ipAddress, Date authDate) {
+        String lang = servletRequest.getLocale().toString();
+        Account account = accountService.getAccountByEmail(email);
+        accountService.updateValidAuth(account, ipAddress, authDate, lang);
+    }
 }
