@@ -1,7 +1,8 @@
 package pl.lodz.p.ks.it.neighbourlyhelp.service;
 
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.java.Log;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -22,11 +23,12 @@ import pl.lodz.p.ks.it.neighbourlyhelp.utils.email.EmailService;
 
 import javax.annotation.security.PermitAll;
 import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
 @Service
-@AllArgsConstructor
+@RequiredArgsConstructor
 @Log
 @Transactional(propagation = Propagation.MANDATORY)
 public class AccountService {
@@ -36,6 +38,9 @@ public class AccountService {
     private final ConfirmationTokenRepository confirmationTokenRepository;
     private final EmailService emailService;
     private final UserDetailsServiceImpl userService;
+
+    @Value("${incorrectLoginAttemptsLimit}")
+    private String INCORRECT_LOGIN_ATTEMPTS_LIMIT;
 
     // TODO: 12.02.2022 add permission annotation
     public Account getAccountByEmail(String email) throws UsernameNotFoundException {
@@ -77,6 +82,7 @@ public class AccountService {
         emailService.sendActivationEmail(account, confirmationToken.getToken());
     }
 
+    @PermitAll
     public void confirmToken(String token) throws AppBaseException {
         ConfirmationToken confirmationToken = confirmationTokenRepository.findByToken(token)
                 .orElseThrow(NotFoundException::confirmationTokenNotFound);
@@ -120,6 +126,23 @@ public class AccountService {
         confirmationTokenRepository.save(confirmationToken);
         accountRepository.save(account);
         emailService.sendActivationSuccessEmail(account);
+    }
+
+    //    @PermitAll
+//    @PreAuthorize("isAnonymous()")
+    // TODO: 16.02.2022 repair security annotation
+    public void updateInvalidAuth(Account account, String ipAddress, Date authDate) throws AppBaseException {
+        account.setLastFailedLoginIpAddress(ipAddress);
+        account.setLastFailedLoginDate(authDate);
+        int incorrectLoginAttempts = account.getFailedLoginAttemptsCounter() + 1;
+        if (incorrectLoginAttempts == Integer.parseInt(INCORRECT_LOGIN_ATTEMPTS_LIMIT)) {
+            account.setLocked(true);
+            account.setModifiedBy(null);
+            emailService.sendLockAccountEmail(account);
+        }
+        account.setFailedLoginAttemptsCounter(incorrectLoginAttempts);
+
+        accountRepository.saveAndFlush(account);
     }
 
 }

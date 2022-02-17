@@ -15,6 +15,7 @@ import pl.lodz.p.ks.it.neighbourlyhelp.service.AccountService;
 
 import javax.annotation.security.PermitAll;
 import javax.servlet.http.HttpServletRequest;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -50,5 +51,13 @@ public class AccountEndpointImpl implements AccountEndpoint {
         return accounts.stream()
                 .map(account -> Mappers.getMapper(IAccountMapper.class).toAccountDto(account))
                 .collect(Collectors.toList());
+    }
+
+    @Override
+//    @PreAuthorize("isAnonymous()")
+    // TODO: 16.02.2022 repair security annotation
+    public void updateInvalidAuth(String email, String ipAddress, Date authDate) throws AppBaseException {
+        Account account = accountService.getAccountByEmail(email);
+        accountService.updateInvalidAuth(account, ipAddress, authDate);
     }
 }
