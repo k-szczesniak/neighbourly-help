@@ -10,4 +10,6 @@ public interface EmailService {
     void sendActivationSuccessEmail(Account account) throws AppBaseException;
 
     void sendActivationEmail(Account account, String activationLink) throws AppBaseException;
+
+    void sendLockAccountEmail(Account account) throws AppBaseException;
 }
