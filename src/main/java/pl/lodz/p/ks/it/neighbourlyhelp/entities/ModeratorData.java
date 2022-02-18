@@ -12,7 +12,7 @@ import javax.persistence.Table;
 //@Table(name = "manager_data", indexes = {
 //        @Index(name = "ix_manager_data_hotel_id", columnList = "hotel_id")
 //})
-@DiscriminatorValue("MANAGER")
+@DiscriminatorValue("MODERATOR")
 @NoArgsConstructor
 public class ModeratorData extends Role {
 

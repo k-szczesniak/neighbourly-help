@@ -1,9 +1,8 @@
 package pl.lodz.p.ks.it.neighbourlyhelp.endpoint;
 
+import org.springframework.security.access.annotation.Secured;
 import pl.lodz.p.ks.it.neighbourlyhelp.domain.user.AccessLevel;
 import pl.lodz.p.ks.it.neighbourlyhelp.exception.AppBaseException;
-
-import javax.annotation.security.RolesAllowed;
 
 public interface RoleEndpoint {
 
@@ -14,7 +13,7 @@ public interface RoleEndpoint {
      * @param accessLevel poziom dostępu do odebrania
      * @throws AppBaseException gdy nie udało się zaktualizować danych
      */
-    @RolesAllowed("deleteAccessLevel")
+    @Secured("ROLE_ADMIN")
     void revokeAccessLevel(String email, AccessLevel accessLevel) throws AppBaseException;
 
     /**
@@ -24,6 +23,6 @@ public interface RoleEndpoint {
      * @param accessLevel poziom dostępu do przyznania
      * @throws AppBaseException gdy nie udało się zaktualizować danych
      */
-    @RolesAllowed("addAccessLevel")
+    @Secured("ROLE_ADMIN")
     void grantAccessLevel(String email, AccessLevel accessLevel) throws AppBaseException;
 }

@@ -32,13 +32,12 @@ public class RoleService {
     /**
      * Revoke access level of user.
      *
-     * @param email       email of user
+     * @param account     account entity
      * @param accessLevel access level
      * @throws AppBaseException when it was impossible to revoke the access level
      */
     @Secured("ROLE_ADMIN")
-    public void revokeAccessLevel(String email, AccessLevel accessLevel) throws AppBaseException {
-        Account account = (Account) accountService.getAccountByEmail(email);
+    public void revokeAccessLevel(Account account, AccessLevel accessLevel) throws AppBaseException {
 
         if (!account.isEnabled()) {
             throw RoleException.accountNotConfirmed();
@@ -63,13 +62,12 @@ public class RoleService {
     /**
      * Add access level to user.
      *
-     * @param email       email of user
+     * @param account     account entity
      * @param accessLevel access level
      * @throws AppBaseException when it was impossible to add the access level to user
      */
     @Secured("ROLE_ADMIN")
-    public void grantAccessLevel(String email, AccessLevel accessLevel) throws AppBaseException {
-        Account account = (Account) accountService.getAccountByEmail(email);
+    public void grantAccessLevel(Account account, AccessLevel accessLevel) throws AppBaseException {
 
         if (!account.isEnabled()) {
             throw RoleException.accountNotConfirmed();
