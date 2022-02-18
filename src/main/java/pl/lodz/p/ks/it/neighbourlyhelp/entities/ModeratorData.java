@@ -8,13 +8,13 @@ import javax.persistence.Entity;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "manager_data")
+@Table(name = "moderator_data")
 //@Table(name = "manager_data", indexes = {
 //        @Index(name = "ix_manager_data_hotel_id", columnList = "hotel_id")
 //})
-@DiscriminatorValue("MANAGER")
+@DiscriminatorValue("MODERATOR")
 @NoArgsConstructor
-public class ManagerData extends Role {
+public class ModeratorData extends Role {
 
     @Override
     public String toString() {

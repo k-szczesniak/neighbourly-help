@@ -11,5 +11,9 @@ public interface EmailService {
 
     void sendActivationEmail(Account account, String activationLink) throws AppBaseException;
 
+    void sendDenyAccessLevelEmail(Account account, String accessLevel) throws AppBaseException;
+
+    void sendGrantAccessLevelEmail(Account account, String accessLevel) throws AppBaseException;
+
     void sendLockAccountEmail(Account account) throws AppBaseException;
 }

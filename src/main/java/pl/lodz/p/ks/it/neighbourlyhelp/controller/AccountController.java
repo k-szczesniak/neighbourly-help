@@ -9,15 +9,18 @@ import org.springframework.http.MediaType;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import pl.lodz.p.ks.it.neighbourlyhelp.domain.user.AccessLevel;
 import pl.lodz.p.ks.it.neighbourlyhelp.dto.AccountDto;
 import pl.lodz.p.ks.it.neighbourlyhelp.dto.RefreshTokenDto;
 import pl.lodz.p.ks.it.neighbourlyhelp.dto.RegisterAccountDto;
 import pl.lodz.p.ks.it.neighbourlyhelp.endpoint.AccountEndpoint;
+import pl.lodz.p.ks.it.neighbourlyhelp.endpoint.RoleEndpoint;
 import pl.lodz.p.ks.it.neighbourlyhelp.exception.AppBaseException;
 import pl.lodz.p.ks.it.neighbourlyhelp.exception.JwtTokenMalformedException;
 import pl.lodz.p.ks.it.neighbourlyhelp.exception.JwtTokenMissingException;
@@ -25,6 +28,7 @@ import pl.lodz.p.ks.it.neighbourlyhelp.security.jwt.JwtUtil;
 import pl.lodz.p.ks.it.neighbourlyhelp.security.jwt.TokenVerifier;
 import pl.lodz.p.ks.it.neighbourlyhelp.service.AccountService;
 import pl.lodz.p.ks.it.neighbourlyhelp.validator.ConfirmationToken;
+import pl.lodz.p.ks.it.neighbourlyhelp.validator.Email;
 
 import javax.annotation.security.PermitAll;
 import javax.crypto.SecretKey;
@@ -50,6 +54,7 @@ public class AccountController {
     private final JwtUtil jwtUtil;
 
     private final AccountEndpoint accountEndpoint;
+    private final RoleEndpoint roleEndpoint;
 
     @PostMapping(value = "/register")
     @PermitAll
@@ -67,6 +72,20 @@ public class AccountController {
     @Secured("ROLE_ADMIN")
     public List<AccountDto> getAllAccounts() throws AppBaseException {
         return accountEndpoint.getAllAccounts();
+    }
+
+    @PatchMapping("/user/{email}/grant/{accessLevel}")
+    @Secured("ROLE_ADMIN")
+    public void grantAccessLevel(@NotNull @Email @PathVariable(name = "email") @Valid String email,
+                                  @NotNull @PathVariable(name = "accessLevel") AccessLevel accessLevel) throws AppBaseException {
+        roleEndpoint.grantAccessLevel(email, accessLevel);
+    }
+
+    @PatchMapping("/user/{email}/revoke/{accessLevel}")
+    @Secured("ROLE_ADMIN")
+    public void revokeAccessLevel(@NotNull @Email @PathVariable(name = "email") @Valid String email,
+                                  @NotNull @PathVariable(name = "accessLevel") AccessLevel accessLevel) throws AppBaseException {
+        roleEndpoint.revokeAccessLevel(email, accessLevel);
     }
 
     @PostMapping("/token/refresh")
