@@ -1,7 +1,7 @@
 package pl.lodz.p.ks.it.neighbourlyhelp.utils.common;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import pl.lodz.p.ks.it.neighbourlyhelp.consistency.MessageSigner;
 import pl.lodz.p.ks.it.neighbourlyhelp.consistency.Signable;
 
 import javax.servlet.http.HttpServletRequest;
@@ -9,13 +9,14 @@ import javax.servlet.http.HttpServletRequest;
 public abstract class AbstractEndpoint {
 
     @Autowired
-    private BCryptPasswordEncoder encoder;
-
-    @Autowired
     private HttpServletRequest request;
 
-    public boolean verifyIntegrity(Signable signable) { // TODO: 18.02.2022 change signer !!!
+    @Autowired
+    private MessageSigner signer;
+
+    public boolean verifyIntegrity(Signable signable) {
         String valueFromHeader = request.getHeader("If-Match");
-        return encoder.matches(signable.getMessageToSign(), valueFromHeader);
+        String valueFromSigner = signer.sign(signable);
+        return valueFromSigner.equals(valueFromHeader);
     }
 }
