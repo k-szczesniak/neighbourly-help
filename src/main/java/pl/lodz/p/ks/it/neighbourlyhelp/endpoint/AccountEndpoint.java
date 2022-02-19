@@ -27,4 +27,10 @@ public interface AccountEndpoint {
     //    @PreAuthorize("isAnonymous()")
     // TODO: 16.02.2022 repair security annotation
     void updateValidAuth(String email, String ipAddress, Date authDate);
+
+    @Secured("ROLE_ADMIN")
+    void blockAccount(String email) throws AppBaseException;
+
+    @Secured("ROLE_ADMIN")
+    void unblockAccount(String email) throws AppBaseException;
 }

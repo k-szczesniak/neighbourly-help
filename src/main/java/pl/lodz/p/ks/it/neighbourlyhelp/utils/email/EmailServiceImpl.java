@@ -87,6 +87,14 @@ public class EmailServiceImpl implements EmailService {
         send(account.getEmail(), lockSubject, lockContent);
     }
 
+    @Override
+    public void sendUnlockAccountEmail(Account account) throws AppBaseException {
+        String lang = account.getLanguage();
+        String lockContent = mailConfig.getContentForType(lang, MailConfig.MailType.UNLOCK_ACCOUNT, account.getEmail());
+        String lockSubject = mailConfig.getSubjectForType(lang, MailConfig.MailType.UNLOCK_ACCOUNT);
+        send(account.getEmail(), lockSubject, lockContent);
+    }
+
     private String wrapCode(String code, String endpoint) {
         return String.join("/", mailConfig.getMailUri(), endpoint, code);
     }

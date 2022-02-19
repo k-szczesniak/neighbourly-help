@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.java.Log;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -152,5 +153,29 @@ public class AccountService {
         account.setLanguage(lang.substring(0, 2));
 
         accountRepository.saveAndFlush(account);
+    }
+
+    @Secured("ROLE_ADMIN")
+    public void blockAccount(Account account) throws AppBaseException {
+        account.setLocked(true);
+        account.setFailedLoginAttemptsCounter(0);
+        account.setModifiedBy(getEditorName());
+
+        accountRepository.saveAndFlush(account);
+        emailService.sendLockAccountEmail(account);
+    }
+
+    @Secured("ROLE_ADMIN")
+    public void unblockAccount(Account account) throws AppBaseException {
+        account.setLocked(false);
+        account.setFailedLoginAttemptsCounter(0);
+        account.setModifiedBy(getEditorName());
+
+        accountRepository.saveAndFlush(account);
+        emailService.sendUnlockAccountEmail(account);
+    }
+
+    private Account getEditorName() {
+        return getAccountByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
     }
 }

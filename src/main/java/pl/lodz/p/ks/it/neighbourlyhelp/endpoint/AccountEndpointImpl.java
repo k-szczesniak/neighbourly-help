@@ -10,8 +10,10 @@ import pl.lodz.p.ks.it.neighbourlyhelp.domain.user.Account;
 import pl.lodz.p.ks.it.neighbourlyhelp.dto.AccountDto;
 import pl.lodz.p.ks.it.neighbourlyhelp.dto.RegisterAccountDto;
 import pl.lodz.p.ks.it.neighbourlyhelp.exception.AppBaseException;
+import pl.lodz.p.ks.it.neighbourlyhelp.exception.AppOptimisticLockException;
 import pl.lodz.p.ks.it.neighbourlyhelp.mapper.IAccountMapper;
 import pl.lodz.p.ks.it.neighbourlyhelp.service.AccountService;
+import pl.lodz.p.ks.it.neighbourlyhelp.utils.common.AbstractEndpoint;
 
 import javax.annotation.security.PermitAll;
 import javax.servlet.http.HttpServletRequest;
@@ -22,7 +24,7 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 @Transactional(propagation = Propagation.REQUIRES_NEW)
-public class AccountEndpointImpl implements AccountEndpoint {
+public class AccountEndpointImpl extends AbstractEndpoint implements AccountEndpoint {
 
     private final HttpServletRequest servletRequest;
 
@@ -66,5 +68,27 @@ public class AccountEndpointImpl implements AccountEndpoint {
         String lang = servletRequest.getLocale().toString();
         Account account = accountService.getAccountByEmail(email);
         accountService.updateValidAuth(account, ipAddress, authDate, lang);
+    }
+
+    @Override
+    @Secured("ROLE_ADMIN")
+    public void blockAccount(String email) throws AppBaseException {
+        Account account = accountService.getAccountByEmail(email);
+        AccountDto accountIntegrity = Mappers.getMapper(IAccountMapper.class).toAccountDto(account);
+        if (!verifyIntegrity(accountIntegrity)) {
+            throw AppOptimisticLockException.optimisticLockException();
+        }
+        accountService.blockAccount(account);
+    }
+
+    @Override
+    @Secured("ROLE_ADMIN")
+    public void unblockAccount(String email) throws AppBaseException {
+        Account account = accountService.getAccountByEmail(email);
+        AccountDto accountIntegrity = Mappers.getMapper(IAccountMapper.class).toAccountDto(account);
+        if (!verifyIntegrity(accountIntegrity)) {
+            throw AppOptimisticLockException.optimisticLockException();
+        }
+        accountService.unblockAccount(account);
     }
 }

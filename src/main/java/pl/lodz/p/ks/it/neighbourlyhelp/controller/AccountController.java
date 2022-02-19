@@ -77,7 +77,7 @@ public class AccountController {
     @PatchMapping("/user/{email}/grant/{accessLevel}")
     @Secured("ROLE_ADMIN")
     public void grantAccessLevel(@NotNull @Email @PathVariable(name = "email") @Valid String email,
-                                  @NotNull @PathVariable(name = "accessLevel") AccessLevel accessLevel) throws AppBaseException {
+                                 @NotNull @PathVariable(name = "accessLevel") AccessLevel accessLevel) throws AppBaseException {
         roleEndpoint.grantAccessLevel(email, accessLevel);
     }
 
@@ -86,6 +86,18 @@ public class AccountController {
     public void revokeAccessLevel(@NotNull @Email @PathVariable(name = "email") @Valid String email,
                                   @NotNull @PathVariable(name = "accessLevel") AccessLevel accessLevel) throws AppBaseException {
         roleEndpoint.revokeAccessLevel(email, accessLevel);
+    }
+
+    @PatchMapping("/{email}/block")
+    @Secured("ROLE_ADMIN")
+    public void blockAccount(@NotNull @Email @PathVariable("email") @Valid String email) throws AppBaseException {
+        accountEndpoint.blockAccount(email);
+    }
+
+    @PatchMapping("/{email}/unblock")
+    @Secured("ROLE_ADMIN")
+    public void unblockAccount(@NotNull @Email @PathVariable("email") @Valid String email) throws AppBaseException {
+        accountEndpoint.unblockAccount(email);
     }
 
     @PostMapping("/token/refresh")
