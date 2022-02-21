@@ -91,4 +91,11 @@ public class AccountEndpointImpl extends AbstractEndpoint implements AccountEndp
         }
         accountService.unblockAccount(account);
     }
+
+    @Override
+    @Secured({"ROLE_ADMIN", "ROLE_MODERATOR", "ROLE_CLIENT"})
+    public AccountDto getOwnAccountInfo() {
+        return Mappers.getMapper(IAccountMapper.class)
+                .toAccountDto(accountService.getExecutorAccount());
+    }
 }

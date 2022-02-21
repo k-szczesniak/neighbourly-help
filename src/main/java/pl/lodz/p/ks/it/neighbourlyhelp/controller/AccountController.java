@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.java.Log;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import pl.lodz.p.ks.it.neighbourlyhelp.consistency.MessageSigner;
 import pl.lodz.p.ks.it.neighbourlyhelp.domain.user.AccessLevel;
 import pl.lodz.p.ks.it.neighbourlyhelp.dto.AccountDto;
 import pl.lodz.p.ks.it.neighbourlyhelp.dto.RefreshTokenDto;
@@ -43,7 +45,7 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/account")
 @RequiredArgsConstructor
 @Log
 public class AccountController {
@@ -55,6 +57,8 @@ public class AccountController {
 
     private final AccountEndpoint accountEndpoint;
     private final RoleEndpoint roleEndpoint;
+
+    private final MessageSigner messageSigner;
 
     @PostMapping(value = "/register")
     @PermitAll
@@ -98,6 +102,15 @@ public class AccountController {
     @Secured("ROLE_ADMIN")
     public void unblockAccount(@NotNull @Email @PathVariable("email") @Valid String email) throws AppBaseException {
         accountEndpoint.unblockAccount(email);
+    }
+
+    @GetMapping("/user")
+    @Secured({"ROLE_ADMIN", "ROLE_MODERATOR", "ROLE_CLIENT"})
+    public ResponseEntity<AccountDto> getAccountInformation() {
+        AccountDto ownAccountInfo = accountEndpoint.getOwnAccountInfo();
+        return ResponseEntity.ok()
+                .eTag(messageSigner.sign(ownAccountInfo))
+                .body(ownAccountInfo);
     }
 
     @PostMapping("/token/refresh")
