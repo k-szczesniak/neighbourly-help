@@ -98,4 +98,11 @@ public class AccountEndpointImpl extends AbstractEndpoint implements AccountEndp
         return Mappers.getMapper(IAccountMapper.class)
                 .toAccountDto(accountService.getExecutorAccount());
     }
+
+    @Override
+    @Secured("ROLE_ADMIN")
+    public AccountDto getAccountInfo(String email) {
+        return Mappers.getMapper(IAccountMapper.class)
+                .toAccountDto(accountService.getAccountByEmail(email));
+    }
 }

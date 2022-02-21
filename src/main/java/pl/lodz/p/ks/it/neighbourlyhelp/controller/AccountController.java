@@ -113,6 +113,15 @@ public class AccountController {
                 .body(ownAccountInfo);
     }
 
+    @GetMapping("/user/{email}")
+    @Secured("ROLE_ADMIN")
+    public ResponseEntity<AccountDto> getAccountInformationByEmail(@NotNull @Email @PathVariable("email") @Valid String email) {
+        AccountDto accountInfo = accountEndpoint.getAccountInfo(email);
+        return ResponseEntity.ok()
+                .eTag(messageSigner.sign(accountInfo))
+                .body(accountInfo);
+    }
+
     @PostMapping("/token/refresh")
     public void refreshToken(HttpServletRequest request, HttpServletResponse response, @RequestBody RefreshTokenDto refreshTokenDto) throws IOException {
         if (refreshTokenDto != null) {
