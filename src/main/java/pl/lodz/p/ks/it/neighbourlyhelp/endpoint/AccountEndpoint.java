@@ -36,4 +36,7 @@ public interface AccountEndpoint {
 
     @Secured({"ROLE_ADMIN", "ROLE_MODERATOR", "ROLE_CLIENT"})
     AccountDto getOwnAccountInfo();
+
+    @Secured("ROLE_ADMIN")
+    AccountDto getAccountInfo(String email);
 }
