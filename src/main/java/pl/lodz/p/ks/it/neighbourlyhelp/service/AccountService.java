@@ -159,7 +159,7 @@ public class AccountService {
     public void blockAccount(Account account) throws AppBaseException {
         account.setLocked(true);
         account.setFailedLoginAttemptsCounter(0);
-        account.setModifiedBy(getEditorName());
+        account.setModifiedBy(getExecutorAccount());
 
         accountRepository.saveAndFlush(account);
         emailService.sendLockAccountEmail(account);
@@ -169,13 +169,13 @@ public class AccountService {
     public void unblockAccount(Account account) throws AppBaseException {
         account.setLocked(false);
         account.setFailedLoginAttemptsCounter(0);
-        account.setModifiedBy(getEditorName());
+        account.setModifiedBy(getExecutorAccount());
 
         accountRepository.saveAndFlush(account);
         emailService.sendUnlockAccountEmail(account);
     }
 
-    private Account getEditorName() {
+    public Account getExecutorAccount() {
         return getAccountByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
     }
 }

@@ -33,4 +33,7 @@ public interface AccountEndpoint {
 
     @Secured("ROLE_ADMIN")
     void unblockAccount(String email) throws AppBaseException;
+
+    @Secured({"ROLE_ADMIN", "ROLE_MODERATOR", "ROLE_CLIENT"})
+    AccountDto getOwnAccountInfo();
 }
