@@ -3,6 +3,7 @@ package pl.lodz.p.ks.it.neighbourlyhelp.endpoint;
 import org.springframework.security.access.annotation.Secured;
 import pl.lodz.p.ks.it.neighbourlyhelp.dto.AccountDto;
 import pl.lodz.p.ks.it.neighbourlyhelp.dto.RegisterAccountDto;
+import pl.lodz.p.ks.it.neighbourlyhelp.dto.request.AccountPersonalDetailsDto;
 import pl.lodz.p.ks.it.neighbourlyhelp.exception.AppBaseException;
 
 import javax.annotation.security.PermitAll;
@@ -39,4 +40,7 @@ public interface AccountEndpoint {
 
     @Secured("ROLE_ADMIN")
     AccountDto getAccountInfo(String email);
+
+    @Secured({"ROLE_ADMIN", "ROLE_MODERATOR", "ROLE_CLIENT"})
+    void editOwnAccountDetails(AccountPersonalDetailsDto accountPersonalDetailsDto) throws AppBaseException;
 }

@@ -175,6 +175,12 @@ public class AccountService {
         emailService.sendUnlockAccountEmail(account);
     }
 
+    @Secured({"ROLE_ADMIN", "ROLE_MODERATOR", "ROLE_CLIENT"})
+    public void editAccountDetails(Account account) {
+        account.setModifiedBy(getExecutorAccount());
+        accountRepository.saveAndFlush(account);
+    }
+
     public Account getExecutorAccount() {
         return getAccountByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
     }
