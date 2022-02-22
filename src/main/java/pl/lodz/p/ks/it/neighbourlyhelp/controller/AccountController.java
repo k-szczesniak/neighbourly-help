@@ -2,6 +2,7 @@ package pl.lodz.p.ks.it.neighbourlyhelp.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.Jwts;
+import io.swagger.annotations.ApiImplicitParam;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.java.Log;
 import org.springframework.http.HttpStatus;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -21,6 +23,7 @@ import pl.lodz.p.ks.it.neighbourlyhelp.domain.user.AccessLevel;
 import pl.lodz.p.ks.it.neighbourlyhelp.dto.AccountDto;
 import pl.lodz.p.ks.it.neighbourlyhelp.dto.RefreshTokenDto;
 import pl.lodz.p.ks.it.neighbourlyhelp.dto.RegisterAccountDto;
+import pl.lodz.p.ks.it.neighbourlyhelp.dto.request.AccountPersonalDetailsDto;
 import pl.lodz.p.ks.it.neighbourlyhelp.endpoint.AccountEndpoint;
 import pl.lodz.p.ks.it.neighbourlyhelp.endpoint.RoleEndpoint;
 import pl.lodz.p.ks.it.neighbourlyhelp.exception.AppBaseException;
@@ -80,6 +83,7 @@ public class AccountController {
 
     @PatchMapping("/user/{email}/grant/{accessLevel}")
     @Secured("ROLE_ADMIN")
+    @ApiImplicitParam(name = "If-Match", value = "ETag", required = false, allowEmptyValue = true, paramType = "header", dataTypeClass = String.class)
     public void grantAccessLevel(@NotNull @Email @PathVariable(name = "email") @Valid String email,
                                  @NotNull @PathVariable(name = "accessLevel") AccessLevel accessLevel) throws AppBaseException {
         roleEndpoint.grantAccessLevel(email, accessLevel);
@@ -87,6 +91,7 @@ public class AccountController {
 
     @PatchMapping("/user/{email}/revoke/{accessLevel}")
     @Secured("ROLE_ADMIN")
+    @ApiImplicitParam(name = "If-Match", value = "ETag", required = false, allowEmptyValue = true, paramType = "header", dataTypeClass = String.class)
     public void revokeAccessLevel(@NotNull @Email @PathVariable(name = "email") @Valid String email,
                                   @NotNull @PathVariable(name = "accessLevel") AccessLevel accessLevel) throws AppBaseException {
         roleEndpoint.revokeAccessLevel(email, accessLevel);
@@ -94,12 +99,14 @@ public class AccountController {
 
     @PatchMapping("/{email}/block")
     @Secured("ROLE_ADMIN")
+    @ApiImplicitParam(name = "If-Match", value = "ETag", required = false, allowEmptyValue = true, paramType = "header", dataTypeClass = String.class)
     public void blockAccount(@NotNull @Email @PathVariable("email") @Valid String email) throws AppBaseException {
         accountEndpoint.blockAccount(email);
     }
 
     @PatchMapping("/{email}/unblock")
     @Secured("ROLE_ADMIN")
+    @ApiImplicitParam(name = "If-Match", value = "ETag", required = false, allowEmptyValue = true, paramType = "header", dataTypeClass = String.class)
     public void unblockAccount(@NotNull @Email @PathVariable("email") @Valid String email) throws AppBaseException {
         accountEndpoint.unblockAccount(email);
     }
@@ -120,6 +127,14 @@ public class AccountController {
         return ResponseEntity.ok()
                 .eTag(messageSigner.sign(accountInfo))
                 .body(accountInfo);
+    }
+
+    @PutMapping("/edit")
+    @Secured({"ROLE_ADMIN", "ROLE_MODERATOR", "ROLE_CLIENT"})
+    @ApiImplicitParam(name = "If-Match", value = "ETag", required = false, allowEmptyValue = true, paramType = "header", dataTypeClass = String.class)
+    public void editOwnAccountDetails(@NotNull @Valid @RequestBody AccountPersonalDetailsDto accountPersonalDetailsDto)
+            throws AppBaseException {
+        accountEndpoint.editOwnAccountDetails(accountPersonalDetailsDto);
     }
 
     @PostMapping("/token/refresh")

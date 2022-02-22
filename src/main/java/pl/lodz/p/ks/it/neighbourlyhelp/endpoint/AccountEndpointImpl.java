@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 import pl.lodz.p.ks.it.neighbourlyhelp.domain.user.Account;
 import pl.lodz.p.ks.it.neighbourlyhelp.dto.AccountDto;
 import pl.lodz.p.ks.it.neighbourlyhelp.dto.RegisterAccountDto;
+import pl.lodz.p.ks.it.neighbourlyhelp.dto.request.AccountPersonalDetailsDto;
 import pl.lodz.p.ks.it.neighbourlyhelp.exception.AppBaseException;
 import pl.lodz.p.ks.it.neighbourlyhelp.exception.AppOptimisticLockException;
 import pl.lodz.p.ks.it.neighbourlyhelp.mapper.IAccountMapper;
@@ -104,5 +105,17 @@ public class AccountEndpointImpl extends AbstractEndpoint implements AccountEndp
     public AccountDto getAccountInfo(String email) {
         return Mappers.getMapper(IAccountMapper.class)
                 .toAccountDto(accountService.getAccountByEmail(email));
+    }
+
+    @Override
+    @Secured({"ROLE_ADMIN", "ROLE_MODERATOR", "ROLE_CLIENT"})
+    public void editOwnAccountDetails(AccountPersonalDetailsDto accountPersonalDetailsDto) throws AppBaseException {
+        Account editAccount = accountService.getExecutorAccount();
+        AccountDto accountIntegrity = Mappers.getMapper(IAccountMapper.class).toAccountDto(editAccount);
+        if (!verifyIntegrity(accountIntegrity)) {
+            throw AppOptimisticLockException.optimisticLockException();
+        }
+        Mappers.getMapper(IAccountMapper.class).toAccount(accountPersonalDetailsDto, editAccount);
+        accountService.editAccountDetails(editAccount);
     }
 }
