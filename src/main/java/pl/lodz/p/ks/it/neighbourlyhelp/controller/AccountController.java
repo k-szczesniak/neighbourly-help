@@ -137,6 +137,15 @@ public class AccountController {
         accountEndpoint.editOwnAccountDetails(accountPersonalDetailsDto);
     }
 
+    @PutMapping("/edit/{email}")
+    @Secured("ROLE_ADMIN")
+    @ApiImplicitParam(name = "If-Match", value = "ETag", required = false, allowEmptyValue = true, paramType = "header", dataTypeClass = String.class)
+    public void editOtherAccountDetails(@NotNull @Email @PathVariable("email") @Valid String email,
+                                        @NotNull @Valid @RequestBody AccountPersonalDetailsDto accountPersonalDetailsDto)
+            throws AppBaseException {
+        accountEndpoint.editOtherAccountDetails(email, accountPersonalDetailsDto);
+    }
+
     @PostMapping("/token/refresh")
     public void refreshToken(HttpServletRequest request, HttpServletResponse response, @RequestBody RefreshTokenDto refreshTokenDto) throws IOException {
         if (refreshTokenDto != null) {

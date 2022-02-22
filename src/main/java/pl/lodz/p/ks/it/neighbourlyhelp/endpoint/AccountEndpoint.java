@@ -43,4 +43,6 @@ public interface AccountEndpoint {
 
     @Secured({"ROLE_ADMIN", "ROLE_MODERATOR", "ROLE_CLIENT"})
     void editOwnAccountDetails(AccountPersonalDetailsDto accountPersonalDetailsDto) throws AppBaseException;
+
+    void editOtherAccountDetails(String email, AccountPersonalDetailsDto accountPersonalDetailsDto) throws AppBaseException;
 }

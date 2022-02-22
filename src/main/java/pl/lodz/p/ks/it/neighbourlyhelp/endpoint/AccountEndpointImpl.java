@@ -118,4 +118,16 @@ public class AccountEndpointImpl extends AbstractEndpoint implements AccountEndp
         Mappers.getMapper(IAccountMapper.class).toAccount(accountPersonalDetailsDto, editAccount);
         accountService.editAccountDetails(editAccount);
     }
+
+    @Override
+    @Secured("ROLE_ADMIN")
+    public void editOtherAccountDetails(String email, AccountPersonalDetailsDto accountPersonalDetailsDto) throws AppBaseException {
+        Account editAccount = accountService.getAccountByEmail(email);
+        AccountDto accountIntegrity = Mappers.getMapper(IAccountMapper.class).toAccountDto(editAccount);
+        if (!verifyIntegrity(accountIntegrity)) {
+            throw AppOptimisticLockException.optimisticLockException();
+        }
+        Mappers.getMapper(IAccountMapper.class).toAccount(accountPersonalDetailsDto, editAccount);
+        accountService.editAccountDetails(editAccount);
+    }
 }
