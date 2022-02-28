@@ -11,6 +11,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import pl.lodz.p.ks.it.neighbourlyhelp.dto.LoginCredentials;
+import pl.lodz.p.ks.it.neighbourlyhelp.dto.response.AuthTokenResponseDto;
 
 import javax.crypto.SecretKey;
 import javax.servlet.FilterChain;
@@ -19,8 +20,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
 
 @Log
 @RequiredArgsConstructor
@@ -54,8 +53,6 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + jwtUtil.getTokenExpiration()))
                 .setIssuer(request.getRequestURL().toString())
-//                .withIssuer(request.getRequestURL().toString())
-//                .withClaim("roles", user.getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(Collectors.toList()))
                 .signWith(secretKey)
                 .compact();
         String refreshToken = Jwts.builder()
@@ -66,14 +63,12 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
                 .signWith(secretKey)
                 .compact();
 
-//        response.setHeader("accessToken", accessToken);
-//        response.setHeader("refreshToken", refreshToken); //TODO: remove in future
-
-        Map<String, String> tokens = new HashMap<>();
-        tokens.put("accessToken", accessToken);
-        tokens.put("refreshToken", refreshToken);
+        AuthTokenResponseDto authTokenResponseDto = AuthTokenResponseDto.builder()
+                .accessToken(accessToken)
+                .refreshToken(refreshToken)
+                .build();
 
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-        new ObjectMapper().writeValue(response.getOutputStream(), tokens);
+        new ObjectMapper().writeValue(response.getOutputStream(), authTokenResponseDto);
     }
 }
