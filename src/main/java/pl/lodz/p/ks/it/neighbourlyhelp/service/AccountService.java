@@ -24,6 +24,7 @@ import pl.lodz.p.ks.it.neighbourlyhelp.repository.ConfirmationTokenRepository;
 import pl.lodz.p.ks.it.neighbourlyhelp.utils.email.EmailService;
 
 import javax.annotation.security.PermitAll;
+import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
@@ -43,6 +44,9 @@ public class AccountService {
 
     @Value("${incorrectLoginAttemptsLimit}")
     private String INCORRECT_LOGIN_ATTEMPTS_LIMIT;
+
+    @Value("${reset.expiration.minutes}")
+    private int RESET_EXPIRATION_MINUTES;
 
     // TODO: 12.02.2022 add permission annotation
     public Account getAccountByEmail(String email) throws UsernameNotFoundException {
@@ -90,10 +94,10 @@ public class AccountService {
                 .orElseThrow(NotFoundException::confirmationTokenNotFound);
 
         if (confirmationToken.getTokenType() != TokenType.ACCOUNT_ACTIVATION) {
-            throw ConfirmationTokenException.codeInvalid();
+            throw ConfirmationTokenException.tokenInvalid();
         }
         if (confirmationToken.isUsed()) {
-            throw ConfirmationTokenException.codeUsed();
+            throw ConfirmationTokenException.tokenUsed();
         }
         Account account = confirmationToken.getAccount();
         if (account.isEnabled()) {
@@ -182,16 +186,52 @@ public class AccountService {
         accountRepository.saveAndFlush(account);
     }
 
+    @Secured({"ROLE_ADMIN", "ROLE_MODERATOR", "ROLE_CLIENT"})
     public void changePassword(Account account, PasswordChangeRequestDto passwordChangeDto) {
         if (!bCryptPasswordEncoder.matches(passwordChangeDto.getOldPassword(), account.getPassword())) {
             throw AccountException.passwordsDontMatch();
         }
 
-        String encodedPassword = bCryptPasswordEncoder.encode(account.getPassword());
+        changePassword(account, passwordChangeDto.getNewPassword());
+    }
+
+    private void changePassword(Account account, String newPassword) {
+        String encodedPassword = bCryptPasswordEncoder.encode(newPassword);
         account.setPassword(encodedPassword);
         account.setModifiedBy(getExecutorAccount());
 
         accountRepository.saveAndFlush(account);
+    }
+
+    @PermitAll
+    public void resetPassword(String password, String token) throws AppBaseException {
+        ConfirmationToken resetToken = confirmationTokenRepository.findByToken(token)
+                .orElseThrow(NotFoundException::confirmationTokenNotFound);
+        Account account = getAccountByEmail(resetToken.getAccount().getEmail());
+
+        if (!account.isEnabled()) {
+            throw AccountException.accountNotConfirmed();
+        }
+        if (account.isAccountNonLocked()) {
+            throw AccountException.accountLocked();
+        }
+        if (!resetToken.getTokenType().equals(TokenType.PASSWORD_RESET)) {
+            throw ConfirmationTokenException.tokenInvalid();
+        }
+        if (resetToken.isUsed()) {
+            throw ConfirmationTokenException.tokenUsed();
+        }
+
+        Date expirationDate = new Date(resetToken.getCreationDate().getTime() + (RESET_EXPIRATION_MINUTES * 60000L));
+        Date localTime = Timestamp.valueOf(LocalDateTime.now());
+        if (localTime.after(expirationDate)) {
+            throw ConfirmationTokenException.tokenExpired();
+        }
+
+        resetToken.setUsed(true);
+        resetToken.setModifiedBy(account);
+        confirmationTokenRepository.saveAndFlush(resetToken);
+        changePassword(account, password);
     }
 
     public Account getExecutorAccount() {

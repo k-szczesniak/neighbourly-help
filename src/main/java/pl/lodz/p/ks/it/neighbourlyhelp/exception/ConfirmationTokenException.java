@@ -22,7 +22,7 @@ public class ConfirmationTokenException extends AppBaseException {
      * Tworzy wyjątek reprezentujący nieaktualność kodu.
      * @return wyjątek CodeException
      */
-    public static ConfirmationTokenException codeExpired() {
+    public static ConfirmationTokenException tokenExpired() {
         return new ConfirmationTokenException(CODE_EXPIRED);
     }
 
@@ -30,7 +30,7 @@ public class ConfirmationTokenException extends AppBaseException {
      * Tworzy wyjątek reprezentujący nieprawidłowość przekazanego kodu.
      * @return wyjątek CodeException
      */
-    public static ConfirmationTokenException codeInvalid() {
+    public static ConfirmationTokenException tokenInvalid() {
         return new ConfirmationTokenException(CODE_INVALID);
     }
 
@@ -38,7 +38,7 @@ public class ConfirmationTokenException extends AppBaseException {
      * Tworzy wyjątek reprezentujący użyty kod.
      * @return wyjątek CodeException
      */
-    public static ConfirmationTokenException codeUsed() {
+    public static ConfirmationTokenException tokenUsed() {
         return new ConfirmationTokenException(CODE_USED);
     }
 
@@ -46,7 +46,7 @@ public class ConfirmationTokenException extends AppBaseException {
      * Tworzy wyjątek reprezentujący duplikowany kod.
      * @return wyjątek CodeException
      */
-    public static ConfirmationTokenException codeDuplicated(Throwable cause) {
+    public static ConfirmationTokenException tokenDuplicated(Throwable cause) {
         return new ConfirmationTokenException(CODE_DUPLICATED, cause);
     }
 }

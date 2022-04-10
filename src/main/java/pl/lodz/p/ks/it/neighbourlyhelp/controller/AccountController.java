@@ -18,6 +18,7 @@ import pl.lodz.p.ks.it.neighbourlyhelp.dto.AccountDto;
 import pl.lodz.p.ks.it.neighbourlyhelp.dto.RegisterAccountDto;
 import pl.lodz.p.ks.it.neighbourlyhelp.dto.request.AccountPersonalDetailsDto;
 import pl.lodz.p.ks.it.neighbourlyhelp.dto.request.PasswordChangeRequestDto;
+import pl.lodz.p.ks.it.neighbourlyhelp.dto.request.PasswordResetRequestDto;
 import pl.lodz.p.ks.it.neighbourlyhelp.endpoint.AccountEndpoint;
 import pl.lodz.p.ks.it.neighbourlyhelp.endpoint.RoleEndpoint;
 import pl.lodz.p.ks.it.neighbourlyhelp.exception.AppBaseException;
@@ -128,5 +129,10 @@ public class AccountController {
     @ApiImplicitParam(name = "If-Match", value = "ETag", required = false, allowEmptyValue = true, paramType = "header", dataTypeClass = String.class)
     public void changePassword(@NotNull @Valid PasswordChangeRequestDto passwordChangeDto) throws AppOptimisticLockException {
         accountEndpoint.changePassword(passwordChangeDto);
+    }
+
+    @PostMapping(value = "/user/reset")
+    public void resetPassword(@NotNull @Valid PasswordResetRequestDto passwordResetDto) throws AppBaseException {
+        accountEndpoint.resetPassword(passwordResetDto);
     }
 }

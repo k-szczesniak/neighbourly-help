@@ -5,6 +5,7 @@ import pl.lodz.p.ks.it.neighbourlyhelp.dto.AccountDto;
 import pl.lodz.p.ks.it.neighbourlyhelp.dto.RegisterAccountDto;
 import pl.lodz.p.ks.it.neighbourlyhelp.dto.request.AccountPersonalDetailsDto;
 import pl.lodz.p.ks.it.neighbourlyhelp.dto.request.PasswordChangeRequestDto;
+import pl.lodz.p.ks.it.neighbourlyhelp.dto.request.PasswordResetRequestDto;
 import pl.lodz.p.ks.it.neighbourlyhelp.exception.AppBaseException;
 import pl.lodz.p.ks.it.neighbourlyhelp.exception.AppOptimisticLockException;
 
@@ -49,4 +50,6 @@ public interface AccountEndpoint {
     void editOtherAccountDetails(String email, AccountPersonalDetailsDto accountPersonalDetailsDto) throws AppBaseException;
 
     void changePassword(PasswordChangeRequestDto passwordChangeDto) throws AppOptimisticLockException;
+
+    void resetPassword(PasswordResetRequestDto passwordResetDto) throws AppBaseException;
 }

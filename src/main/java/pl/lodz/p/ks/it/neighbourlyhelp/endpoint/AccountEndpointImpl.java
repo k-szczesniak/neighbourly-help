@@ -11,6 +11,7 @@ import pl.lodz.p.ks.it.neighbourlyhelp.dto.AccountDto;
 import pl.lodz.p.ks.it.neighbourlyhelp.dto.RegisterAccountDto;
 import pl.lodz.p.ks.it.neighbourlyhelp.dto.request.AccountPersonalDetailsDto;
 import pl.lodz.p.ks.it.neighbourlyhelp.dto.request.PasswordChangeRequestDto;
+import pl.lodz.p.ks.it.neighbourlyhelp.dto.request.PasswordResetRequestDto;
 import pl.lodz.p.ks.it.neighbourlyhelp.exception.AppBaseException;
 import pl.lodz.p.ks.it.neighbourlyhelp.exception.AppOptimisticLockException;
 import pl.lodz.p.ks.it.neighbourlyhelp.mapper.IAccountMapper;
@@ -141,5 +142,13 @@ public class AccountEndpointImpl extends AbstractEndpoint implements AccountEndp
             throw AppOptimisticLockException.optimisticLockException();
         }
         accountService.changePassword(editAccount, passwordChangeDto);
+    }
+
+    @Override
+    @PermitAll
+    public void resetPassword(PasswordResetRequestDto passwordResetDto) throws AppBaseException {
+        String password = passwordResetDto.getPassword();
+        String token = passwordResetDto.getResetToken();
+        accountService.resetPassword(password, token);
     }
 }
