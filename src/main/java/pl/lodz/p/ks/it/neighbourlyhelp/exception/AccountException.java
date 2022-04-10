@@ -4,6 +4,7 @@ public class AccountException extends RuntimeException {
     private static final String ACCOUNT_EMAIL_INVALID = "exception.account.email_invalid";
     private static final String ACCOUNT_CONTACT_NUMBER = "exception.account.contact_number";
     private static final String ACCOUNT_ALREADY_ACTIVATED = "exception.account_already_activated.already_activated";
+    private static final String ACCOUNT_PASSWORDS_DONT_MATCH = "exception.passwords_dont_match.passwords_dont_match";
 
     public AccountException(String message) {
         super(message);
@@ -36,5 +37,14 @@ public class AccountException extends RuntimeException {
      */
     public static AccountException alreadyActivated() {
         return new AccountException(ACCOUNT_ALREADY_ACTIVATED);
+    }
+
+    /**
+     * Tworzy wyjątek reprezentujący niepowodzenie operacji ze względu na to, że podane nowe hasła nie są identyczne.
+     *
+     * @return wyjątek AccountException
+     */
+    public static AccountException passwordsDontMatch() {
+        return new AccountException(ACCOUNT_PASSWORDS_DONT_MATCH);
     }
 }

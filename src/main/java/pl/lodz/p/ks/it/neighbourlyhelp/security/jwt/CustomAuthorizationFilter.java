@@ -9,6 +9,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
+import pl.lodz.p.ks.it.neighbourlyhelp.exception.AppRuntimeException;
 import pl.lodz.p.ks.it.neighbourlyhelp.exception.JwtTokenMalformedException;
 import pl.lodz.p.ks.it.neighbourlyhelp.exception.JwtTokenMissingException;
 
@@ -68,7 +69,7 @@ public class CustomAuthorizationFilter extends OncePerRequestFilter {
             filterChain.doFilter(request, response);
         } catch (JwtTokenMalformedException | JwtTokenMissingException e) {
             response.sendError(HttpStatus.UNAUTHORIZED.value(), e.getMessage());
-            log.info(e.getMessage());
+            throw AppRuntimeException.jwtException(e);
         }
 
     }

@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import pl.lodz.p.ks.it.neighbourlyhelp.domain.user.Account;
+import pl.lodz.p.ks.it.neighbourlyhelp.dto.request.PasswordChangeRequestDto;
 import pl.lodz.p.ks.it.neighbourlyhelp.entities.ClientData;
 import pl.lodz.p.ks.it.neighbourlyhelp.entities.ConfirmationToken;
 import pl.lodz.p.ks.it.neighbourlyhelp.entities.TokenType;
@@ -178,6 +179,18 @@ public class AccountService {
     @Secured({"ROLE_ADMIN", "ROLE_MODERATOR", "ROLE_CLIENT"})
     public void editAccountDetails(Account account) {
         account.setModifiedBy(getExecutorAccount());
+        accountRepository.saveAndFlush(account);
+    }
+
+    public void changePassword(Account account, PasswordChangeRequestDto passwordChangeDto) {
+        if (!bCryptPasswordEncoder.matches(passwordChangeDto.getOldPassword(), account.getPassword())) {
+            throw AccountException.passwordsDontMatch();
+        }
+
+        String encodedPassword = bCryptPasswordEncoder.encode(account.getPassword());
+        account.setPassword(encodedPassword);
+        account.setModifiedBy(getExecutorAccount());
+
         accountRepository.saveAndFlush(account);
     }
 

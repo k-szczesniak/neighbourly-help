@@ -17,9 +17,11 @@ import pl.lodz.p.ks.it.neighbourlyhelp.domain.user.AccessLevel;
 import pl.lodz.p.ks.it.neighbourlyhelp.dto.AccountDto;
 import pl.lodz.p.ks.it.neighbourlyhelp.dto.RegisterAccountDto;
 import pl.lodz.p.ks.it.neighbourlyhelp.dto.request.AccountPersonalDetailsDto;
+import pl.lodz.p.ks.it.neighbourlyhelp.dto.request.PasswordChangeRequestDto;
 import pl.lodz.p.ks.it.neighbourlyhelp.endpoint.AccountEndpoint;
 import pl.lodz.p.ks.it.neighbourlyhelp.endpoint.RoleEndpoint;
 import pl.lodz.p.ks.it.neighbourlyhelp.exception.AppBaseException;
+import pl.lodz.p.ks.it.neighbourlyhelp.exception.AppOptimisticLockException;
 import pl.lodz.p.ks.it.neighbourlyhelp.validator.ConfirmationToken;
 import pl.lodz.p.ks.it.neighbourlyhelp.validator.Email;
 
@@ -119,5 +121,12 @@ public class AccountController {
                                         @NotNull @Valid @RequestBody AccountPersonalDetailsDto accountPersonalDetailsDto)
             throws AppBaseException {
         accountEndpoint.editOtherAccountDetails(email, accountPersonalDetailsDto);
+    }
+
+    @PutMapping("/self/password")
+    @Secured({"ROLE_ADMIN", "ROLE_MODERATOR", "ROLE_CLIENT"})
+    @ApiImplicitParam(name = "If-Match", value = "ETag", required = false, allowEmptyValue = true, paramType = "header", dataTypeClass = String.class)
+    public void changePassword(@NotNull @Valid PasswordChangeRequestDto passwordChangeDto) throws AppOptimisticLockException {
+        accountEndpoint.changePassword(passwordChangeDto);
     }
 }
