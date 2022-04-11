@@ -30,10 +30,10 @@ public class ConfirmationTokenService {
     private Integer RESET_EXPIRATION_MINUTES;
 
     public void saveConfirmationToken(ConfirmationToken token) {
-        confirmationTokenRepository.save(token);
+        confirmationTokenRepository.saveAndFlush(token);
     }
 
-    public Optional<ConfirmationToken> getToken(String token) {
+    public Optional<ConfirmationToken> getConfirmationToken(String token) {
         return confirmationTokenRepository.findByToken(token);
     }
 

@@ -20,7 +20,6 @@ import pl.lodz.p.ks.it.neighbourlyhelp.exception.AppBaseException;
 import pl.lodz.p.ks.it.neighbourlyhelp.exception.ConfirmationTokenException;
 import pl.lodz.p.ks.it.neighbourlyhelp.exception.NotFoundException;
 import pl.lodz.p.ks.it.neighbourlyhelp.repository.AccountRepository;
-import pl.lodz.p.ks.it.neighbourlyhelp.repository.ConfirmationTokenRepository;
 import pl.lodz.p.ks.it.neighbourlyhelp.utils.email.EmailService;
 
 import javax.annotation.security.PermitAll;
@@ -37,7 +36,6 @@ public class AccountService {
 
     private final AccountRepository accountRepository;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
-    private final ConfirmationTokenRepository confirmationTokenRepository;
     private final EmailService emailService;
     private final UserDetailsServiceImpl userService;
     private final ConfirmationTokenService tokenService;
@@ -87,7 +85,7 @@ public class AccountService {
 
     @PermitAll
     public void confirmToken(String token) throws AppBaseException {
-        ConfirmationToken confirmationToken = confirmationTokenRepository.findByToken(token)
+        ConfirmationToken confirmationToken = tokenService.getConfirmationToken(token)
                 .orElseThrow(NotFoundException::confirmationTokenNotFound);
 
         if (confirmationToken.getTokenType() != TokenType.ACCOUNT_ACTIVATION) {
@@ -126,7 +124,7 @@ public class AccountService {
 
         confirmationToken.setConfirmedAt(LocalDateTime.now());
 
-        confirmationTokenRepository.save(confirmationToken);
+        tokenService.saveConfirmationToken(confirmationToken);
         accountRepository.save(account);
         emailService.sendActivationSuccessEmail(account);
     }
@@ -202,7 +200,7 @@ public class AccountService {
 
     @PermitAll
     public void resetPassword(String password, String token) throws AppBaseException {
-        ConfirmationToken resetToken = confirmationTokenRepository.findByToken(token)
+        ConfirmationToken resetToken = tokenService.getConfirmationToken(token)
                 .orElseThrow(NotFoundException::confirmationTokenNotFound);
         Account account = getAccountByEmail(resetToken.getAccount().getEmail());
 
@@ -226,7 +224,7 @@ public class AccountService {
 
         resetToken.setUsed(true);
         resetToken.setModifiedBy(account);
-        confirmationTokenRepository.saveAndFlush(resetToken);
+        tokenService.saveConfirmationToken(resetToken);
         changePassword(account, password);
     }
 
