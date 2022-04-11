@@ -151,4 +151,10 @@ public class AccountEndpointImpl extends AbstractEndpoint implements AccountEndp
         String token = passwordResetDto.getResetToken();
         accountService.resetPassword(password, token);
     }
+
+    @Override
+    @PermitAll
+    public void sendResetPasswordRequest(String email) throws AppBaseException {
+        accountService.sendResetPasswordRequest(email);
+    }
 }

@@ -135,4 +135,9 @@ public class AccountController {
     public void resetPassword(@NotNull @Valid PasswordResetRequestDto passwordResetDto) throws AppBaseException {
         accountEndpoint.resetPassword(passwordResetDto);
     }
+
+    @PutMapping("/user/{email}/reset")
+    public void sendResetPasswordRequest(@NotNull @Email @PathVariable("email") @Valid String email) throws AppBaseException {
+        accountEndpoint.sendResetPasswordRequest(email);
+    }
 }

@@ -95,6 +95,15 @@ public class EmailServiceImpl implements EmailService {
         send(account.getEmail(), lockSubject, lockContent);
     }
 
+    @Override
+    public void sendResetPasswordEmail(Account account, String resetPasswordLink) throws AppBaseException {
+        String lang = account.getLanguage();
+        String resetContent = mailConfig.getContentForType(lang, MailConfig.MailType.RESET_PASSWORD, account.getEmail(),
+                wrapCode(resetPasswordLink, mailConfig.getMailEndpointPasswordReset()));
+        String resetSubject = mailConfig.getSubjectForType(lang, MailConfig.MailType.RESET_PASSWORD);
+        send(account.getEmail(), resetSubject, resetContent);
+    }
+
     private String wrapCode(String code, String endpoint) {
         return String.join("/", mailConfig.getMailUri(), endpoint, code);
     }

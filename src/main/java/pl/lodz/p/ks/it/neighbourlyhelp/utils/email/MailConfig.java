@@ -24,6 +24,10 @@ public class MailConfig {
     private String mailEndpointActivate;
 
     @Getter
+    @Value("${mail.endpoint.password_reset}")
+    private String mailEndpointPasswordReset;
+
+    @Getter
     @Value("${mail.uri}")
     private String mailUri;
 

@@ -52,4 +52,12 @@ public interface AccountEndpoint {
     void changePassword(PasswordChangeRequestDto passwordChangeDto) throws AppOptimisticLockException;
 
     void resetPassword(PasswordResetRequestDto passwordResetDto) throws AppBaseException;
+
+    /**
+     * Send reset password token for account with given email
+     *
+     * @param email address where reset password message will be sent
+     * @throws AppBaseException when there will be problems with sent resetting password message
+     */
+    void sendResetPasswordRequest(String email) throws AppBaseException;
 }

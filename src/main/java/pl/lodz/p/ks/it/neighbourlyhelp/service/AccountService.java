@@ -24,7 +24,6 @@ import pl.lodz.p.ks.it.neighbourlyhelp.repository.ConfirmationTokenRepository;
 import pl.lodz.p.ks.it.neighbourlyhelp.utils.email.EmailService;
 
 import javax.annotation.security.PermitAll;
-import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
@@ -41,12 +40,10 @@ public class AccountService {
     private final ConfirmationTokenRepository confirmationTokenRepository;
     private final EmailService emailService;
     private final UserDetailsServiceImpl userService;
+    private final ConfirmationTokenService tokenService;
 
     @Value("${incorrectLoginAttemptsLimit}")
     private String INCORRECT_LOGIN_ATTEMPTS_LIMIT;
-
-    @Value("${reset.expiration.minutes}")
-    private int RESET_EXPIRATION_MINUTES;
 
     // TODO: 12.02.2022 add permission annotation
     public Account getAccountByEmail(String email) throws UsernameNotFoundException {
@@ -212,7 +209,7 @@ public class AccountService {
         if (!account.isEnabled()) {
             throw AccountException.accountNotConfirmed();
         }
-        if (account.isAccountNonLocked()) {
+        if (!account.isAccountNonLocked()) {
             throw AccountException.accountLocked();
         }
         if (!resetToken.getTokenType().equals(TokenType.PASSWORD_RESET)) {
@@ -222,9 +219,8 @@ public class AccountService {
             throw ConfirmationTokenException.tokenUsed();
         }
 
-        Date expirationDate = new Date(resetToken.getCreationDate().getTime() + (RESET_EXPIRATION_MINUTES * 60000L));
-        Date localTime = Timestamp.valueOf(LocalDateTime.now());
-        if (localTime.after(expirationDate)) {
+        LocalDateTime expirationDate = resetToken.getExpiresAt();
+        if (expirationDate.isBefore(LocalDateTime.now())) {
             throw ConfirmationTokenException.tokenExpired();
         }
 
@@ -232,6 +228,20 @@ public class AccountService {
         resetToken.setModifiedBy(account);
         confirmationTokenRepository.saveAndFlush(resetToken);
         changePassword(account, password);
+    }
+
+    @PermitAll
+    public void sendResetPasswordRequest(String email) throws AppBaseException {
+        Account account = getAccountByEmail(email);
+
+        if (!account.isEnabled()) {
+            throw AccountException.accountNotConfirmed();
+        }
+        if (!account.isAccountNonLocked()) {
+            throw AccountException.accountLocked();
+        }
+
+        tokenService.sendResetPasswordRequest(account);
     }
 
     public Account getExecutorAccount() {
