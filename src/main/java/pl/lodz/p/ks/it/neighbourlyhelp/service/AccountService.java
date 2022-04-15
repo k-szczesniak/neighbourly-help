@@ -55,12 +55,12 @@ public class AccountService {
 
     @PermitAll
     public void register(Account account) throws AppBaseException {
-        accountRepository.findByEmail(account.getEmail()).ifPresent(userWithEmailExist -> {
+        if (accountRepository.findByEmail(account.getEmail()).isPresent()) {
             throw AccountException.emailExists();
-        });
-        accountRepository.findByContactNumber(account.getContactNumber()).ifPresent(userWithEmailExist -> {
+        }
+        if (accountRepository.findByContactNumber(account.getContactNumber()).isPresent()) {
             throw AccountException.contactNumberException();
-        });
+        }
 
         String encodedPassword = bCryptPasswordEncoder.encode(account.getPassword());
         account.setPassword(encodedPassword);
@@ -182,7 +182,7 @@ public class AccountService {
     }
 
     @Secured({"ROLE_ADMIN", "ROLE_MODERATOR", "ROLE_CLIENT"})
-    public void changePassword(Account account, PasswordChangeRequestDto passwordChangeDto) {
+    public void changePassword(Account account, PasswordChangeRequestDto passwordChangeDto) throws AppBaseException {
         if (!bCryptPasswordEncoder.matches(passwordChangeDto.getOldPassword(), account.getPassword())) {
             throw AccountException.passwordsDontMatch();
         }

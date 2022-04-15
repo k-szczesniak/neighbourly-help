@@ -23,7 +23,6 @@ import pl.lodz.p.ks.it.neighbourlyhelp.dto.request.PasswordResetRequestDto;
 import pl.lodz.p.ks.it.neighbourlyhelp.endpoint.AccountEndpoint;
 import pl.lodz.p.ks.it.neighbourlyhelp.endpoint.RoleEndpoint;
 import pl.lodz.p.ks.it.neighbourlyhelp.exception.AppBaseException;
-import pl.lodz.p.ks.it.neighbourlyhelp.exception.AppOptimisticLockException;
 import pl.lodz.p.ks.it.neighbourlyhelp.validator.ConfirmationToken;
 import pl.lodz.p.ks.it.neighbourlyhelp.validator.Email;
 
@@ -128,7 +127,7 @@ public class AccountController {
     @PutMapping("/self/password")
     @Secured({"ROLE_ADMIN", "ROLE_MODERATOR", "ROLE_CLIENT"})
     @ApiImplicitParam(name = "If-Match", value = "ETag", required = false, allowEmptyValue = true, paramType = "header", dataTypeClass = String.class)
-    public void changePassword(@NotNull @Valid PasswordChangeRequestDto passwordChangeDto) throws AppOptimisticLockException {
+    public void changePassword(@NotNull @Valid PasswordChangeRequestDto passwordChangeDto) throws AppBaseException {
         accountEndpoint.changePassword(passwordChangeDto);
     }
 

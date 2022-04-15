@@ -136,7 +136,7 @@ public class AccountEndpointImpl extends AbstractEndpoint implements AccountEndp
 
     @Override
     @Secured({"ROLE_ADMIN", "ROLE_MODERATOR", "ROLE_CLIENT"})
-    public void changePassword(PasswordChangeRequestDto passwordChangeDto) throws AppOptimisticLockException {
+    public void changePassword(PasswordChangeRequestDto passwordChangeDto) throws AppBaseException {
         Account editAccount = accountService.getExecutorAccount();
         AccountDto accountIntegrity = Mappers.getMapper(IAccountMapper.class).toAccountDto(editAccount);
         if (!verifyIntegrity(accountIntegrity)) {

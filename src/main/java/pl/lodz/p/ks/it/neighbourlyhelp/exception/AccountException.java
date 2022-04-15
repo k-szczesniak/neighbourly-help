@@ -1,6 +1,6 @@
 package pl.lodz.p.ks.it.neighbourlyhelp.exception;
 
-public class AccountException extends RuntimeException {
+public class AccountException extends AppBaseException {
     private static final String ACCOUNT_EMAIL_INVALID = "exception.account.email_invalid";
     private static final String ACCOUNT_CONTACT_NUMBER = "exception.account.contact_number";
     private static final String ACCOUNT_ALREADY_ACTIVATED = "exception.account_already_activated.already_activated";

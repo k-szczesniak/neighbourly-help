@@ -8,7 +8,6 @@ import pl.lodz.p.ks.it.neighbourlyhelp.dto.request.PasswordChangeOtherRequestDto
 import pl.lodz.p.ks.it.neighbourlyhelp.dto.request.PasswordChangeRequestDto;
 import pl.lodz.p.ks.it.neighbourlyhelp.dto.request.PasswordResetRequestDto;
 import pl.lodz.p.ks.it.neighbourlyhelp.exception.AppBaseException;
-import pl.lodz.p.ks.it.neighbourlyhelp.exception.AppOptimisticLockException;
 
 import javax.annotation.security.PermitAll;
 import java.util.Date;
@@ -50,7 +49,7 @@ public interface AccountEndpoint {
 
     void editOtherAccountDetails(String email, AccountPersonalDetailsDto accountPersonalDetailsDto) throws AppBaseException;
 
-    void changePassword(PasswordChangeRequestDto passwordChangeDto) throws AppOptimisticLockException;
+    void changePassword(PasswordChangeRequestDto passwordChangeDto) throws AppBaseException;
 
     void resetPassword(PasswordResetRequestDto passwordResetDto) throws AppBaseException;
 
