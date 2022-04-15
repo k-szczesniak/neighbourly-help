@@ -4,6 +4,7 @@ import org.springframework.security.access.annotation.Secured;
 import pl.lodz.p.ks.it.neighbourlyhelp.dto.AccountDto;
 import pl.lodz.p.ks.it.neighbourlyhelp.dto.RegisterAccountDto;
 import pl.lodz.p.ks.it.neighbourlyhelp.dto.request.AccountPersonalDetailsDto;
+import pl.lodz.p.ks.it.neighbourlyhelp.dto.request.PasswordChangeOtherRequestDto;
 import pl.lodz.p.ks.it.neighbourlyhelp.dto.request.PasswordChangeRequestDto;
 import pl.lodz.p.ks.it.neighbourlyhelp.dto.request.PasswordResetRequestDto;
 import pl.lodz.p.ks.it.neighbourlyhelp.exception.AppBaseException;
@@ -60,4 +61,6 @@ public interface AccountEndpoint {
      * @throws AppBaseException when there will be problems with sent resetting password message
      */
     void sendResetPasswordRequest(String email) throws AppBaseException;
+
+    void changeOtherPassword(PasswordChangeOtherRequestDto passwordChangeOtherDto) throws AppBaseException;
 }

@@ -10,6 +10,7 @@ import pl.lodz.p.ks.it.neighbourlyhelp.domain.user.Account;
 import pl.lodz.p.ks.it.neighbourlyhelp.dto.AccountDto;
 import pl.lodz.p.ks.it.neighbourlyhelp.dto.RegisterAccountDto;
 import pl.lodz.p.ks.it.neighbourlyhelp.dto.request.AccountPersonalDetailsDto;
+import pl.lodz.p.ks.it.neighbourlyhelp.dto.request.PasswordChangeOtherRequestDto;
 import pl.lodz.p.ks.it.neighbourlyhelp.dto.request.PasswordChangeRequestDto;
 import pl.lodz.p.ks.it.neighbourlyhelp.dto.request.PasswordResetRequestDto;
 import pl.lodz.p.ks.it.neighbourlyhelp.exception.AppBaseException;
@@ -156,5 +157,16 @@ public class AccountEndpointImpl extends AbstractEndpoint implements AccountEndp
     @PermitAll
     public void sendResetPasswordRequest(String email) throws AppBaseException {
         accountService.sendResetPasswordRequest(email);
+    }
+
+    @Override
+    public void changeOtherPassword(PasswordChangeOtherRequestDto passwordChangeOtherDto) throws AppBaseException {
+        Account editAccount = accountService.getAccountByEmail(passwordChangeOtherDto.getEmail());
+        AccountDto accountIntegrity = Mappers.getMapper(IAccountMapper.class).toAccountDto(editAccount);
+        if (!verifyIntegrity(accountIntegrity)) {
+            throw AppOptimisticLockException.optimisticLockException();
+        }
+
+        accountService.changeOtherPassword(editAccount, passwordChangeOtherDto.getGivenPassword());
     }
 }

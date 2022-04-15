@@ -190,14 +190,6 @@ public class AccountService {
         changePassword(account, passwordChangeDto.getNewPassword());
     }
 
-    private void changePassword(Account account, String newPassword) {
-        String encodedPassword = bCryptPasswordEncoder.encode(newPassword);
-        account.setPassword(encodedPassword);
-        account.setModifiedBy(getExecutorAccount());
-
-        accountRepository.saveAndFlush(account);
-    }
-
     @PermitAll
     public void resetPassword(String password, String token) throws AppBaseException {
         ConfirmationToken resetToken = tokenService.getConfirmationToken(token)
@@ -242,7 +234,21 @@ public class AccountService {
         tokenService.sendResetPasswordRequest(account);
     }
 
+    @Secured("ROLE_ADMIN")
+    public void changeOtherPassword(Account editAccount, String givenPassword) throws AppBaseException {
+        tokenService.sendResetPasswordRequest(editAccount);
+        changePassword(editAccount, givenPassword);
+    }
+
     public Account getExecutorAccount() {
         return getAccountByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
+    }
+
+    private void changePassword(Account account, String newPassword) {
+        String encodedPassword = bCryptPasswordEncoder.encode(newPassword);
+        account.setPassword(encodedPassword);
+        account.setModifiedBy(getExecutorAccount());
+
+        accountRepository.saveAndFlush(account);
     }
 }

@@ -17,6 +17,7 @@ import pl.lodz.p.ks.it.neighbourlyhelp.domain.user.AccessLevel;
 import pl.lodz.p.ks.it.neighbourlyhelp.dto.AccountDto;
 import pl.lodz.p.ks.it.neighbourlyhelp.dto.RegisterAccountDto;
 import pl.lodz.p.ks.it.neighbourlyhelp.dto.request.AccountPersonalDetailsDto;
+import pl.lodz.p.ks.it.neighbourlyhelp.dto.request.PasswordChangeOtherRequestDto;
 import pl.lodz.p.ks.it.neighbourlyhelp.dto.request.PasswordChangeRequestDto;
 import pl.lodz.p.ks.it.neighbourlyhelp.dto.request.PasswordResetRequestDto;
 import pl.lodz.p.ks.it.neighbourlyhelp.endpoint.AccountEndpoint;
@@ -139,5 +140,11 @@ public class AccountController {
     @PutMapping("/user/{email}/reset")
     public void sendResetPasswordRequest(@NotNull @Email @PathVariable("email") @Valid String email) throws AppBaseException {
         accountEndpoint.sendResetPasswordRequest(email);
+    }
+
+    @PutMapping("/user/password")
+    @Secured("ROLE_ADMIN")
+    public void changeOtherPassword(@NotNull @Valid PasswordChangeOtherRequestDto passwordChangeOtherDto) throws AppBaseException {
+        accountEndpoint.changeOtherPassword(passwordChangeOtherDto);
     }
 }
