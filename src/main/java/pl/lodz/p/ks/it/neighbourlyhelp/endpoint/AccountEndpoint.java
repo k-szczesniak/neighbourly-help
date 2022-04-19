@@ -33,10 +33,10 @@ public interface AccountEndpoint {
     void updateValidAuth(String email, String ipAddress, Date authDate);
 
     @Secured("ROLE_ADMIN")
-    void blockAccount(String email) throws AppBaseException;
+    void blockAccount(String email, String ifMatch) throws AppBaseException;
 
     @Secured("ROLE_ADMIN")
-    void unblockAccount(String email) throws AppBaseException;
+    void unblockAccount(String email, String ifMatch) throws AppBaseException;
 
     @Secured({"ROLE_ADMIN", "ROLE_MODERATOR", "ROLE_CLIENT"})
     AccountDto getOwnAccountInfo();
@@ -45,11 +45,11 @@ public interface AccountEndpoint {
     AccountDto getAccountInfo(String email);
 
     @Secured({"ROLE_ADMIN", "ROLE_MODERATOR", "ROLE_CLIENT"})
-    void editOwnAccountDetails(AccountPersonalDetailsDto accountPersonalDetailsDto) throws AppBaseException;
+    void editOwnAccountDetails(AccountPersonalDetailsDto accountPersonalDetailsDto, String ifMatch) throws AppBaseException;
 
-    void editOtherAccountDetails(String email, AccountPersonalDetailsDto accountPersonalDetailsDto) throws AppBaseException;
+    void editOtherAccountDetails(String email, AccountPersonalDetailsDto accountPersonalDetailsDto, String ifMatch) throws AppBaseException;
 
-    void changePassword(PasswordChangeRequestDto passwordChangeDto) throws AppBaseException;
+    void changePassword(PasswordChangeRequestDto passwordChangeDto, String ifMatch) throws AppBaseException;
 
     void resetPassword(PasswordResetRequestDto passwordResetDto) throws AppBaseException;
 
@@ -61,5 +61,5 @@ public interface AccountEndpoint {
      */
     void sendResetPasswordRequest(String email) throws AppBaseException;
 
-    void changeOtherPassword(PasswordChangeOtherRequestDto passwordChangeOtherDto) throws AppBaseException;
+    void changeOtherPassword(PasswordChangeOtherRequestDto passwordChangeOtherDto, String ifMatch) throws AppBaseException;
 }

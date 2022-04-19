@@ -4,11 +4,13 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.MissingRequestHeaderException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 import pl.lodz.p.ks.it.neighbourlyhelp.exception.AppBaseException;
+import pl.lodz.p.ks.it.neighbourlyhelp.exception.AppRuntimeException;
 
 @ControllerAdvice
 public class ExceptionMapper extends ResponseEntityExceptionHandler {
@@ -21,6 +23,18 @@ public class ExceptionMapper extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler({Exception.class, RuntimeException.class})
     public final ResponseEntity<ErrorResponse> allExceptions(Exception ex, WebRequest request) {
+        ErrorResponse errorResponse = new ErrorResponse(ex.getClass().getSimpleName(), ex.getMessage());
+        return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(MissingRequestHeaderException.class)
+    public ResponseEntity<ErrorResponse> handleException(MissingRequestHeaderException ex) {
+        ErrorResponse errorResponse = new ErrorResponse(ex.getClass().getSimpleName(), ex.getMessage());
+        return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(AppRuntimeException.class)
+    public ResponseEntity<ErrorResponse> handleAppRuntimeException(AppRuntimeException ex, WebRequest request) {
         ErrorResponse errorResponse = new ErrorResponse(ex.getClass().getSimpleName(), ex.getMessage());
         return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
     }

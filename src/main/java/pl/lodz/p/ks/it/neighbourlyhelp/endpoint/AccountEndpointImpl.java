@@ -76,10 +76,10 @@ public class AccountEndpointImpl extends AbstractEndpoint implements AccountEndp
 
     @Override
     @Secured("ROLE_ADMIN")
-    public void blockAccount(String email) throws AppBaseException {
+    public void blockAccount(String email, String ifMatch) throws AppBaseException {
         Account account = accountService.getAccountByEmail(email);
         AccountDto accountIntegrity = Mappers.getMapper(IAccountMapper.class).toAccountDto(account);
-        if (!verifyIntegrity(accountIntegrity)) {
+        if (!verifyIntegrity(accountIntegrity, ifMatch)) {
             throw AppOptimisticLockException.optimisticLockException();
         }
         accountService.blockAccount(account);
@@ -87,10 +87,10 @@ public class AccountEndpointImpl extends AbstractEndpoint implements AccountEndp
 
     @Override
     @Secured("ROLE_ADMIN")
-    public void unblockAccount(String email) throws AppBaseException {
+    public void unblockAccount(String email, String ifMatch) throws AppBaseException {
         Account account = accountService.getAccountByEmail(email);
         AccountDto accountIntegrity = Mappers.getMapper(IAccountMapper.class).toAccountDto(account);
-        if (!verifyIntegrity(accountIntegrity)) {
+        if (!verifyIntegrity(accountIntegrity, ifMatch)) {
             throw AppOptimisticLockException.optimisticLockException();
         }
         accountService.unblockAccount(account);
@@ -112,10 +112,10 @@ public class AccountEndpointImpl extends AbstractEndpoint implements AccountEndp
 
     @Override
     @Secured({"ROLE_ADMIN", "ROLE_MODERATOR", "ROLE_CLIENT"})
-    public void editOwnAccountDetails(AccountPersonalDetailsDto accountPersonalDetailsDto) throws AppBaseException {
+    public void editOwnAccountDetails(AccountPersonalDetailsDto accountPersonalDetailsDto, String ifMatch) throws AppBaseException {
         Account editAccount = accountService.getExecutorAccount();
         AccountDto accountIntegrity = Mappers.getMapper(IAccountMapper.class).toAccountDto(editAccount);
-        if (!verifyIntegrity(accountIntegrity)) {
+        if (!verifyIntegrity(accountIntegrity, ifMatch)) {
             throw AppOptimisticLockException.optimisticLockException();
         }
         Mappers.getMapper(IAccountMapper.class).toAccount(accountPersonalDetailsDto, editAccount);
@@ -124,10 +124,10 @@ public class AccountEndpointImpl extends AbstractEndpoint implements AccountEndp
 
     @Override
     @Secured("ROLE_ADMIN")
-    public void editOtherAccountDetails(String email, AccountPersonalDetailsDto accountPersonalDetailsDto) throws AppBaseException {
+    public void editOtherAccountDetails(String email, AccountPersonalDetailsDto accountPersonalDetailsDto, String ifMatch) throws AppBaseException {
         Account editAccount = accountService.getAccountByEmail(email);
         AccountDto accountIntegrity = Mappers.getMapper(IAccountMapper.class).toAccountDto(editAccount);
-        if (!verifyIntegrity(accountIntegrity)) {
+        if (!verifyIntegrity(accountIntegrity, ifMatch)) {
             throw AppOptimisticLockException.optimisticLockException();
         }
         Mappers.getMapper(IAccountMapper.class).toAccount(accountPersonalDetailsDto, editAccount);
@@ -136,10 +136,10 @@ public class AccountEndpointImpl extends AbstractEndpoint implements AccountEndp
 
     @Override
     @Secured({"ROLE_ADMIN", "ROLE_MODERATOR", "ROLE_CLIENT"})
-    public void changePassword(PasswordChangeRequestDto passwordChangeDto) throws AppBaseException {
+    public void changePassword(PasswordChangeRequestDto passwordChangeDto, String ifMatch) throws AppBaseException {
         Account editAccount = accountService.getExecutorAccount();
         AccountDto accountIntegrity = Mappers.getMapper(IAccountMapper.class).toAccountDto(editAccount);
-        if (!verifyIntegrity(accountIntegrity)) {
+        if (!verifyIntegrity(accountIntegrity, ifMatch)) {
             throw AppOptimisticLockException.optimisticLockException();
         }
         accountService.changePassword(editAccount, passwordChangeDto);
@@ -160,10 +160,10 @@ public class AccountEndpointImpl extends AbstractEndpoint implements AccountEndp
     }
 
     @Override
-    public void changeOtherPassword(PasswordChangeOtherRequestDto passwordChangeOtherDto) throws AppBaseException {
+    public void changeOtherPassword(PasswordChangeOtherRequestDto passwordChangeOtherDto, String ifMatch) throws AppBaseException {
         Account editAccount = accountService.getAccountByEmail(passwordChangeOtherDto.getEmail());
         AccountDto accountIntegrity = Mappers.getMapper(IAccountMapper.class).toAccountDto(editAccount);
-        if (!verifyIntegrity(accountIntegrity)) {
+        if (!verifyIntegrity(accountIntegrity, ifMatch)) {
             throw AppOptimisticLockException.optimisticLockException();
         }
 

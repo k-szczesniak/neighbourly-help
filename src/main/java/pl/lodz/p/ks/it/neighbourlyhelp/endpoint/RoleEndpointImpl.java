@@ -27,10 +27,10 @@ public class RoleEndpointImpl extends AbstractEndpoint implements RoleEndpoint {
 
     @Override
     @Secured("ROLE_ADMIN")
-    public void revokeAccessLevel(String email, AccessLevel accessLevel) throws AppBaseException {
+    public void revokeAccessLevel(String email, AccessLevel accessLevel, String ifMatch) throws AppBaseException {
         Account editAccount = accountService.getAccountByEmail(email);
         RolesDto rolesIntegrity = mapToRolesDto(editAccount);
-        if(!verifyIntegrity(rolesIntegrity)) {
+        if(!verifyIntegrity(rolesIntegrity, ifMatch)) {
             throw AppOptimisticLockException.optimisticLockException();
         }
         roleService.revokeAccessLevel(editAccount, accessLevel);
@@ -38,10 +38,10 @@ public class RoleEndpointImpl extends AbstractEndpoint implements RoleEndpoint {
 
     @Override
     @Secured("ROLE_ADMIN")
-    public void grantAccessLevel(String email, AccessLevel accessLevel) throws AppBaseException {
+    public void grantAccessLevel(String email, AccessLevel accessLevel, String ifMatch) throws AppBaseException {
         Account editAccount = accountService.getAccountByEmail(email);
         RolesDto rolesIntegrity = mapToRolesDto(editAccount);
-        if(!verifyIntegrity(rolesIntegrity)) {
+        if(!verifyIntegrity(rolesIntegrity, ifMatch)) {
             throw AppOptimisticLockException.optimisticLockException();
         }
         roleService.grantAccessLevel(editAccount, accessLevel);

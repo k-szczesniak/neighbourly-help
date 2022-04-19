@@ -1,6 +1,5 @@
 package pl.lodz.p.ks.it.neighbourlyhelp.controller;
 
-import io.swagger.annotations.ApiImplicitParam;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
@@ -10,6 +9,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import pl.lodz.p.ks.it.neighbourlyhelp.consistency.MessageSigner;
@@ -23,6 +23,7 @@ import pl.lodz.p.ks.it.neighbourlyhelp.dto.request.PasswordResetRequestDto;
 import pl.lodz.p.ks.it.neighbourlyhelp.endpoint.AccountEndpoint;
 import pl.lodz.p.ks.it.neighbourlyhelp.endpoint.RoleEndpoint;
 import pl.lodz.p.ks.it.neighbourlyhelp.exception.AppBaseException;
+import pl.lodz.p.ks.it.neighbourlyhelp.exception.AppRuntimeException;
 import pl.lodz.p.ks.it.neighbourlyhelp.validator.ConfirmationToken;
 import pl.lodz.p.ks.it.neighbourlyhelp.validator.Email;
 
@@ -61,32 +62,32 @@ public class AccountController {
 
     @PatchMapping("/user/{email}/grant/{accessLevel}")
     @Secured("ROLE_ADMIN")
-    @ApiImplicitParam(name = "If-Match", value = "ETag", required = false, allowEmptyValue = true, paramType = "header", dataTypeClass = String.class)
-    public void grantAccessLevel(@NotNull @Email @PathVariable(name = "email") @Valid String email,
+    public void grantAccessLevel(@RequestHeader("If-Match") String ifMatch,
+                                 @NotNull @Email @PathVariable(name = "email") @Valid String email,
                                  @NotNull @PathVariable(name = "accessLevel") AccessLevel accessLevel) throws AppBaseException {
-        roleEndpoint.grantAccessLevel(email, accessLevel);
+        roleEndpoint.grantAccessLevel(email, accessLevel, ifMatch);
     }
 
     @PatchMapping("/user/{email}/revoke/{accessLevel}")
     @Secured("ROLE_ADMIN")
-    @ApiImplicitParam(name = "If-Match", value = "ETag", required = false, allowEmptyValue = true, paramType = "header", dataTypeClass = String.class)
-    public void revokeAccessLevel(@NotNull @Email @PathVariable(name = "email") @Valid String email,
+    public void revokeAccessLevel(@RequestHeader("If-Match") String ifMatch,
+                                  @NotNull @Email @PathVariable(name = "email") @Valid String email,
                                   @NotNull @PathVariable(name = "accessLevel") AccessLevel accessLevel) throws AppBaseException {
-        roleEndpoint.revokeAccessLevel(email, accessLevel);
+        roleEndpoint.revokeAccessLevel(email, accessLevel, ifMatch);
     }
 
     @PatchMapping("/{email}/block")
     @Secured("ROLE_ADMIN")
-    @ApiImplicitParam(name = "If-Match", value = "ETag", required = false, allowEmptyValue = true, paramType = "header", dataTypeClass = String.class)
-    public void blockAccount(@NotNull @Email @PathVariable("email") @Valid String email) throws AppBaseException {
-        accountEndpoint.blockAccount(email);
+    public void blockAccount(@RequestHeader("If-Match") String ifMatch,
+                             @NotNull @Email @PathVariable("email") @Valid String email) throws AppBaseException {
+        accountEndpoint.blockAccount(email, ifMatch);
     }
 
     @PatchMapping("/{email}/unblock")
     @Secured("ROLE_ADMIN")
-    @ApiImplicitParam(name = "If-Match", value = "ETag", required = false, allowEmptyValue = true, paramType = "header", dataTypeClass = String.class)
-    public void unblockAccount(@NotNull @Email @PathVariable("email") @Valid String email) throws AppBaseException {
-        accountEndpoint.unblockAccount(email);
+    public void unblockAccount(@RequestHeader("If-Match") String ifMatch,
+                               @NotNull @Email @PathVariable("email") @Valid String email) throws AppBaseException {
+        accountEndpoint.unblockAccount(email, ifMatch);
     }
 
     @GetMapping("/user")
@@ -109,30 +110,30 @@ public class AccountController {
 
     @PutMapping("/edit")
     @Secured({"ROLE_ADMIN", "ROLE_MODERATOR", "ROLE_CLIENT"})
-    @ApiImplicitParam(name = "If-Match", value = "ETag", required = false, allowEmptyValue = true, paramType = "header", dataTypeClass = String.class)
-    public void editOwnAccountDetails(@NotNull @Valid @RequestBody AccountPersonalDetailsDto accountPersonalDetailsDto)
+    public void editOwnAccountDetails(@RequestHeader("If-Match") String ifMatch,
+                                      @NotNull @Valid @RequestBody AccountPersonalDetailsDto accountPersonalDetailsDto)
             throws AppBaseException {
-        accountEndpoint.editOwnAccountDetails(accountPersonalDetailsDto);
+        accountEndpoint.editOwnAccountDetails(accountPersonalDetailsDto, ifMatch);
     }
 
     @PutMapping("/edit/{email}")
     @Secured("ROLE_ADMIN")
-    @ApiImplicitParam(name = "If-Match", value = "ETag", required = false, allowEmptyValue = true, paramType = "header", dataTypeClass = String.class)
-    public void editOtherAccountDetails(@NotNull @Email @PathVariable("email") @Valid String email,
+    public void editOtherAccountDetails(@RequestHeader("If-Match") String ifMatch,
+                                        @NotNull @Email @PathVariable("email") @Valid String email,
                                         @NotNull @Valid @RequestBody AccountPersonalDetailsDto accountPersonalDetailsDto)
             throws AppBaseException {
-        accountEndpoint.editOtherAccountDetails(email, accountPersonalDetailsDto);
+        accountEndpoint.editOtherAccountDetails(email, accountPersonalDetailsDto, ifMatch);
     }
 
     @PutMapping("/self/password")
     @Secured({"ROLE_ADMIN", "ROLE_MODERATOR", "ROLE_CLIENT"})
-    @ApiImplicitParam(name = "If-Match", value = "ETag", required = false, allowEmptyValue = true, paramType = "header", dataTypeClass = String.class)
-    public void changePassword(@NotNull @Valid PasswordChangeRequestDto passwordChangeDto) throws AppBaseException {
-        accountEndpoint.changePassword(passwordChangeDto);
+    public void changePassword(@RequestHeader("If-Match") String ifMatch,
+                               @NotNull @Valid @RequestBody PasswordChangeRequestDto passwordChangeDto) throws AppBaseException {
+        accountEndpoint.changePassword(passwordChangeDto, ifMatch);
     }
 
     @PostMapping(value = "/user/reset")
-    public void resetPassword(@NotNull @Valid PasswordResetRequestDto passwordResetDto) throws AppBaseException {
+    public void resetPassword(@NotNull @Valid @RequestBody PasswordResetRequestDto passwordResetDto) throws AppBaseException {
         accountEndpoint.resetPassword(passwordResetDto);
     }
 
@@ -143,7 +144,9 @@ public class AccountController {
 
     @PutMapping("/user/password")
     @Secured("ROLE_ADMIN")
-    public void changeOtherPassword(@NotNull @Valid PasswordChangeOtherRequestDto passwordChangeOtherDto) throws AppBaseException {
-        accountEndpoint.changeOtherPassword(passwordChangeOtherDto);
+    public void changeOtherPassword(@RequestHeader("If-Match") String ifMatch,
+                                    @NotNull @Valid @RequestBody PasswordChangeOtherRequestDto passwordChangeOtherDto)
+            throws AppBaseException, AppRuntimeException {
+        accountEndpoint.changeOtherPassword(passwordChangeOtherDto, ifMatch);
     }
 }
