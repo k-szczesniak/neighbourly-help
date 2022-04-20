@@ -4,6 +4,9 @@ import org.springframework.security.access.annotation.Secured;
 import pl.lodz.p.ks.it.neighbourlyhelp.dto.AccountDto;
 import pl.lodz.p.ks.it.neighbourlyhelp.dto.RegisterAccountDto;
 import pl.lodz.p.ks.it.neighbourlyhelp.dto.request.AccountPersonalDetailsDto;
+import pl.lodz.p.ks.it.neighbourlyhelp.dto.request.PasswordChangeOtherRequestDto;
+import pl.lodz.p.ks.it.neighbourlyhelp.dto.request.PasswordChangeRequestDto;
+import pl.lodz.p.ks.it.neighbourlyhelp.dto.request.PasswordResetRequestDto;
 import pl.lodz.p.ks.it.neighbourlyhelp.exception.AppBaseException;
 
 import javax.annotation.security.PermitAll;
@@ -30,10 +33,10 @@ public interface AccountEndpoint {
     void updateValidAuth(String email, String ipAddress, Date authDate);
 
     @Secured("ROLE_ADMIN")
-    void blockAccount(String email) throws AppBaseException;
+    void blockAccount(String email, String ifMatch) throws AppBaseException;
 
     @Secured("ROLE_ADMIN")
-    void unblockAccount(String email) throws AppBaseException;
+    void unblockAccount(String email, String ifMatch) throws AppBaseException;
 
     @Secured({"ROLE_ADMIN", "ROLE_MODERATOR", "ROLE_CLIENT"})
     AccountDto getOwnAccountInfo();
@@ -42,7 +45,21 @@ public interface AccountEndpoint {
     AccountDto getAccountInfo(String email);
 
     @Secured({"ROLE_ADMIN", "ROLE_MODERATOR", "ROLE_CLIENT"})
-    void editOwnAccountDetails(AccountPersonalDetailsDto accountPersonalDetailsDto) throws AppBaseException;
+    void editOwnAccountDetails(AccountPersonalDetailsDto accountPersonalDetailsDto, String ifMatch) throws AppBaseException;
 
-    void editOtherAccountDetails(String email, AccountPersonalDetailsDto accountPersonalDetailsDto) throws AppBaseException;
+    void editOtherAccountDetails(String email, AccountPersonalDetailsDto accountPersonalDetailsDto, String ifMatch) throws AppBaseException;
+
+    void changePassword(PasswordChangeRequestDto passwordChangeDto, String ifMatch) throws AppBaseException;
+
+    void resetPassword(PasswordResetRequestDto passwordResetDto) throws AppBaseException;
+
+    /**
+     * Send reset password token for account with given email
+     *
+     * @param email address where reset password message will be sent
+     * @throws AppBaseException when there will be problems with sent resetting password message
+     */
+    void sendResetPasswordRequest(String email) throws AppBaseException;
+
+    void changeOtherPassword(PasswordChangeOtherRequestDto passwordChangeOtherDto, String ifMatch) throws AppBaseException;
 }

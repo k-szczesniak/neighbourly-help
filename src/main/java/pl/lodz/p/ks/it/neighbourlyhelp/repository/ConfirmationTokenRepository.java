@@ -5,15 +5,20 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
+import pl.lodz.p.ks.it.neighbourlyhelp.domain.user.Account;
 import pl.lodz.p.ks.it.neighbourlyhelp.entities.ConfirmationToken;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 @Repository
 public interface ConfirmationTokenRepository extends JpaRepository<ConfirmationToken, Long> {
 
     Optional<ConfirmationToken> findByToken(String token);
+
+    @Query("SELECT p FROM ConfirmationToken p WHERE (p.account = :account AND p.tokenType = 2 AND p.used = false) ORDER BY p.creationDate ASC")
+    List<ConfirmationToken> findResetTokenByAccount(Account account);
 
     @Transactional
     @Modifying

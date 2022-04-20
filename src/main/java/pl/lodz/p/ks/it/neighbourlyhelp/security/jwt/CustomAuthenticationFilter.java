@@ -3,7 +3,6 @@ package pl.lodz.p.ks.it.neighbourlyhelp.security.jwt;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.Jwts;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.java.Log;
 import org.springframework.http.MediaType;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -12,6 +11,7 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import pl.lodz.p.ks.it.neighbourlyhelp.dto.LoginCredentials;
 import pl.lodz.p.ks.it.neighbourlyhelp.dto.response.AuthTokenResponseDto;
+import pl.lodz.p.ks.it.neighbourlyhelp.exception.AppRuntimeException;
 
 import javax.crypto.SecretKey;
 import javax.servlet.FilterChain;
@@ -21,7 +21,6 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Date;
 
-@Log
 @RequiredArgsConstructor
 public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 
@@ -40,8 +39,7 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
 
             return authenticationManager.authenticate(authentication);
         } catch (IOException e) {
-            log.info("Exception occurred: " + e.getClass());
-            throw new RuntimeException(e);
+            throw new AppRuntimeException(e.getMessage());
         }
     }
 

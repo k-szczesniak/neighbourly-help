@@ -1,9 +1,12 @@
 package pl.lodz.p.ks.it.neighbourlyhelp.exception;
 
-public class AccountException extends RuntimeException {
+public class AccountException extends AppBaseException {
     private static final String ACCOUNT_EMAIL_INVALID = "exception.account.email_invalid";
     private static final String ACCOUNT_CONTACT_NUMBER = "exception.account.contact_number";
     private static final String ACCOUNT_ALREADY_ACTIVATED = "exception.account_already_activated.already_activated";
+    private static final String ACCOUNT_PASSWORDS_DONT_MATCH = "exception.passwords_dont_match.passwords_dont_match";
+    private static final String ACCOUNT_NOT_CONFIRMED = "exception.account_not_confirmed.account_not_confirmed";
+    private static final String ACCOUNT_LOCKED = "exception.account_locked.account_locked";
 
     public AccountException(String message) {
         super(message);
@@ -36,5 +39,32 @@ public class AccountException extends RuntimeException {
      */
     public static AccountException alreadyActivated() {
         return new AccountException(ACCOUNT_ALREADY_ACTIVATED);
+    }
+
+    /**
+     * Tworzy wyjątek reprezentujący niepowodzenie operacji ze względu na to, że podane nowe hasła nie są identyczne.
+     *
+     * @return wyjątek AccountException
+     */
+    public static AccountException passwordsDontMatch() {
+        return new AccountException(ACCOUNT_PASSWORDS_DONT_MATCH);
+    }
+
+    /**
+     * Tworzy wyjątek reprezentujący niepowodzenie operacji ze względu na to, że konto użytkownika nie jest potwierdzone.
+     *
+     * @return wyjątek AccountException
+     */
+    public static AccountException accountNotConfirmed() {
+        return new AccountException(ACCOUNT_NOT_CONFIRMED);
+    }
+
+    /**
+     * Tworzy wyjątek reprezentujący niepowodzenie operacji ze względu na to, że konto użytkownika jest zablokowane.
+     *
+     * @return wyjątek AccountException
+     */
+    public static AccountException accountLocked() {
+        return new AccountException(ACCOUNT_LOCKED);
     }
 }

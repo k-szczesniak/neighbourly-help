@@ -10,6 +10,9 @@ import pl.lodz.p.ks.it.neighbourlyhelp.domain.user.Account;
 import pl.lodz.p.ks.it.neighbourlyhelp.dto.AccountDto;
 import pl.lodz.p.ks.it.neighbourlyhelp.dto.RegisterAccountDto;
 import pl.lodz.p.ks.it.neighbourlyhelp.dto.request.AccountPersonalDetailsDto;
+import pl.lodz.p.ks.it.neighbourlyhelp.dto.request.PasswordChangeOtherRequestDto;
+import pl.lodz.p.ks.it.neighbourlyhelp.dto.request.PasswordChangeRequestDto;
+import pl.lodz.p.ks.it.neighbourlyhelp.dto.request.PasswordResetRequestDto;
 import pl.lodz.p.ks.it.neighbourlyhelp.exception.AppBaseException;
 import pl.lodz.p.ks.it.neighbourlyhelp.exception.AppOptimisticLockException;
 import pl.lodz.p.ks.it.neighbourlyhelp.mapper.IAccountMapper;
@@ -73,10 +76,10 @@ public class AccountEndpointImpl extends AbstractEndpoint implements AccountEndp
 
     @Override
     @Secured("ROLE_ADMIN")
-    public void blockAccount(String email) throws AppBaseException {
+    public void blockAccount(String email, String ifMatch) throws AppBaseException {
         Account account = accountService.getAccountByEmail(email);
         AccountDto accountIntegrity = Mappers.getMapper(IAccountMapper.class).toAccountDto(account);
-        if (!verifyIntegrity(accountIntegrity)) {
+        if (!verifyIntegrity(accountIntegrity, ifMatch)) {
             throw AppOptimisticLockException.optimisticLockException();
         }
         accountService.blockAccount(account);
@@ -84,10 +87,10 @@ public class AccountEndpointImpl extends AbstractEndpoint implements AccountEndp
 
     @Override
     @Secured("ROLE_ADMIN")
-    public void unblockAccount(String email) throws AppBaseException {
+    public void unblockAccount(String email, String ifMatch) throws AppBaseException {
         Account account = accountService.getAccountByEmail(email);
         AccountDto accountIntegrity = Mappers.getMapper(IAccountMapper.class).toAccountDto(account);
-        if (!verifyIntegrity(accountIntegrity)) {
+        if (!verifyIntegrity(accountIntegrity, ifMatch)) {
             throw AppOptimisticLockException.optimisticLockException();
         }
         accountService.unblockAccount(account);
@@ -109,10 +112,10 @@ public class AccountEndpointImpl extends AbstractEndpoint implements AccountEndp
 
     @Override
     @Secured({"ROLE_ADMIN", "ROLE_MODERATOR", "ROLE_CLIENT"})
-    public void editOwnAccountDetails(AccountPersonalDetailsDto accountPersonalDetailsDto) throws AppBaseException {
+    public void editOwnAccountDetails(AccountPersonalDetailsDto accountPersonalDetailsDto, String ifMatch) throws AppBaseException {
         Account editAccount = accountService.getExecutorAccount();
         AccountDto accountIntegrity = Mappers.getMapper(IAccountMapper.class).toAccountDto(editAccount);
-        if (!verifyIntegrity(accountIntegrity)) {
+        if (!verifyIntegrity(accountIntegrity, ifMatch)) {
             throw AppOptimisticLockException.optimisticLockException();
         }
         Mappers.getMapper(IAccountMapper.class).toAccount(accountPersonalDetailsDto, editAccount);
@@ -121,13 +124,49 @@ public class AccountEndpointImpl extends AbstractEndpoint implements AccountEndp
 
     @Override
     @Secured("ROLE_ADMIN")
-    public void editOtherAccountDetails(String email, AccountPersonalDetailsDto accountPersonalDetailsDto) throws AppBaseException {
+    public void editOtherAccountDetails(String email, AccountPersonalDetailsDto accountPersonalDetailsDto, String ifMatch) throws AppBaseException {
         Account editAccount = accountService.getAccountByEmail(email);
         AccountDto accountIntegrity = Mappers.getMapper(IAccountMapper.class).toAccountDto(editAccount);
-        if (!verifyIntegrity(accountIntegrity)) {
+        if (!verifyIntegrity(accountIntegrity, ifMatch)) {
             throw AppOptimisticLockException.optimisticLockException();
         }
         Mappers.getMapper(IAccountMapper.class).toAccount(accountPersonalDetailsDto, editAccount);
         accountService.editAccountDetails(editAccount);
+    }
+
+    @Override
+    @Secured({"ROLE_ADMIN", "ROLE_MODERATOR", "ROLE_CLIENT"})
+    public void changePassword(PasswordChangeRequestDto passwordChangeDto, String ifMatch) throws AppBaseException {
+        Account editAccount = accountService.getExecutorAccount();
+        AccountDto accountIntegrity = Mappers.getMapper(IAccountMapper.class).toAccountDto(editAccount);
+        if (!verifyIntegrity(accountIntegrity, ifMatch)) {
+            throw AppOptimisticLockException.optimisticLockException();
+        }
+        accountService.changePassword(editAccount, passwordChangeDto);
+    }
+
+    @Override
+    @PermitAll
+    public void resetPassword(PasswordResetRequestDto passwordResetDto) throws AppBaseException {
+        String password = passwordResetDto.getPassword();
+        String token = passwordResetDto.getResetToken();
+        accountService.resetPassword(password, token);
+    }
+
+    @Override
+    @PermitAll
+    public void sendResetPasswordRequest(String email) throws AppBaseException {
+        accountService.sendResetPasswordRequest(email);
+    }
+
+    @Override
+    public void changeOtherPassword(PasswordChangeOtherRequestDto passwordChangeOtherDto, String ifMatch) throws AppBaseException {
+        Account editAccount = accountService.getAccountByEmail(passwordChangeOtherDto.getEmail());
+        AccountDto accountIntegrity = Mappers.getMapper(IAccountMapper.class).toAccountDto(editAccount);
+        if (!verifyIntegrity(accountIntegrity, ifMatch)) {
+            throw AppOptimisticLockException.optimisticLockException();
+        }
+
+        accountService.changeOtherPassword(editAccount, passwordChangeOtherDto.getGivenPassword());
     }
 }

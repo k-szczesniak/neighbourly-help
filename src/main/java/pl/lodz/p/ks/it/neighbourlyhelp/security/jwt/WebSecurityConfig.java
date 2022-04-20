@@ -11,6 +11,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import pl.lodz.p.ks.it.neighbourlyhelp.exception.handler.FilterChainExceptionHandler;
 import pl.lodz.p.ks.it.neighbourlyhelp.service.UserDetailsServiceImpl;
 
 import javax.crypto.SecretKey;
@@ -23,6 +24,8 @@ import javax.crypto.SecretKey;
         securedEnabled = true,
         jsr250Enabled = true)
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
+
+    private final FilterChainExceptionHandler filterChainExceptionHandler;
 
     private final UserDetailsServiceImpl userService;
 
@@ -68,7 +71,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 //                .anyRequest().authenticated()
                 .and()
                 .addFilter(customAuthenticationFilter)
-                .addFilterAfter(new CustomAuthorizationFilter(jwtUtil, tokenVerifier), CustomAuthenticationFilter.class);
+                .addFilterAfter(new CustomAuthorizationFilter(jwtUtil, tokenVerifier), CustomAuthenticationFilter.class)
+                .addFilterBefore(filterChainExceptionHandler, CustomAuthenticationFilter.class);
     }
 
     @Override

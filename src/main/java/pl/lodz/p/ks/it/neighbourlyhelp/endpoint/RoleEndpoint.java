@@ -11,18 +11,20 @@ public interface RoleEndpoint {
      *
      * @param email      identyfikator użytkownika
      * @param accessLevel poziom dostępu do odebrania
+     * @param ifMatch     value of etag
      * @throws AppBaseException gdy nie udało się zaktualizować danych
      */
     @Secured("ROLE_ADMIN")
-    void revokeAccessLevel(String email, AccessLevel accessLevel) throws AppBaseException;
+    void revokeAccessLevel(String email, AccessLevel accessLevel, String ifMatch) throws AppBaseException;
 
     /**
      * Przyznaje uprawnienia użytkownikowi.
      *
      * @param email      identyfikator użytkownika
      * @param accessLevel poziom dostępu do przyznania
+     * @param ifMatch     value of etag
      * @throws AppBaseException gdy nie udało się zaktualizować danych
      */
     @Secured("ROLE_ADMIN")
-    void grantAccessLevel(String email, AccessLevel accessLevel) throws AppBaseException;
+    void grantAccessLevel(String email, AccessLevel accessLevel, String ifMatch) throws AppBaseException;
 }

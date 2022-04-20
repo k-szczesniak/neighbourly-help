@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import pl.lodz.p.ks.it.neighbourlyhelp.domain.user.Account;
+import pl.lodz.p.ks.it.neighbourlyhelp.dto.request.PasswordChangeRequestDto;
 import pl.lodz.p.ks.it.neighbourlyhelp.entities.ClientData;
 import pl.lodz.p.ks.it.neighbourlyhelp.entities.ConfirmationToken;
 import pl.lodz.p.ks.it.neighbourlyhelp.entities.TokenType;
@@ -19,7 +20,6 @@ import pl.lodz.p.ks.it.neighbourlyhelp.exception.AppBaseException;
 import pl.lodz.p.ks.it.neighbourlyhelp.exception.ConfirmationTokenException;
 import pl.lodz.p.ks.it.neighbourlyhelp.exception.NotFoundException;
 import pl.lodz.p.ks.it.neighbourlyhelp.repository.AccountRepository;
-import pl.lodz.p.ks.it.neighbourlyhelp.repository.ConfirmationTokenRepository;
 import pl.lodz.p.ks.it.neighbourlyhelp.utils.email.EmailService;
 
 import javax.annotation.security.PermitAll;
@@ -36,9 +36,9 @@ public class AccountService {
 
     private final AccountRepository accountRepository;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
-    private final ConfirmationTokenRepository confirmationTokenRepository;
     private final EmailService emailService;
     private final UserDetailsServiceImpl userService;
+    private final ConfirmationTokenService tokenService;
 
     @Value("${incorrectLoginAttemptsLimit}")
     private String INCORRECT_LOGIN_ATTEMPTS_LIMIT;
@@ -55,12 +55,12 @@ public class AccountService {
 
     @PermitAll
     public void register(Account account) throws AppBaseException {
-        accountRepository.findByEmail(account.getEmail()).ifPresent(userWithEmailExist -> {
+        if (accountRepository.findByEmail(account.getEmail()).isPresent()) {
             throw AccountException.emailExists();
-        });
-        accountRepository.findByContactNumber(account.getContactNumber()).ifPresent(userWithEmailExist -> {
+        }
+        if (accountRepository.findByContactNumber(account.getContactNumber()).isPresent()) {
             throw AccountException.contactNumberException();
-        });
+        }
 
         String encodedPassword = bCryptPasswordEncoder.encode(account.getPassword());
         account.setPassword(encodedPassword);
@@ -85,14 +85,14 @@ public class AccountService {
 
     @PermitAll
     public void confirmToken(String token) throws AppBaseException {
-        ConfirmationToken confirmationToken = confirmationTokenRepository.findByToken(token)
+        ConfirmationToken confirmationToken = tokenService.getConfirmationToken(token)
                 .orElseThrow(NotFoundException::confirmationTokenNotFound);
 
         if (confirmationToken.getTokenType() != TokenType.ACCOUNT_ACTIVATION) {
-            throw ConfirmationTokenException.codeInvalid();
+            throw ConfirmationTokenException.tokenInvalid();
         }
         if (confirmationToken.isUsed()) {
-            throw ConfirmationTokenException.codeUsed();
+            throw ConfirmationTokenException.tokenUsed();
         }
         Account account = confirmationToken.getAccount();
         if (account.isEnabled()) {
@@ -124,7 +124,7 @@ public class AccountService {
 
         confirmationToken.setConfirmedAt(LocalDateTime.now());
 
-        confirmationTokenRepository.save(confirmationToken);
+        tokenService.saveConfirmationToken(confirmationToken);
         accountRepository.save(account);
         emailService.sendActivationSuccessEmail(account);
     }
@@ -181,7 +181,74 @@ public class AccountService {
         accountRepository.saveAndFlush(account);
     }
 
+    @Secured({"ROLE_ADMIN", "ROLE_MODERATOR", "ROLE_CLIENT"})
+    public void changePassword(Account account, PasswordChangeRequestDto passwordChangeDto) throws AppBaseException {
+        if (!bCryptPasswordEncoder.matches(passwordChangeDto.getOldPassword(), account.getPassword())) {
+            throw AccountException.passwordsDontMatch();
+        }
+
+        changePassword(account, passwordChangeDto.getNewPassword());
+    }
+
+    @PermitAll
+    public void resetPassword(String password, String token) throws AppBaseException {
+        ConfirmationToken resetToken = tokenService.getConfirmationToken(token)
+                .orElseThrow(NotFoundException::confirmationTokenNotFound);
+        Account account = getAccountByEmail(resetToken.getAccount().getEmail());
+
+        if (!account.isEnabled()) {
+            throw AccountException.accountNotConfirmed();
+        }
+        if (!account.isAccountNonLocked()) {
+            throw AccountException.accountLocked();
+        }
+        if (!resetToken.getTokenType().equals(TokenType.PASSWORD_RESET)) {
+            throw ConfirmationTokenException.tokenInvalid();
+        }
+        if (resetToken.isUsed()) {
+            throw ConfirmationTokenException.tokenUsed();
+        }
+
+        LocalDateTime expirationDate = resetToken.getExpiresAt();
+        if (expirationDate.isBefore(LocalDateTime.now())) {
+            throw ConfirmationTokenException.tokenExpired();
+        }
+
+        resetToken.setUsed(true);
+        resetToken.setModifiedBy(account);
+        tokenService.saveConfirmationToken(resetToken);
+        changePassword(account, password);
+    }
+
+    @PermitAll
+    public void sendResetPasswordRequest(String email) throws AppBaseException {
+        Account account = getAccountByEmail(email);
+
+        if (!account.isEnabled()) {
+            throw AccountException.accountNotConfirmed();
+        }
+        if (!account.isAccountNonLocked()) {
+            throw AccountException.accountLocked();
+        }
+
+        tokenService.sendResetPasswordRequest(account);
+    }
+
+    @Secured("ROLE_ADMIN")
+    public void changeOtherPassword(Account editAccount, String givenPassword) throws AppBaseException {
+        tokenService.sendResetPasswordRequest(editAccount);
+        changePassword(editAccount, givenPassword);
+    }
+
     public Account getExecutorAccount() {
         return getAccountByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
+    }
+
+    private void changePassword(Account account, String newPassword) {
+        String encodedPassword = bCryptPasswordEncoder.encode(newPassword);
+        account.setPassword(encodedPassword);
+        account.setModifiedBy(getExecutorAccount());
+
+        accountRepository.saveAndFlush(account);
     }
 }
