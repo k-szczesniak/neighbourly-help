@@ -22,6 +22,7 @@ import pl.lodz.p.ks.it.neighbourlyhelp.dto.request.PasswordChangeRequestDto;
 import pl.lodz.p.ks.it.neighbourlyhelp.dto.request.PasswordResetRequestDto;
 import pl.lodz.p.ks.it.neighbourlyhelp.endpoint.AccountEndpoint;
 import pl.lodz.p.ks.it.neighbourlyhelp.endpoint.RoleEndpoint;
+import pl.lodz.p.ks.it.neighbourlyhelp.entities.ThemeColor;
 import pl.lodz.p.ks.it.neighbourlyhelp.exception.AppBaseException;
 import pl.lodz.p.ks.it.neighbourlyhelp.exception.AppRuntimeException;
 import pl.lodz.p.ks.it.neighbourlyhelp.validator.ConfirmationToken;
@@ -151,10 +152,17 @@ public class AccountController {
         accountEndpoint.changeOtherPassword(passwordChangeOtherDto, ifMatch);
     }
 
-    @PutMapping("/self/edit/language/{lang}")
+    @PatchMapping("/self/edit/language/{lang}")
     @Secured({"ROLE_ADMIN", "ROLE_MODERATOR", "ROLE_CLIENT"})
     public void editOwnLanguage(@RequestHeader("If-Match") String ifMatch,
                                 @NotNull @Language @PathVariable("lang") @Valid String language) throws AppBaseException {
         accountEndpoint.editOwnLanguage(language, ifMatch);
+    }
+
+    @PatchMapping("/theme/{themeColor}")
+    @Secured({"ROLE_ADMIN", "ROLE_MODERATOR", "ROLE_CLIENT"})
+    public void changeThemeColor(@RequestHeader("If-Match") String ifMatch,
+                                 @NotNull @PathVariable("themeColor") ThemeColor themeColor) throws AppBaseException {
+        accountEndpoint.changeThemeColor(themeColor, ifMatch);
     }
 }

@@ -7,6 +7,7 @@ public class AccountException extends AppBaseException {
     private static final String ACCOUNT_PASSWORDS_DONT_MATCH = "exception.passwords_dont_match.passwords_dont_match";
     private static final String ACCOUNT_NOT_CONFIRMED = "exception.account_not_confirmed.account_not_confirmed";
     private static final String ACCOUNT_LOCKED = "exception.account_locked.account_locked";
+    private static final String ACCOUNT_THEME_ALREADY_SET = "exception.account.theme_already_set";
 
     public AccountException(String message) {
         super(message);
@@ -66,5 +67,14 @@ public class AccountException extends AppBaseException {
      */
     public static AccountException accountLocked() {
         return new AccountException(ACCOUNT_LOCKED);
+    }
+
+    /**
+     * Tworzy wyjątek reprezentujący niepowodzenie zmiany koloru szablonu, ze względu, że zmiana już istnieje.
+     *
+     * @return wyjątek AccountException
+     */
+    public static AccountException themeAlreadySet() {
+        return new AccountException(ACCOUNT_THEME_ALREADY_SET);
     }
 }

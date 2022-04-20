@@ -7,6 +7,7 @@ import pl.lodz.p.ks.it.neighbourlyhelp.dto.request.AccountPersonalDetailsDto;
 import pl.lodz.p.ks.it.neighbourlyhelp.dto.request.PasswordChangeOtherRequestDto;
 import pl.lodz.p.ks.it.neighbourlyhelp.dto.request.PasswordChangeRequestDto;
 import pl.lodz.p.ks.it.neighbourlyhelp.dto.request.PasswordResetRequestDto;
+import pl.lodz.p.ks.it.neighbourlyhelp.entities.ThemeColor;
 import pl.lodz.p.ks.it.neighbourlyhelp.exception.AppBaseException;
 
 import javax.annotation.security.PermitAll;
@@ -64,4 +65,6 @@ public interface AccountEndpoint {
     void changeOtherPassword(PasswordChangeOtherRequestDto passwordChangeOtherDto, String ifMatch) throws AppBaseException;
 
     void editOwnLanguage(String language, String ifMatch) throws AppBaseException;
+
+    void changeThemeColor(ThemeColor themeColor, String ifMatch) throws AppBaseException;
 }

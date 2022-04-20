@@ -13,6 +13,7 @@ import pl.lodz.p.ks.it.neighbourlyhelp.dto.request.AccountPersonalDetailsDto;
 import pl.lodz.p.ks.it.neighbourlyhelp.dto.request.PasswordChangeOtherRequestDto;
 import pl.lodz.p.ks.it.neighbourlyhelp.dto.request.PasswordChangeRequestDto;
 import pl.lodz.p.ks.it.neighbourlyhelp.dto.request.PasswordResetRequestDto;
+import pl.lodz.p.ks.it.neighbourlyhelp.entities.ThemeColor;
 import pl.lodz.p.ks.it.neighbourlyhelp.exception.AppBaseException;
 import pl.lodz.p.ks.it.neighbourlyhelp.exception.AppOptimisticLockException;
 import pl.lodz.p.ks.it.neighbourlyhelp.mapper.IAccountMapper;
@@ -180,5 +181,17 @@ public class AccountEndpointImpl extends AbstractEndpoint implements AccountEndp
         }
 
         accountService.changeAccountLanguage(editAccount, language);
+    }
+
+    @Override
+    @Secured({"ROLE_ADMIN", "ROLE_MODERATOR", "ROLE_CLIENT"})
+    public void changeThemeColor(ThemeColor themeColor, String ifMatch) throws AppBaseException {
+        Account editAccount = accountService.getExecutorAccount();
+        AccountDto accountIntegrity = Mappers.getMapper(IAccountMapper.class).toAccountDto(editAccount);
+        if (!verifyIntegrity(accountIntegrity, ifMatch)) {
+            throw AppOptimisticLockException.optimisticLockException();
+        }
+
+        accountService.changeThemeColor(editAccount, themeColor);
     }
 }

@@ -14,6 +14,7 @@ import pl.lodz.p.ks.it.neighbourlyhelp.domain.user.Account;
 import pl.lodz.p.ks.it.neighbourlyhelp.dto.request.PasswordChangeRequestDto;
 import pl.lodz.p.ks.it.neighbourlyhelp.entities.ClientData;
 import pl.lodz.p.ks.it.neighbourlyhelp.entities.ConfirmationToken;
+import pl.lodz.p.ks.it.neighbourlyhelp.entities.ThemeColor;
 import pl.lodz.p.ks.it.neighbourlyhelp.entities.TokenType;
 import pl.lodz.p.ks.it.neighbourlyhelp.exception.AccountException;
 import pl.lodz.p.ks.it.neighbourlyhelp.exception.AppBaseException;
@@ -243,6 +244,17 @@ public class AccountService {
     @Secured({"ROLE_ADMIN", "ROLE_MODERATOR", "ROLE_CLIENT"})
     public void changeAccountLanguage(Account account, String language) {
         account.setLanguage(language);
+        account.setModifiedBy(account);
+
+        accountRepository.saveAndFlush(account);
+    }
+
+    public void changeThemeColor(Account account, ThemeColor themeColor) throws AppBaseException {
+        if (account.getThemeColor().equals(themeColor)) {
+            throw AccountException.themeAlreadySet();
+        }
+
+        account.setThemeColor(themeColor);
         account.setModifiedBy(account);
 
         accountRepository.saveAndFlush(account);

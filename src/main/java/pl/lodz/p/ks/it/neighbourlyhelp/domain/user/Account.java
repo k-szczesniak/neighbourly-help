@@ -10,6 +10,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import pl.lodz.p.ks.it.neighbourlyhelp.entities.ConfirmationToken;
 import pl.lodz.p.ks.it.neighbourlyhelp.entities.Role;
+import pl.lodz.p.ks.it.neighbourlyhelp.entities.ThemeColor;
 import pl.lodz.p.ks.it.neighbourlyhelp.utils.common.AbstractEntity;
 import pl.lodz.p.ks.it.neighbourlyhelp.validator.ContactNumber;
 import pl.lodz.p.ks.it.neighbourlyhelp.validator.Email;
@@ -18,9 +19,12 @@ import pl.lodz.p.ks.it.neighbourlyhelp.validator.Language;
 import pl.lodz.p.ks.it.neighbourlyhelp.validator.Lastname;
 import pl.lodz.p.ks.it.neighbourlyhelp.validator.Password;
 
+import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -139,6 +143,12 @@ public class Account extends AbstractEntity implements UserDetails {
     @Setter
     @Column(name = "last_failed_login_ip_address")
     private String lastFailedLoginIpAddress;
+
+    @Setter
+    @Column(name = "theme_color", nullable = false)
+    @Basic(optional = false)
+    @Enumerated(EnumType.STRING)
+    private ThemeColor themeColor = ThemeColor.LIGHT;
 
     @Setter
     @OneToMany(cascade = {CascadeType.REMOVE, CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH}, mappedBy = "account", fetch = FetchType.EAGER) //TODO: fetchType changed to EAGER
