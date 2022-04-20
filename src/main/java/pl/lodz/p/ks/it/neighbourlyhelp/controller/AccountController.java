@@ -16,6 +16,7 @@ import pl.lodz.p.ks.it.neighbourlyhelp.consistency.MessageSigner;
 import pl.lodz.p.ks.it.neighbourlyhelp.domain.user.AccessLevel;
 import pl.lodz.p.ks.it.neighbourlyhelp.dto.AccountDto;
 import pl.lodz.p.ks.it.neighbourlyhelp.dto.RegisterAccountDto;
+import pl.lodz.p.ks.it.neighbourlyhelp.dto.RolesDto;
 import pl.lodz.p.ks.it.neighbourlyhelp.dto.request.AccountPersonalDetailsDto;
 import pl.lodz.p.ks.it.neighbourlyhelp.dto.request.PasswordChangeOtherRequestDto;
 import pl.lodz.p.ks.it.neighbourlyhelp.dto.request.PasswordChangeRequestDto;
@@ -164,5 +165,15 @@ public class AccountController {
     public void changeThemeColor(@RequestHeader("If-Match") String ifMatch,
                                  @NotNull @PathVariable("themeColor") ThemeColor themeColor) throws AppBaseException {
         accountEndpoint.changeThemeColor(themeColor, ifMatch);
+    }
+
+    @GetMapping("/self/role")
+    @Secured({"ROLE_ADMIN", "ROLE_MODERATOR", "ROLE_CLIENT"})
+    public ResponseEntity<RolesDto> getSelfRole() throws AppBaseException {
+        RolesDto rolesDto = roleEndpoint.getUserRole();
+
+        return ResponseEntity.ok()
+                .eTag(messageSigner.sign(rolesDto))
+                .body(rolesDto);
     }
 }

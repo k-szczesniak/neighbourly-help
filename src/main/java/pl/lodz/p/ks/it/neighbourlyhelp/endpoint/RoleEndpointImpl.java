@@ -47,6 +47,12 @@ public class RoleEndpointImpl extends AbstractEndpoint implements RoleEndpoint {
         roleService.grantAccessLevel(editAccount, accessLevel);
     }
 
+    @Override
+    @Secured({"ROLE_ADMIN", "ROLE_MODERATOR", "ROLE_CLIENT"})
+    public RolesDto getUserRole() throws AppBaseException {
+        return mapToRolesDto(accountService.getExecutorAccount());
+    }
+
     private RolesDto mapToRolesDto(Account account) {
         return Mappers.getMapper(IRoleMapper.class).toRolesDto(account);
     }

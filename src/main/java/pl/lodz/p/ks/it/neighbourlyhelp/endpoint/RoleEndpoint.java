@@ -2,6 +2,7 @@ package pl.lodz.p.ks.it.neighbourlyhelp.endpoint;
 
 import org.springframework.security.access.annotation.Secured;
 import pl.lodz.p.ks.it.neighbourlyhelp.domain.user.AccessLevel;
+import pl.lodz.p.ks.it.neighbourlyhelp.dto.RolesDto;
 import pl.lodz.p.ks.it.neighbourlyhelp.exception.AppBaseException;
 
 public interface RoleEndpoint {
@@ -27,4 +28,6 @@ public interface RoleEndpoint {
      */
     @Secured("ROLE_ADMIN")
     void grantAccessLevel(String email, AccessLevel accessLevel, String ifMatch) throws AppBaseException;
+
+    RolesDto getUserRole() throws AppBaseException;
 }
