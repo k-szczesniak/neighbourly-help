@@ -53,7 +53,7 @@ public class AccountService {
         }
     }
 
-    @Secured("ROLE_ADMIN")
+    @Secured("ROLE_ADMIN") // TODO: 20.04.2022 exception when sth went wrong
     public List<Account> getAllAccounts() {
         return accountRepository.findAll();
     }

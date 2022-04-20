@@ -176,4 +176,14 @@ public class AccountController {
                 .eTag(messageSigner.sign(rolesDto))
                 .body(rolesDto);
     }
+
+    @GetMapping("/{email}/role")
+    @Secured("ROLE_ADMIN")
+    public ResponseEntity<RolesDto> getUserRole(@NotNull @Email @PathVariable("email") @Valid String email) throws AppBaseException {
+        RolesDto rolesDto = roleEndpoint.getUserRole(email);
+
+        return ResponseEntity.ok()
+                .eTag(messageSigner.sign(rolesDto))
+                .body(rolesDto);
+    }
 }

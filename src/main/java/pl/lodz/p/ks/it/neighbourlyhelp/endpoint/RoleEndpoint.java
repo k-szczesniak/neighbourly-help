@@ -30,4 +30,6 @@ public interface RoleEndpoint {
     void grantAccessLevel(String email, AccessLevel accessLevel, String ifMatch) throws AppBaseException;
 
     RolesDto getUserRole() throws AppBaseException;
+
+    RolesDto getUserRole(String email) throws AppBaseException;
 }

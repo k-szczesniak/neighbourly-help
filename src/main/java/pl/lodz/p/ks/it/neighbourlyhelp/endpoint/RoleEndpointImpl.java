@@ -53,6 +53,11 @@ public class RoleEndpointImpl extends AbstractEndpoint implements RoleEndpoint {
         return mapToRolesDto(accountService.getExecutorAccount());
     }
 
+    @Override
+    public RolesDto getUserRole(String email) throws AppBaseException {
+        return mapToRolesDto(accountService.getAccountByEmail(email));
+    }
+
     private RolesDto mapToRolesDto(Account account) {
         return Mappers.getMapper(IRoleMapper.class).toRolesDto(account);
     }
