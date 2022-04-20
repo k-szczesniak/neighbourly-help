@@ -26,6 +26,7 @@ import pl.lodz.p.ks.it.neighbourlyhelp.exception.AppBaseException;
 import pl.lodz.p.ks.it.neighbourlyhelp.exception.AppRuntimeException;
 import pl.lodz.p.ks.it.neighbourlyhelp.validator.ConfirmationToken;
 import pl.lodz.p.ks.it.neighbourlyhelp.validator.Email;
+import pl.lodz.p.ks.it.neighbourlyhelp.validator.Language;
 
 import javax.annotation.security.PermitAll;
 import javax.validation.Valid;
@@ -148,5 +149,12 @@ public class AccountController {
                                     @NotNull @Valid @RequestBody PasswordChangeOtherRequestDto passwordChangeOtherDto)
             throws AppBaseException, AppRuntimeException {
         accountEndpoint.changeOtherPassword(passwordChangeOtherDto, ifMatch);
+    }
+
+    @PutMapping("/self/edit/language/{lang}")
+    @Secured({"ROLE_ADMIN", "ROLE_MODERATOR", "ROLE_CLIENT"})
+    public void editOwnLanguage(@RequestHeader("If-Match") String ifMatch,
+                                @NotNull @Language @PathVariable("lang") @Valid String language) throws AppBaseException {
+        accountEndpoint.editOwnLanguage(language, ifMatch);
     }
 }

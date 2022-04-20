@@ -240,6 +240,14 @@ public class AccountService {
         changePassword(editAccount, givenPassword);
     }
 
+    @Secured({"ROLE_ADMIN", "ROLE_MODERATOR", "ROLE_CLIENT"})
+    public void changeAccountLanguage(Account account, String language) {
+        account.setLanguage(language);
+        account.setModifiedBy(account);
+
+        accountRepository.saveAndFlush(account);
+    }
+
     public Account getExecutorAccount() {
         return getAccountByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
     }

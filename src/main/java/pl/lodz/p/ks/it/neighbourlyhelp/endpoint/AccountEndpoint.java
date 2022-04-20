@@ -62,4 +62,6 @@ public interface AccountEndpoint {
     void sendResetPasswordRequest(String email) throws AppBaseException;
 
     void changeOtherPassword(PasswordChangeOtherRequestDto passwordChangeOtherDto, String ifMatch) throws AppBaseException;
+
+    void editOwnLanguage(String language, String ifMatch) throws AppBaseException;
 }

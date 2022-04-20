@@ -169,4 +169,16 @@ public class AccountEndpointImpl extends AbstractEndpoint implements AccountEndp
 
         accountService.changeOtherPassword(editAccount, passwordChangeOtherDto.getGivenPassword());
     }
+
+    @Override
+    @Secured({"ROLE_ADMIN", "ROLE_MODERATOR", "ROLE_CLIENT"})
+    public void editOwnLanguage(String language, String ifMatch) throws AppBaseException {
+        Account editAccount = accountService.getExecutorAccount();
+        AccountDto accountIntegrity = Mappers.getMapper(IAccountMapper.class).toAccountDto(editAccount);
+        if (!verifyIntegrity(accountIntegrity, ifMatch)) {
+            throw AppOptimisticLockException.optimisticLockException();
+        }
+
+        accountService.changeAccountLanguage(editAccount, language);
+    }
 }
