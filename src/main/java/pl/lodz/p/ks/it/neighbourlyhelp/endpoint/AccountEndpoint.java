@@ -31,7 +31,7 @@ public interface AccountEndpoint {
 
     //    @PreAuthorize("isAnonymous()")
     // TODO: 16.02.2022 repair security annotation
-    void updateValidAuth(String email, String ipAddress, Date authDate);
+    void updateValidAuth(String email, String ipAddress, Date authDate) throws AppBaseException;
 
     @Secured("ROLE_ADMIN")
     void blockAccount(String email, String ifMatch) throws AppBaseException;
@@ -40,10 +40,10 @@ public interface AccountEndpoint {
     void unblockAccount(String email, String ifMatch) throws AppBaseException;
 
     @Secured({"ROLE_ADMIN", "ROLE_MODERATOR", "ROLE_CLIENT"})
-    AccountDto getOwnAccountInfo();
+    AccountDto getOwnAccountInfo() throws AppBaseException;
 
     @Secured("ROLE_ADMIN")
-    AccountDto getAccountInfo(String email);
+    AccountDto getAccountInfo(String email) throws AppBaseException;
 
     @Secured({"ROLE_ADMIN", "ROLE_MODERATOR", "ROLE_CLIENT"})
     void editOwnAccountDetails(AccountPersonalDetailsDto accountPersonalDetailsDto, String ifMatch) throws AppBaseException;

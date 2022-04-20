@@ -69,7 +69,7 @@ public class AccountEndpointImpl extends AbstractEndpoint implements AccountEndp
     }
 
     @Override
-    public void updateValidAuth(String email, String ipAddress, Date authDate) {
+    public void updateValidAuth(String email, String ipAddress, Date authDate) throws AppBaseException {
         String lang = servletRequest.getLocale().toString();
         Account account = accountService.getAccountByEmail(email);
         accountService.updateValidAuth(account, ipAddress, authDate, lang);
@@ -99,14 +99,14 @@ public class AccountEndpointImpl extends AbstractEndpoint implements AccountEndp
 
     @Override
     @Secured({"ROLE_ADMIN", "ROLE_MODERATOR", "ROLE_CLIENT"})
-    public AccountDto getOwnAccountInfo() {
+    public AccountDto getOwnAccountInfo() throws AppBaseException {
         return Mappers.getMapper(IAccountMapper.class)
                 .toAccountDto(accountService.getExecutorAccount());
     }
 
     @Override
     @Secured("ROLE_ADMIN")
-    public AccountDto getAccountInfo(String email) {
+    public AccountDto getAccountInfo(String email) throws AppBaseException {
         return Mappers.getMapper(IAccountMapper.class)
                 .toAccountDto(accountService.getAccountByEmail(email));
     }

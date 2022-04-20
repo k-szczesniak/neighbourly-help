@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import pl.lodz.p.ks.it.neighbourlyhelp.dto.response.AuthTokenResponseDto;
+import pl.lodz.p.ks.it.neighbourlyhelp.exception.AppBaseException;
 import pl.lodz.p.ks.it.neighbourlyhelp.exception.AppRuntimeException;
 import pl.lodz.p.ks.it.neighbourlyhelp.exception.JwtTokenMalformedException;
 import pl.lodz.p.ks.it.neighbourlyhelp.exception.JwtTokenMissingException;
@@ -30,7 +31,7 @@ public class AuthEndpointImpl implements AuthEndpoint {
     private final HttpServletRequest request;
 
     @Override
-    public AuthTokenResponseDto refreshToken(String refreshToken) {
+    public AuthTokenResponseDto refreshToken(String refreshToken) throws AppBaseException {
         try {
             tokenVerifier.validateToken(refreshToken);
             String email = tokenVerifier.getClaims(refreshToken).getSubject();

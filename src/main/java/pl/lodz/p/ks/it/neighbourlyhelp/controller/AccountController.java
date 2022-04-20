@@ -95,7 +95,7 @@ public class AccountController {
 
     @GetMapping("/user")
     @Secured({"ROLE_ADMIN", "ROLE_MODERATOR", "ROLE_CLIENT"})
-    public ResponseEntity<AccountDto> getAccountInformation() {
+    public ResponseEntity<AccountDto> getAccountInformation() throws AppBaseException {
         AccountDto ownAccountInfo = accountEndpoint.getOwnAccountInfo();
         return ResponseEntity.ok()
                 .eTag(messageSigner.sign(ownAccountInfo))
@@ -104,7 +104,7 @@ public class AccountController {
 
     @GetMapping("/user/{email}")
     @Secured("ROLE_ADMIN")
-    public ResponseEntity<AccountDto> getAccountInformationByEmail(@NotNull @Email @PathVariable("email") @Valid String email) {
+    public ResponseEntity<AccountDto> getAccountInformationByEmail(@NotNull @Email @PathVariable("email") @Valid String email) throws AppBaseException {
         AccountDto accountInfo = accountEndpoint.getAccountInfo(email);
         return ResponseEntity.ok()
                 .eTag(messageSigner.sign(accountInfo))

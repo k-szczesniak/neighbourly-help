@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RestController;
 import pl.lodz.p.ks.it.neighbourlyhelp.dto.LoginCredentials;
 import pl.lodz.p.ks.it.neighbourlyhelp.dto.response.AuthTokenResponseDto;
 import pl.lodz.p.ks.it.neighbourlyhelp.endpoint.AuthEndpoint;
+import pl.lodz.p.ks.it.neighbourlyhelp.exception.AppBaseException;
 
 import javax.validation.constraints.NotNull;
 
@@ -25,7 +26,7 @@ public class LoginController {
     }
 
     @PostMapping("/token/refresh")
-    public ResponseEntity<AuthTokenResponseDto> refreshToken(@NotNull @RequestBody String refreshToken) {
+    public ResponseEntity<AuthTokenResponseDto> refreshToken(@NotNull @RequestBody String refreshToken) throws AppBaseException {
         AuthTokenResponseDto authTokenResponseDto = authEndpoint.refreshToken(refreshToken);
         return ResponseEntity.ok().body(authTokenResponseDto);
     }

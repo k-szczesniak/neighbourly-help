@@ -45,8 +45,12 @@ public class AccountService {
     private String INCORRECT_LOGIN_ATTEMPTS_LIMIT;
 
     // TODO: 12.02.2022 add permission annotation
-    public Account getAccountByEmail(String email) throws UsernameNotFoundException {
-        return (Account) userService.loadUserByUsername(email);
+    public Account getAccountByEmail(String email) throws AppBaseException {
+        try {
+            return (Account) userService.loadUserByUsername(email);
+        } catch (UsernameNotFoundException e) {
+            throw NotFoundException.accountNotFound(e);
+        }
     }
 
     @Secured("ROLE_ADMIN")
@@ -177,7 +181,7 @@ public class AccountService {
     }
 
     @Secured({"ROLE_ADMIN", "ROLE_MODERATOR", "ROLE_CLIENT"})
-    public void editAccountDetails(Account account) {
+    public void editAccountDetails(Account account) throws AppBaseException {
         account.setModifiedBy(getExecutorAccount());
         accountRepository.saveAndFlush(account);
     }
@@ -260,11 +264,11 @@ public class AccountService {
         accountRepository.saveAndFlush(account);
     }
 
-    public Account getExecutorAccount() {
+    public Account getExecutorAccount() throws AppBaseException {
         return getAccountByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
     }
 
-    private void changePassword(Account account, String newPassword) {
+    private void changePassword(Account account, String newPassword) throws AppBaseException {
         String encodedPassword = bCryptPasswordEncoder.encode(newPassword);
         account.setPassword(encodedPassword);
         account.setModifiedBy(getExecutorAccount());
