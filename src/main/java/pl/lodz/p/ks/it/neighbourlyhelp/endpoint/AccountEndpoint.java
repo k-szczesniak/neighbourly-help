@@ -1,6 +1,7 @@
 package pl.lodz.p.ks.it.neighbourlyhelp.endpoint;
 
 import org.springframework.security.access.annotation.Secured;
+import pl.lodz.p.ks.it.neighbourlyhelp.domain.user.AccessLevel;
 import pl.lodz.p.ks.it.neighbourlyhelp.dto.AccountDto;
 import pl.lodz.p.ks.it.neighbourlyhelp.dto.RegisterAccountDto;
 import pl.lodz.p.ks.it.neighbourlyhelp.dto.request.AccountPersonalDetailsDto;
@@ -67,4 +68,6 @@ public interface AccountEndpoint {
     void editOwnLanguage(String language, String ifMatch) throws AppBaseException;
 
     void changeThemeColor(ThemeColor themeColor, String ifMatch) throws AppBaseException;
+
+    void changeOwnAccessLevel(AccessLevel accessLevel) throws AppBaseException;
 }

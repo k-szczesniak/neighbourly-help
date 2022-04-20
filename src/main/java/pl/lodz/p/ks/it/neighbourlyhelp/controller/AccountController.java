@@ -186,4 +186,11 @@ public class AccountController {
                 .eTag(messageSigner.sign(rolesDto))
                 .body(rolesDto);
     }
+
+    @GetMapping("changeOwnAccessLevel/{accessLevel}")
+    @Secured({"ROLE_ADMIN", "ROLE_MODERATOR", "ROLE_CLIENT"})
+    public ResponseEntity<?> changeOwnAccessLevel(@NotNull @PathVariable("accessLevel") AccessLevel accessLevel) throws AppBaseException {
+        accountEndpoint.changeOwnAccessLevel(accessLevel);
+        return ResponseEntity.noContent().build();
+    }
 }

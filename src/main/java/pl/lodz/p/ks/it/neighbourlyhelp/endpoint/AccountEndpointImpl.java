@@ -1,11 +1,13 @@
 package pl.lodz.p.ks.it.neighbourlyhelp.endpoint;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.java.Log;
 import org.mapstruct.factory.Mappers;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+import pl.lodz.p.ks.it.neighbourlyhelp.domain.user.AccessLevel;
 import pl.lodz.p.ks.it.neighbourlyhelp.domain.user.Account;
 import pl.lodz.p.ks.it.neighbourlyhelp.dto.AccountDto;
 import pl.lodz.p.ks.it.neighbourlyhelp.dto.RegisterAccountDto;
@@ -24,11 +26,13 @@ import javax.annotation.security.PermitAll;
 import javax.servlet.http.HttpServletRequest;
 import java.util.Date;
 import java.util.List;
+import java.util.logging.Level;
 import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 @Transactional(propagation = Propagation.REQUIRES_NEW)
+@Log
 public class AccountEndpointImpl extends AbstractEndpoint implements AccountEndpoint {
 
     private final HttpServletRequest servletRequest;
@@ -193,5 +197,13 @@ public class AccountEndpointImpl extends AbstractEndpoint implements AccountEndp
         }
 
         accountService.changeThemeColor(editAccount, themeColor);
+    }
+
+    @Override
+    @Secured({"ROLE_ADMIN", "ROLE_MODERATOR", "ROLE_CLIENT"})
+    public void changeOwnAccessLevel(AccessLevel accessLevel) throws AppBaseException {
+        log.log(Level.INFO, String.format("User %s change access level on: %s",
+                accountService.getExecutorAccount().getEmail(),
+                accessLevel.toString()));
     }
 }
