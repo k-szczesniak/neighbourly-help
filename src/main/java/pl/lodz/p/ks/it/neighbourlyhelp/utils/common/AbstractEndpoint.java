@@ -1,9 +1,9 @@
 package pl.lodz.p.ks.it.neighbourlyhelp.utils.common;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import pl.lodz.p.ks.it.neighbourlyhelp.consistency.MessageSigner;
-import pl.lodz.p.ks.it.neighbourlyhelp.consistency.Signable;
 import pl.lodz.p.ks.it.neighbourlyhelp.exception.AppOptimisticLockException;
+import pl.lodz.p.ks.it.neighbourlyhelp.utils.consistency.MessageSigner;
+import pl.lodz.p.ks.it.neighbourlyhelp.utils.consistency.Signable;
 
 public abstract class AbstractEndpoint {
 

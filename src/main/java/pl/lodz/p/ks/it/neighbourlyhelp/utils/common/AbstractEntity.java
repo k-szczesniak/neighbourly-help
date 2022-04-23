@@ -3,7 +3,7 @@ package pl.lodz.p.ks.it.neighbourlyhelp.utils.common;
 import lombok.Getter;
 import lombok.Setter;
 import org.apache.commons.lang3.builder.ToStringBuilder;
-import pl.lodz.p.ks.it.neighbourlyhelp.entities.Account;
+import pl.lodz.p.ks.it.neighbourlyhelp.clientmodule.domain.Account;
 
 import javax.persistence.Column;
 import javax.persistence.JoinColumn;

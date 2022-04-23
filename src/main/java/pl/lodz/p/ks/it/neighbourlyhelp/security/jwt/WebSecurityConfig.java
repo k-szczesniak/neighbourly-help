@@ -11,8 +11,8 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import pl.lodz.p.ks.it.neighbourlyhelp.clientmodule.service.UserDetailsServiceImpl;
 import pl.lodz.p.ks.it.neighbourlyhelp.exception.handler.FilterChainExceptionHandler;
-import pl.lodz.p.ks.it.neighbourlyhelp.service.UserDetailsServiceImpl;
 
 import javax.crypto.SecretKey;
 
