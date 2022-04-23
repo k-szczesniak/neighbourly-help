@@ -1,4 +1,4 @@
-package pl.lodz.p.ks.it.neighbourlyhelp.domain.user;
+package pl.lodz.p.ks.it.neighbourlyhelp.entities;
 
 public enum AccessLevel {
     CLIENT,

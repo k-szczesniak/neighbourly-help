@@ -3,8 +3,8 @@ package pl.lodz.p.ks.it.neighbourlyhelp.mapper;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Mappings;
-import pl.lodz.p.ks.it.neighbourlyhelp.domain.user.Account;
 import pl.lodz.p.ks.it.neighbourlyhelp.dto.RolesDto;
+import pl.lodz.p.ks.it.neighbourlyhelp.entities.Account;
 import pl.lodz.p.ks.it.neighbourlyhelp.entities.Role;
 
 import java.util.List;

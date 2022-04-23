@@ -5,7 +5,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
-import pl.lodz.p.ks.it.neighbourlyhelp.domain.user.Account;
+import pl.lodz.p.ks.it.neighbourlyhelp.entities.Account;
 import pl.lodz.p.ks.it.neighbourlyhelp.entities.ConfirmationToken;
 import pl.lodz.p.ks.it.neighbourlyhelp.entities.TokenType;
 import pl.lodz.p.ks.it.neighbourlyhelp.exception.AppBaseException;

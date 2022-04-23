@@ -1,4 +1,4 @@
-package pl.lodz.p.ks.it.neighbourlyhelp.domain.user;
+package pl.lodz.p.ks.it.neighbourlyhelp.entities;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -8,9 +8,6 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-import pl.lodz.p.ks.it.neighbourlyhelp.entities.ConfirmationToken;
-import pl.lodz.p.ks.it.neighbourlyhelp.entities.Role;
-import pl.lodz.p.ks.it.neighbourlyhelp.entities.ThemeColor;
 import pl.lodz.p.ks.it.neighbourlyhelp.utils.common.AbstractEntity;
 import pl.lodz.p.ks.it.neighbourlyhelp.validator.ContactNumber;
 import pl.lodz.p.ks.it.neighbourlyhelp.validator.Email;
