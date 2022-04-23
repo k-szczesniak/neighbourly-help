@@ -10,7 +10,6 @@ import pl.lodz.p.ks.it.neighbourlyhelp.domain.user.AccessLevel;
 import pl.lodz.p.ks.it.neighbourlyhelp.domain.user.Account;
 import pl.lodz.p.ks.it.neighbourlyhelp.dto.RolesDto;
 import pl.lodz.p.ks.it.neighbourlyhelp.exception.AppBaseException;
-import pl.lodz.p.ks.it.neighbourlyhelp.exception.AppOptimisticLockException;
 import pl.lodz.p.ks.it.neighbourlyhelp.mapper.IRoleMapper;
 import pl.lodz.p.ks.it.neighbourlyhelp.service.AccountService;
 import pl.lodz.p.ks.it.neighbourlyhelp.service.RoleService;
@@ -30,9 +29,8 @@ public class RoleEndpointImpl extends AbstractEndpoint implements RoleEndpoint {
     public void revokeAccessLevel(String email, AccessLevel accessLevel, String ifMatch) throws AppBaseException {
         Account editAccount = accountService.getAccountByEmail(email);
         RolesDto rolesIntegrity = mapToRolesDto(editAccount);
-        if(!verifyIntegrity(rolesIntegrity, ifMatch)) {
-            throw AppOptimisticLockException.optimisticLockException();
-        }
+        verifyIntegrity(rolesIntegrity, ifMatch);
+
         roleService.revokeAccessLevel(editAccount, accessLevel);
     }
 
@@ -41,9 +39,8 @@ public class RoleEndpointImpl extends AbstractEndpoint implements RoleEndpoint {
     public void grantAccessLevel(String email, AccessLevel accessLevel, String ifMatch) throws AppBaseException {
         Account editAccount = accountService.getAccountByEmail(email);
         RolesDto rolesIntegrity = mapToRolesDto(editAccount);
-        if(!verifyIntegrity(rolesIntegrity, ifMatch)) {
-            throw AppOptimisticLockException.optimisticLockException();
-        }
+        verifyIntegrity(rolesIntegrity, ifMatch);
+
         roleService.grantAccessLevel(editAccount, accessLevel);
     }
 

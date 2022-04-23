@@ -47,7 +47,7 @@ public class AccountController {
 
     @PostMapping(value = "/register")
     @PermitAll
-    public void registerAccount(RegisterAccountDto registerAccountDto) throws AppBaseException {
+    public void registerAccount(@NotNull @Valid @RequestBody RegisterAccountDto registerAccountDto) throws AppBaseException {
         accountEndpoint.registerAccount(registerAccountDto);
     }
 

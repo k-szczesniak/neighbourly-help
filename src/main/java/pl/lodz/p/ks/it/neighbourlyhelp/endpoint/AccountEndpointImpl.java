@@ -17,7 +17,6 @@ import pl.lodz.p.ks.it.neighbourlyhelp.dto.request.PasswordChangeRequestDto;
 import pl.lodz.p.ks.it.neighbourlyhelp.dto.request.PasswordResetRequestDto;
 import pl.lodz.p.ks.it.neighbourlyhelp.entities.ThemeColor;
 import pl.lodz.p.ks.it.neighbourlyhelp.exception.AppBaseException;
-import pl.lodz.p.ks.it.neighbourlyhelp.exception.AppOptimisticLockException;
 import pl.lodz.p.ks.it.neighbourlyhelp.mapper.IAccountMapper;
 import pl.lodz.p.ks.it.neighbourlyhelp.service.AccountService;
 import pl.lodz.p.ks.it.neighbourlyhelp.utils.common.AbstractEndpoint;
@@ -84,9 +83,7 @@ public class AccountEndpointImpl extends AbstractEndpoint implements AccountEndp
     public void blockAccount(String email, String ifMatch) throws AppBaseException {
         Account account = accountService.getAccountByEmail(email);
         AccountDto accountIntegrity = Mappers.getMapper(IAccountMapper.class).toAccountDto(account);
-        if (!verifyIntegrity(accountIntegrity, ifMatch)) {
-            throw AppOptimisticLockException.optimisticLockException();
-        }
+        verifyIntegrity(accountIntegrity, ifMatch);
         accountService.blockAccount(account);
     }
 
@@ -95,9 +92,7 @@ public class AccountEndpointImpl extends AbstractEndpoint implements AccountEndp
     public void unblockAccount(String email, String ifMatch) throws AppBaseException {
         Account account = accountService.getAccountByEmail(email);
         AccountDto accountIntegrity = Mappers.getMapper(IAccountMapper.class).toAccountDto(account);
-        if (!verifyIntegrity(accountIntegrity, ifMatch)) {
-            throw AppOptimisticLockException.optimisticLockException();
-        }
+        verifyIntegrity(accountIntegrity, ifMatch);
         accountService.unblockAccount(account);
     }
 
@@ -120,9 +115,7 @@ public class AccountEndpointImpl extends AbstractEndpoint implements AccountEndp
     public void editOwnAccountDetails(AccountPersonalDetailsDto accountPersonalDetailsDto, String ifMatch) throws AppBaseException {
         Account editAccount = accountService.getExecutorAccount();
         AccountDto accountIntegrity = Mappers.getMapper(IAccountMapper.class).toAccountDto(editAccount);
-        if (!verifyIntegrity(accountIntegrity, ifMatch)) {
-            throw AppOptimisticLockException.optimisticLockException();
-        }
+        verifyIntegrity(accountIntegrity, ifMatch);
         Mappers.getMapper(IAccountMapper.class).toAccount(accountPersonalDetailsDto, editAccount);
         accountService.editAccountDetails(editAccount);
     }
@@ -132,9 +125,7 @@ public class AccountEndpointImpl extends AbstractEndpoint implements AccountEndp
     public void editOtherAccountDetails(String email, AccountPersonalDetailsDto accountPersonalDetailsDto, String ifMatch) throws AppBaseException {
         Account editAccount = accountService.getAccountByEmail(email);
         AccountDto accountIntegrity = Mappers.getMapper(IAccountMapper.class).toAccountDto(editAccount);
-        if (!verifyIntegrity(accountIntegrity, ifMatch)) {
-            throw AppOptimisticLockException.optimisticLockException();
-        }
+        verifyIntegrity(accountIntegrity, ifMatch);
         Mappers.getMapper(IAccountMapper.class).toAccount(accountPersonalDetailsDto, editAccount);
         accountService.editAccountDetails(editAccount);
     }
@@ -144,9 +135,8 @@ public class AccountEndpointImpl extends AbstractEndpoint implements AccountEndp
     public void changePassword(PasswordChangeRequestDto passwordChangeDto, String ifMatch) throws AppBaseException {
         Account editAccount = accountService.getExecutorAccount();
         AccountDto accountIntegrity = Mappers.getMapper(IAccountMapper.class).toAccountDto(editAccount);
-        if (!verifyIntegrity(accountIntegrity, ifMatch)) {
-            throw AppOptimisticLockException.optimisticLockException();
-        }
+        verifyIntegrity(accountIntegrity, ifMatch);
+
         accountService.changePassword(editAccount, passwordChangeDto);
     }
 
@@ -168,9 +158,7 @@ public class AccountEndpointImpl extends AbstractEndpoint implements AccountEndp
     public void changeOtherPassword(PasswordChangeOtherRequestDto passwordChangeOtherDto, String ifMatch) throws AppBaseException {
         Account editAccount = accountService.getAccountByEmail(passwordChangeOtherDto.getEmail());
         AccountDto accountIntegrity = Mappers.getMapper(IAccountMapper.class).toAccountDto(editAccount);
-        if (!verifyIntegrity(accountIntegrity, ifMatch)) {
-            throw AppOptimisticLockException.optimisticLockException();
-        }
+        verifyIntegrity(accountIntegrity, ifMatch);
 
         accountService.changeOtherPassword(editAccount, passwordChangeOtherDto.getGivenPassword());
     }
@@ -180,9 +168,7 @@ public class AccountEndpointImpl extends AbstractEndpoint implements AccountEndp
     public void editOwnLanguage(String language, String ifMatch) throws AppBaseException {
         Account editAccount = accountService.getExecutorAccount();
         AccountDto accountIntegrity = Mappers.getMapper(IAccountMapper.class).toAccountDto(editAccount);
-        if (!verifyIntegrity(accountIntegrity, ifMatch)) {
-            throw AppOptimisticLockException.optimisticLockException();
-        }
+        verifyIntegrity(accountIntegrity, ifMatch);
 
         accountService.changeAccountLanguage(editAccount, language);
     }
@@ -192,9 +178,7 @@ public class AccountEndpointImpl extends AbstractEndpoint implements AccountEndp
     public void changeThemeColor(ThemeColor themeColor, String ifMatch) throws AppBaseException {
         Account editAccount = accountService.getExecutorAccount();
         AccountDto accountIntegrity = Mappers.getMapper(IAccountMapper.class).toAccountDto(editAccount);
-        if (!verifyIntegrity(accountIntegrity, ifMatch)) {
-            throw AppOptimisticLockException.optimisticLockException();
-        }
+        verifyIntegrity(accountIntegrity, ifMatch);
 
         accountService.changeThemeColor(editAccount, themeColor);
     }
