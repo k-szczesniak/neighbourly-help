@@ -1,20 +1,22 @@
 package pl.lodz.p.ks.it.neighbourlyhelp.endpoint;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.java.Log;
 import org.mapstruct.factory.Mappers;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
-import pl.lodz.p.ks.it.neighbourlyhelp.domain.user.Account;
 import pl.lodz.p.ks.it.neighbourlyhelp.dto.AccountDto;
 import pl.lodz.p.ks.it.neighbourlyhelp.dto.RegisterAccountDto;
 import pl.lodz.p.ks.it.neighbourlyhelp.dto.request.AccountPersonalDetailsDto;
 import pl.lodz.p.ks.it.neighbourlyhelp.dto.request.PasswordChangeOtherRequestDto;
 import pl.lodz.p.ks.it.neighbourlyhelp.dto.request.PasswordChangeRequestDto;
 import pl.lodz.p.ks.it.neighbourlyhelp.dto.request.PasswordResetRequestDto;
+import pl.lodz.p.ks.it.neighbourlyhelp.entities.AccessLevel;
+import pl.lodz.p.ks.it.neighbourlyhelp.entities.Account;
+import pl.lodz.p.ks.it.neighbourlyhelp.entities.ThemeColor;
 import pl.lodz.p.ks.it.neighbourlyhelp.exception.AppBaseException;
-import pl.lodz.p.ks.it.neighbourlyhelp.exception.AppOptimisticLockException;
 import pl.lodz.p.ks.it.neighbourlyhelp.mapper.IAccountMapper;
 import pl.lodz.p.ks.it.neighbourlyhelp.service.AccountService;
 import pl.lodz.p.ks.it.neighbourlyhelp.utils.common.AbstractEndpoint;
@@ -23,11 +25,13 @@ import javax.annotation.security.PermitAll;
 import javax.servlet.http.HttpServletRequest;
 import java.util.Date;
 import java.util.List;
+import java.util.logging.Level;
 import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 @Transactional(propagation = Propagation.REQUIRES_NEW)
+@Log
 public class AccountEndpointImpl extends AbstractEndpoint implements AccountEndpoint {
 
     private final HttpServletRequest servletRequest;
@@ -68,7 +72,7 @@ public class AccountEndpointImpl extends AbstractEndpoint implements AccountEndp
     }
 
     @Override
-    public void updateValidAuth(String email, String ipAddress, Date authDate) {
+    public void updateValidAuth(String email, String ipAddress, Date authDate) throws AppBaseException {
         String lang = servletRequest.getLocale().toString();
         Account account = accountService.getAccountByEmail(email);
         accountService.updateValidAuth(account, ipAddress, authDate, lang);
@@ -79,9 +83,7 @@ public class AccountEndpointImpl extends AbstractEndpoint implements AccountEndp
     public void blockAccount(String email, String ifMatch) throws AppBaseException {
         Account account = accountService.getAccountByEmail(email);
         AccountDto accountIntegrity = Mappers.getMapper(IAccountMapper.class).toAccountDto(account);
-        if (!verifyIntegrity(accountIntegrity, ifMatch)) {
-            throw AppOptimisticLockException.optimisticLockException();
-        }
+        verifyIntegrity(accountIntegrity, ifMatch);
         accountService.blockAccount(account);
     }
 
@@ -90,22 +92,20 @@ public class AccountEndpointImpl extends AbstractEndpoint implements AccountEndp
     public void unblockAccount(String email, String ifMatch) throws AppBaseException {
         Account account = accountService.getAccountByEmail(email);
         AccountDto accountIntegrity = Mappers.getMapper(IAccountMapper.class).toAccountDto(account);
-        if (!verifyIntegrity(accountIntegrity, ifMatch)) {
-            throw AppOptimisticLockException.optimisticLockException();
-        }
+        verifyIntegrity(accountIntegrity, ifMatch);
         accountService.unblockAccount(account);
     }
 
     @Override
     @Secured({"ROLE_ADMIN", "ROLE_MODERATOR", "ROLE_CLIENT"})
-    public AccountDto getOwnAccountInfo() {
+    public AccountDto getOwnAccountInfo() throws AppBaseException {
         return Mappers.getMapper(IAccountMapper.class)
                 .toAccountDto(accountService.getExecutorAccount());
     }
 
     @Override
     @Secured("ROLE_ADMIN")
-    public AccountDto getAccountInfo(String email) {
+    public AccountDto getAccountInfo(String email) throws AppBaseException {
         return Mappers.getMapper(IAccountMapper.class)
                 .toAccountDto(accountService.getAccountByEmail(email));
     }
@@ -115,9 +115,7 @@ public class AccountEndpointImpl extends AbstractEndpoint implements AccountEndp
     public void editOwnAccountDetails(AccountPersonalDetailsDto accountPersonalDetailsDto, String ifMatch) throws AppBaseException {
         Account editAccount = accountService.getExecutorAccount();
         AccountDto accountIntegrity = Mappers.getMapper(IAccountMapper.class).toAccountDto(editAccount);
-        if (!verifyIntegrity(accountIntegrity, ifMatch)) {
-            throw AppOptimisticLockException.optimisticLockException();
-        }
+        verifyIntegrity(accountIntegrity, ifMatch);
         Mappers.getMapper(IAccountMapper.class).toAccount(accountPersonalDetailsDto, editAccount);
         accountService.editAccountDetails(editAccount);
     }
@@ -127,9 +125,7 @@ public class AccountEndpointImpl extends AbstractEndpoint implements AccountEndp
     public void editOtherAccountDetails(String email, AccountPersonalDetailsDto accountPersonalDetailsDto, String ifMatch) throws AppBaseException {
         Account editAccount = accountService.getAccountByEmail(email);
         AccountDto accountIntegrity = Mappers.getMapper(IAccountMapper.class).toAccountDto(editAccount);
-        if (!verifyIntegrity(accountIntegrity, ifMatch)) {
-            throw AppOptimisticLockException.optimisticLockException();
-        }
+        verifyIntegrity(accountIntegrity, ifMatch);
         Mappers.getMapper(IAccountMapper.class).toAccount(accountPersonalDetailsDto, editAccount);
         accountService.editAccountDetails(editAccount);
     }
@@ -139,9 +135,8 @@ public class AccountEndpointImpl extends AbstractEndpoint implements AccountEndp
     public void changePassword(PasswordChangeRequestDto passwordChangeDto, String ifMatch) throws AppBaseException {
         Account editAccount = accountService.getExecutorAccount();
         AccountDto accountIntegrity = Mappers.getMapper(IAccountMapper.class).toAccountDto(editAccount);
-        if (!verifyIntegrity(accountIntegrity, ifMatch)) {
-            throw AppOptimisticLockException.optimisticLockException();
-        }
+        verifyIntegrity(accountIntegrity, ifMatch);
+
         accountService.changePassword(editAccount, passwordChangeDto);
     }
 
@@ -163,10 +158,36 @@ public class AccountEndpointImpl extends AbstractEndpoint implements AccountEndp
     public void changeOtherPassword(PasswordChangeOtherRequestDto passwordChangeOtherDto, String ifMatch) throws AppBaseException {
         Account editAccount = accountService.getAccountByEmail(passwordChangeOtherDto.getEmail());
         AccountDto accountIntegrity = Mappers.getMapper(IAccountMapper.class).toAccountDto(editAccount);
-        if (!verifyIntegrity(accountIntegrity, ifMatch)) {
-            throw AppOptimisticLockException.optimisticLockException();
-        }
+        verifyIntegrity(accountIntegrity, ifMatch);
 
         accountService.changeOtherPassword(editAccount, passwordChangeOtherDto.getGivenPassword());
+    }
+
+    @Override
+    @Secured({"ROLE_ADMIN", "ROLE_MODERATOR", "ROLE_CLIENT"})
+    public void editOwnLanguage(String language, String ifMatch) throws AppBaseException {
+        Account editAccount = accountService.getExecutorAccount();
+        AccountDto accountIntegrity = Mappers.getMapper(IAccountMapper.class).toAccountDto(editAccount);
+        verifyIntegrity(accountIntegrity, ifMatch);
+
+        accountService.changeAccountLanguage(editAccount, language);
+    }
+
+    @Override
+    @Secured({"ROLE_ADMIN", "ROLE_MODERATOR", "ROLE_CLIENT"})
+    public void changeThemeColor(ThemeColor themeColor, String ifMatch) throws AppBaseException {
+        Account editAccount = accountService.getExecutorAccount();
+        AccountDto accountIntegrity = Mappers.getMapper(IAccountMapper.class).toAccountDto(editAccount);
+        verifyIntegrity(accountIntegrity, ifMatch);
+
+        accountService.changeThemeColor(editAccount, themeColor);
+    }
+
+    @Override
+    @Secured({"ROLE_ADMIN", "ROLE_MODERATOR", "ROLE_CLIENT"})
+    public void changeOwnAccessLevel(AccessLevel accessLevel) throws AppBaseException {
+        log.log(Level.INFO, String.format("User %s change access level on: %s",
+                accountService.getExecutorAccount().getEmail(),
+                accessLevel.toString()));
     }
 }

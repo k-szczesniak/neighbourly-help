@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import pl.lodz.p.ks.it.neighbourlyhelp.consistency.MessageSigner;
-import pl.lodz.p.ks.it.neighbourlyhelp.domain.user.AccessLevel;
 import pl.lodz.p.ks.it.neighbourlyhelp.dto.AccountDto;
 import pl.lodz.p.ks.it.neighbourlyhelp.dto.RegisterAccountDto;
 import pl.lodz.p.ks.it.neighbourlyhelp.dto.request.AccountPersonalDetailsDto;
@@ -21,11 +20,13 @@ import pl.lodz.p.ks.it.neighbourlyhelp.dto.request.PasswordChangeOtherRequestDto
 import pl.lodz.p.ks.it.neighbourlyhelp.dto.request.PasswordChangeRequestDto;
 import pl.lodz.p.ks.it.neighbourlyhelp.dto.request.PasswordResetRequestDto;
 import pl.lodz.p.ks.it.neighbourlyhelp.endpoint.AccountEndpoint;
-import pl.lodz.p.ks.it.neighbourlyhelp.endpoint.RoleEndpoint;
+import pl.lodz.p.ks.it.neighbourlyhelp.entities.AccessLevel;
+import pl.lodz.p.ks.it.neighbourlyhelp.entities.ThemeColor;
 import pl.lodz.p.ks.it.neighbourlyhelp.exception.AppBaseException;
 import pl.lodz.p.ks.it.neighbourlyhelp.exception.AppRuntimeException;
 import pl.lodz.p.ks.it.neighbourlyhelp.validator.ConfirmationToken;
 import pl.lodz.p.ks.it.neighbourlyhelp.validator.Email;
+import pl.lodz.p.ks.it.neighbourlyhelp.validator.Language;
 
 import javax.annotation.security.PermitAll;
 import javax.validation.Valid;
@@ -38,13 +39,12 @@ import java.util.List;
 public class AccountController {
 
     private final AccountEndpoint accountEndpoint;
-    private final RoleEndpoint roleEndpoint;
 
     private final MessageSigner messageSigner;
 
     @PostMapping(value = "/register")
     @PermitAll
-    public void registerAccount(RegisterAccountDto registerAccountDto) throws AppBaseException {
+    public void registerAccount(@NotNull @Valid @RequestBody RegisterAccountDto registerAccountDto) throws AppBaseException {
         accountEndpoint.registerAccount(registerAccountDto);
     }
 
@@ -58,22 +58,6 @@ public class AccountController {
     @Secured("ROLE_ADMIN")
     public List<AccountDto> getAllAccounts() throws AppBaseException {
         return accountEndpoint.getAllAccounts();
-    }
-
-    @PatchMapping("/user/{email}/grant/{accessLevel}")
-    @Secured("ROLE_ADMIN")
-    public void grantAccessLevel(@RequestHeader("If-Match") String ifMatch,
-                                 @NotNull @Email @PathVariable(name = "email") @Valid String email,
-                                 @NotNull @PathVariable(name = "accessLevel") AccessLevel accessLevel) throws AppBaseException {
-        roleEndpoint.grantAccessLevel(email, accessLevel, ifMatch);
-    }
-
-    @PatchMapping("/user/{email}/revoke/{accessLevel}")
-    @Secured("ROLE_ADMIN")
-    public void revokeAccessLevel(@RequestHeader("If-Match") String ifMatch,
-                                  @NotNull @Email @PathVariable(name = "email") @Valid String email,
-                                  @NotNull @PathVariable(name = "accessLevel") AccessLevel accessLevel) throws AppBaseException {
-        roleEndpoint.revokeAccessLevel(email, accessLevel, ifMatch);
     }
 
     @PatchMapping("/{email}/block")
@@ -92,7 +76,7 @@ public class AccountController {
 
     @GetMapping("/user")
     @Secured({"ROLE_ADMIN", "ROLE_MODERATOR", "ROLE_CLIENT"})
-    public ResponseEntity<AccountDto> getAccountInformation() {
+    public ResponseEntity<AccountDto> getAccountInformation() throws AppBaseException {
         AccountDto ownAccountInfo = accountEndpoint.getOwnAccountInfo();
         return ResponseEntity.ok()
                 .eTag(messageSigner.sign(ownAccountInfo))
@@ -101,7 +85,7 @@ public class AccountController {
 
     @GetMapping("/user/{email}")
     @Secured("ROLE_ADMIN")
-    public ResponseEntity<AccountDto> getAccountInformationByEmail(@NotNull @Email @PathVariable("email") @Valid String email) {
+    public ResponseEntity<AccountDto> getAccountInformationByEmail(@NotNull @Email @PathVariable("email") @Valid String email) throws AppBaseException {
         AccountDto accountInfo = accountEndpoint.getAccountInfo(email);
         return ResponseEntity.ok()
                 .eTag(messageSigner.sign(accountInfo))
@@ -148,5 +132,26 @@ public class AccountController {
                                     @NotNull @Valid @RequestBody PasswordChangeOtherRequestDto passwordChangeOtherDto)
             throws AppBaseException, AppRuntimeException {
         accountEndpoint.changeOtherPassword(passwordChangeOtherDto, ifMatch);
+    }
+
+    @PatchMapping("/self/edit/language/{lang}")
+    @Secured({"ROLE_ADMIN", "ROLE_MODERATOR", "ROLE_CLIENT"})
+    public void editOwnLanguage(@RequestHeader("If-Match") String ifMatch,
+                                @NotNull @Language @PathVariable("lang") @Valid String language) throws AppBaseException {
+        accountEndpoint.editOwnLanguage(language, ifMatch);
+    }
+
+    @PatchMapping("/theme/{themeColor}")
+    @Secured({"ROLE_ADMIN", "ROLE_MODERATOR", "ROLE_CLIENT"})
+    public void changeThemeColor(@RequestHeader("If-Match") String ifMatch,
+                                 @NotNull @PathVariable("themeColor") ThemeColor themeColor) throws AppBaseException {
+        accountEndpoint.changeThemeColor(themeColor, ifMatch);
+    }
+
+    @GetMapping("changeOwnAccessLevel/{accessLevel}")
+    @Secured({"ROLE_ADMIN", "ROLE_MODERATOR", "ROLE_CLIENT"})
+    public ResponseEntity<?> changeOwnAccessLevel(@NotNull @PathVariable("accessLevel") AccessLevel accessLevel) throws AppBaseException {
+        accountEndpoint.changeOwnAccessLevel(accessLevel);
+        return ResponseEntity.noContent().build();
     }
 }

@@ -7,6 +7,8 @@ import pl.lodz.p.ks.it.neighbourlyhelp.dto.request.AccountPersonalDetailsDto;
 import pl.lodz.p.ks.it.neighbourlyhelp.dto.request.PasswordChangeOtherRequestDto;
 import pl.lodz.p.ks.it.neighbourlyhelp.dto.request.PasswordChangeRequestDto;
 import pl.lodz.p.ks.it.neighbourlyhelp.dto.request.PasswordResetRequestDto;
+import pl.lodz.p.ks.it.neighbourlyhelp.entities.AccessLevel;
+import pl.lodz.p.ks.it.neighbourlyhelp.entities.ThemeColor;
 import pl.lodz.p.ks.it.neighbourlyhelp.exception.AppBaseException;
 
 import javax.annotation.security.PermitAll;
@@ -30,7 +32,7 @@ public interface AccountEndpoint {
 
     //    @PreAuthorize("isAnonymous()")
     // TODO: 16.02.2022 repair security annotation
-    void updateValidAuth(String email, String ipAddress, Date authDate);
+    void updateValidAuth(String email, String ipAddress, Date authDate) throws AppBaseException;
 
     @Secured("ROLE_ADMIN")
     void blockAccount(String email, String ifMatch) throws AppBaseException;
@@ -39,10 +41,10 @@ public interface AccountEndpoint {
     void unblockAccount(String email, String ifMatch) throws AppBaseException;
 
     @Secured({"ROLE_ADMIN", "ROLE_MODERATOR", "ROLE_CLIENT"})
-    AccountDto getOwnAccountInfo();
+    AccountDto getOwnAccountInfo() throws AppBaseException;
 
     @Secured("ROLE_ADMIN")
-    AccountDto getAccountInfo(String email);
+    AccountDto getAccountInfo(String email) throws AppBaseException;
 
     @Secured({"ROLE_ADMIN", "ROLE_MODERATOR", "ROLE_CLIENT"})
     void editOwnAccountDetails(AccountPersonalDetailsDto accountPersonalDetailsDto, String ifMatch) throws AppBaseException;
@@ -62,4 +64,10 @@ public interface AccountEndpoint {
     void sendResetPasswordRequest(String email) throws AppBaseException;
 
     void changeOtherPassword(PasswordChangeOtherRequestDto passwordChangeOtherDto, String ifMatch) throws AppBaseException;
+
+    void editOwnLanguage(String language, String ifMatch) throws AppBaseException;
+
+    void changeThemeColor(ThemeColor themeColor, String ifMatch) throws AppBaseException;
+
+    void changeOwnAccessLevel(AccessLevel accessLevel) throws AppBaseException;
 }

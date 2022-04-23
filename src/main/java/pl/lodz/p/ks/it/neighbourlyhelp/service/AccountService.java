@@ -10,10 +10,11 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
-import pl.lodz.p.ks.it.neighbourlyhelp.domain.user.Account;
 import pl.lodz.p.ks.it.neighbourlyhelp.dto.request.PasswordChangeRequestDto;
+import pl.lodz.p.ks.it.neighbourlyhelp.entities.Account;
 import pl.lodz.p.ks.it.neighbourlyhelp.entities.ClientData;
 import pl.lodz.p.ks.it.neighbourlyhelp.entities.ConfirmationToken;
+import pl.lodz.p.ks.it.neighbourlyhelp.entities.ThemeColor;
 import pl.lodz.p.ks.it.neighbourlyhelp.entities.TokenType;
 import pl.lodz.p.ks.it.neighbourlyhelp.exception.AccountException;
 import pl.lodz.p.ks.it.neighbourlyhelp.exception.AppBaseException;
@@ -44,11 +45,15 @@ public class AccountService {
     private String INCORRECT_LOGIN_ATTEMPTS_LIMIT;
 
     // TODO: 12.02.2022 add permission annotation
-    public Account getAccountByEmail(String email) throws UsernameNotFoundException {
-        return (Account) userService.loadUserByUsername(email);
+    public Account getAccountByEmail(String email) throws AppBaseException {
+        try {
+            return (Account) userService.loadUserByUsername(email);
+        } catch (UsernameNotFoundException e) {
+            throw NotFoundException.accountNotFound(e);
+        }
     }
 
-    @Secured("ROLE_ADMIN")
+    @Secured("ROLE_ADMIN") // TODO: 20.04.2022 exception when sth went wrong
     public List<Account> getAllAccounts() {
         return accountRepository.findAll();
     }
@@ -176,7 +181,7 @@ public class AccountService {
     }
 
     @Secured({"ROLE_ADMIN", "ROLE_MODERATOR", "ROLE_CLIENT"})
-    public void editAccountDetails(Account account) {
+    public void editAccountDetails(Account account) throws AppBaseException {
         account.setModifiedBy(getExecutorAccount());
         accountRepository.saveAndFlush(account);
     }
@@ -240,11 +245,30 @@ public class AccountService {
         changePassword(editAccount, givenPassword);
     }
 
-    public Account getExecutorAccount() {
+    @Secured({"ROLE_ADMIN", "ROLE_MODERATOR", "ROLE_CLIENT"})
+    public void changeAccountLanguage(Account account, String language) {
+        account.setLanguage(language);
+        account.setModifiedBy(account);
+
+        accountRepository.saveAndFlush(account);
+    }
+
+    public void changeThemeColor(Account account, ThemeColor themeColor) throws AppBaseException {
+        if (account.getThemeColor().equals(themeColor)) {
+            throw AccountException.themeAlreadySet();
+        }
+
+        account.setThemeColor(themeColor);
+        account.setModifiedBy(account);
+
+        accountRepository.saveAndFlush(account);
+    }
+
+    public Account getExecutorAccount() throws AppBaseException {
         return getAccountByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
     }
 
-    private void changePassword(Account account, String newPassword) {
+    private void changePassword(Account account, String newPassword) throws AppBaseException {
         String encodedPassword = bCryptPasswordEncoder.encode(newPassword);
         account.setPassword(encodedPassword);
         account.setModifiedBy(getExecutorAccount());

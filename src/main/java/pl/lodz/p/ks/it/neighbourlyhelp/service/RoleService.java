@@ -3,10 +3,9 @@ package pl.lodz.p.ks.it.neighbourlyhelp.service;
 import lombok.AllArgsConstructor;
 import lombok.extern.java.Log;
 import org.springframework.security.access.annotation.Secured;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
-import pl.lodz.p.ks.it.neighbourlyhelp.domain.user.AccessLevel;
-import pl.lodz.p.ks.it.neighbourlyhelp.domain.user.Account;
+import pl.lodz.p.ks.it.neighbourlyhelp.entities.AccessLevel;
+import pl.lodz.p.ks.it.neighbourlyhelp.entities.Account;
 import pl.lodz.p.ks.it.neighbourlyhelp.entities.AdminData;
 import pl.lodz.p.ks.it.neighbourlyhelp.entities.ClientData;
 import pl.lodz.p.ks.it.neighbourlyhelp.entities.ModeratorData;
@@ -120,8 +119,8 @@ public class RoleService {
         throw RoleException.unsupportedAccessLevel();
     }
 
-    private Account getEditorName() {
-        return accountService.getAccountByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
+    private Account getEditorName() throws AppBaseException {
+        return accountService.getExecutorAccount();
     }
 
 }

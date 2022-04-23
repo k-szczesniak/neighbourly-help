@@ -2,10 +2,10 @@ package pl.lodz.p.ks.it.neighbourlyhelp.mapper;
 
 import org.mapstruct.Mapper;
 import org.mapstruct.MappingTarget;
-import pl.lodz.p.ks.it.neighbourlyhelp.domain.user.Account;
 import pl.lodz.p.ks.it.neighbourlyhelp.dto.AccountDto;
 import pl.lodz.p.ks.it.neighbourlyhelp.dto.RegisterAccountDto;
 import pl.lodz.p.ks.it.neighbourlyhelp.dto.request.AccountPersonalDetailsDto;
+import pl.lodz.p.ks.it.neighbourlyhelp.entities.Account;
 import pl.lodz.p.ks.it.neighbourlyhelp.exception.AppBaseException;
 
 @Mapper
