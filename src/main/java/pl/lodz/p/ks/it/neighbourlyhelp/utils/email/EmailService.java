@@ -1,6 +1,6 @@
 package pl.lodz.p.ks.it.neighbourlyhelp.utils.email;
 
-import pl.lodz.p.ks.it.neighbourlyhelp.entities.Account;
+import pl.lodz.p.ks.it.neighbourlyhelp.clientmodule.domain.Account;
 import pl.lodz.p.ks.it.neighbourlyhelp.exception.AppBaseException;
 
 public interface EmailService {

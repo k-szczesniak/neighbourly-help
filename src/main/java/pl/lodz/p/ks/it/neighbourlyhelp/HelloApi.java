@@ -4,9 +4,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
-import pl.lodz.p.ks.it.neighbourlyhelp.entities.Account;
+import pl.lodz.p.ks.it.neighbourlyhelp.clientmodule.domain.Account;
+import pl.lodz.p.ks.it.neighbourlyhelp.clientmodule.service.AccountService;
 import pl.lodz.p.ks.it.neighbourlyhelp.exception.AppBaseException;
-import pl.lodz.p.ks.it.neighbourlyhelp.service.AccountService;
 import pl.lodz.p.ks.it.neighbourlyhelp.utils.email.EmailService;
 
 import java.util.Random;

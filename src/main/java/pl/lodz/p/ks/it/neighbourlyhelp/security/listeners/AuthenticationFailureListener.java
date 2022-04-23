@@ -6,7 +6,7 @@ import org.springframework.context.ApplicationListener;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.event.AuthenticationFailureBadCredentialsEvent;
 import org.springframework.stereotype.Component;
-import pl.lodz.p.ks.it.neighbourlyhelp.endpoint.AccountEndpoint;
+import pl.lodz.p.ks.it.neighbourlyhelp.clientmodule.endpoint.AccountEndpoint;
 import pl.lodz.p.ks.it.neighbourlyhelp.exception.AppBaseException;
 
 import javax.servlet.http.HttpServletRequest;
