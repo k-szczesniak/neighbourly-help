@@ -1,4 +1,4 @@
-package pl.lodz.p.ks.it.neighbourlyhelp.validator;
+package pl.lodz.p.ks.it.neighbourlyhelp.validator.clientmodule;
 
 import javax.validation.Constraint;
 import javax.validation.Payload;

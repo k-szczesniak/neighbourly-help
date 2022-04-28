@@ -4,11 +4,11 @@ import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.ToString;
-import pl.lodz.p.ks.it.neighbourlyhelp.validator.ContactNumber;
-import pl.lodz.p.ks.it.neighbourlyhelp.validator.Email;
-import pl.lodz.p.ks.it.neighbourlyhelp.validator.Firstname;
-import pl.lodz.p.ks.it.neighbourlyhelp.validator.Lastname;
-import pl.lodz.p.ks.it.neighbourlyhelp.validator.Password;
+import pl.lodz.p.ks.it.neighbourlyhelp.validator.clientmodule.ContactNumber;
+import pl.lodz.p.ks.it.neighbourlyhelp.validator.clientmodule.Email;
+import pl.lodz.p.ks.it.neighbourlyhelp.validator.clientmodule.Firstname;
+import pl.lodz.p.ks.it.neighbourlyhelp.validator.clientmodule.Lastname;
+import pl.lodz.p.ks.it.neighbourlyhelp.validator.clientmodule.Password;
 
 @Getter
 @AllArgsConstructor

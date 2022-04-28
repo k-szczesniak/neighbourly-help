@@ -72,5 +72,8 @@ public class Advert extends AbstractEntity {
     private Account publisher;
 
 
-
+    @Setter
+    @JoinColumn(name = "city_id", referencedColumnName = "id")
+    @ManyToOne(cascade = CascadeType.REFRESH, optional = false)
+    private City city;
 }

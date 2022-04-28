@@ -3,9 +3,9 @@ package pl.lodz.p.ks.it.neighbourlyhelp.clientmodule.dto.request;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import pl.lodz.p.ks.it.neighbourlyhelp.validator.ContactNumber;
-import pl.lodz.p.ks.it.neighbourlyhelp.validator.Firstname;
-import pl.lodz.p.ks.it.neighbourlyhelp.validator.Lastname;
+import pl.lodz.p.ks.it.neighbourlyhelp.validator.clientmodule.ContactNumber;
+import pl.lodz.p.ks.it.neighbourlyhelp.validator.clientmodule.Firstname;
+import pl.lodz.p.ks.it.neighbourlyhelp.validator.clientmodule.Lastname;
 
 import javax.validation.constraints.NotNull;
 

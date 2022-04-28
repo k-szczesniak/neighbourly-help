@@ -1,4 +1,6 @@
-package pl.lodz.p.ks.it.neighbourlyhelp.validator;
+package pl.lodz.p.ks.it.neighbourlyhelp.validator.advertmodule;
+
+import pl.lodz.p.ks.it.neighbourlyhelp.validator.RegularExpression;
 
 import javax.validation.Constraint;
 import javax.validation.Payload;
@@ -10,16 +12,15 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Adnotacja służąca do weryfikacji nr telefonu.
+ * Adnotacja służąca do weryfikacji uproszczonej nazwy miasta.
  */
-
 @Constraint(validatedBy = {})
 @Target({ElementType.FIELD, ElementType.PARAMETER})
 @Retention(RetentionPolicy.RUNTIME)
-@Size(min = 9, max = 15, message = "validation.contactnumber.size")
-@Pattern(regexp = RegularExpression.CONTACT_NUMBER, message = "validation.contactnumber.pattern")
-public @interface ContactNumber {
-    String message() default "validation.contactnumber.pattern";
+@Size(min = 2, max = 31, message = "validation.city.name.size")
+@Pattern(regexp = RegularExpression.SIMPLY_CITY_NAME, message = "validation.city.name.pattern")
+public @interface SimplyCityName {
+    String message() default "validation.city.name.pattern";
 
     Class<?>[] groups() default {};
 

@@ -5,11 +5,11 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import pl.lodz.p.ks.it.neighbourlyhelp.utils.consistency.Signable;
-import pl.lodz.p.ks.it.neighbourlyhelp.validator.ContactNumber;
-import pl.lodz.p.ks.it.neighbourlyhelp.validator.Email;
-import pl.lodz.p.ks.it.neighbourlyhelp.validator.Firstname;
-import pl.lodz.p.ks.it.neighbourlyhelp.validator.Language;
-import pl.lodz.p.ks.it.neighbourlyhelp.validator.Lastname;
+import pl.lodz.p.ks.it.neighbourlyhelp.validator.clientmodule.ContactNumber;
+import pl.lodz.p.ks.it.neighbourlyhelp.validator.clientmodule.Email;
+import pl.lodz.p.ks.it.neighbourlyhelp.validator.clientmodule.Firstname;
+import pl.lodz.p.ks.it.neighbourlyhelp.validator.clientmodule.Language;
+import pl.lodz.p.ks.it.neighbourlyhelp.validator.clientmodule.Lastname;
 
 import java.util.Date;
 

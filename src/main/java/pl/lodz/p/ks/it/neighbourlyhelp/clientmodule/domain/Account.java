@@ -10,12 +10,12 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import pl.lodz.p.ks.it.neighbourlyhelp.clientmodule.domain.enums.ThemeColor;
 import pl.lodz.p.ks.it.neighbourlyhelp.utils.common.AbstractEntity;
-import pl.lodz.p.ks.it.neighbourlyhelp.validator.ContactNumber;
-import pl.lodz.p.ks.it.neighbourlyhelp.validator.Email;
-import pl.lodz.p.ks.it.neighbourlyhelp.validator.Firstname;
-import pl.lodz.p.ks.it.neighbourlyhelp.validator.Language;
-import pl.lodz.p.ks.it.neighbourlyhelp.validator.Lastname;
-import pl.lodz.p.ks.it.neighbourlyhelp.validator.Password;
+import pl.lodz.p.ks.it.neighbourlyhelp.validator.clientmodule.ContactNumber;
+import pl.lodz.p.ks.it.neighbourlyhelp.validator.clientmodule.Email;
+import pl.lodz.p.ks.it.neighbourlyhelp.validator.clientmodule.Firstname;
+import pl.lodz.p.ks.it.neighbourlyhelp.validator.clientmodule.Language;
+import pl.lodz.p.ks.it.neighbourlyhelp.validator.clientmodule.Lastname;
+import pl.lodz.p.ks.it.neighbourlyhelp.validator.clientmodule.Password;
 
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;

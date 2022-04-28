@@ -9,4 +9,6 @@ public class RegularExpression {
     public static final String LANGUAGE_CODE = "[a-z]{2}";
     public static final String CONFIRMATION_TOKEN = "^[0-9a-fA-F]{8}\\-[0-9a-fA-F]{4}\\-[0-9a-fA-F]{4}\\-[0-9a-fA-F]{4}\\-[0-9a-fA-F]{12}$";
 
+    public static final String CITY_NAME = "^[A-ZĆŁÓŚŹŻ\\s]{1}[A-Za-ząęćńóśłźż \\-]+$";
+    public static final String SIMPLY_CITY_NAME = "^[a-z \\-]+$";
 }

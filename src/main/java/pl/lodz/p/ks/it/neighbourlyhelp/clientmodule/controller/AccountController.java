@@ -24,9 +24,9 @@ import pl.lodz.p.ks.it.neighbourlyhelp.clientmodule.endpoint.AccountEndpoint;
 import pl.lodz.p.ks.it.neighbourlyhelp.exception.AppBaseException;
 import pl.lodz.p.ks.it.neighbourlyhelp.exception.AppRuntimeException;
 import pl.lodz.p.ks.it.neighbourlyhelp.utils.consistency.MessageSigner;
-import pl.lodz.p.ks.it.neighbourlyhelp.validator.ConfirmationToken;
-import pl.lodz.p.ks.it.neighbourlyhelp.validator.Email;
-import pl.lodz.p.ks.it.neighbourlyhelp.validator.Language;
+import pl.lodz.p.ks.it.neighbourlyhelp.validator.clientmodule.ConfirmationToken;
+import pl.lodz.p.ks.it.neighbourlyhelp.validator.clientmodule.Email;
+import pl.lodz.p.ks.it.neighbourlyhelp.validator.clientmodule.Language;
 
 import javax.annotation.security.PermitAll;
 import javax.validation.Valid;
