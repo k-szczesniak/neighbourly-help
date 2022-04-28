@@ -20,4 +20,6 @@ public interface EmailService {
     void sendUnlockAccountEmail(Account account) throws AppBaseException;
 
     void sendResetPasswordEmail(Account account, String resetPasswordLink) throws AppBaseException;
+
+    void sendDeleteUnconfirmedAccountEmail(Account account) throws AppBaseException;
 }
