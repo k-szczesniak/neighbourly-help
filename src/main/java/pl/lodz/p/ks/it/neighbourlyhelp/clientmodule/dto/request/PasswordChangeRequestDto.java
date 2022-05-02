@@ -4,7 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
-import pl.lodz.p.ks.it.neighbourlyhelp.validator.Password;
+import pl.lodz.p.ks.it.neighbourlyhelp.validator.clientmodule.Password;
 
 import javax.validation.constraints.NotNull;
 

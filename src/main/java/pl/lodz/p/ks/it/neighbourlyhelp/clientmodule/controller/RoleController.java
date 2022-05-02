@@ -14,7 +14,7 @@ import pl.lodz.p.ks.it.neighbourlyhelp.clientmodule.dto.RolesDto;
 import pl.lodz.p.ks.it.neighbourlyhelp.clientmodule.endpoint.RoleEndpoint;
 import pl.lodz.p.ks.it.neighbourlyhelp.exception.AppBaseException;
 import pl.lodz.p.ks.it.neighbourlyhelp.utils.consistency.MessageSigner;
-import pl.lodz.p.ks.it.neighbourlyhelp.validator.Email;
+import pl.lodz.p.ks.it.neighbourlyhelp.validator.clientmodule.Email;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;

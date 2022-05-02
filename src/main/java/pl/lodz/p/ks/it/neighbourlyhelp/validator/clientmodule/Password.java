@@ -1,25 +1,19 @@
-package pl.lodz.p.ks.it.neighbourlyhelp.validator;
+package pl.lodz.p.ks.it.neighbourlyhelp.validator.clientmodule;
 
 import javax.validation.Constraint;
 import javax.validation.Payload;
-import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-/**
- * Adnotacja służąca do weryfikacji kodu językowego.
- */
-
 @Constraint(validatedBy = {})
 @Target({ElementType.FIELD, ElementType.PARAMETER})
 @Retention(RetentionPolicy.RUNTIME)
-@Size(min = 2, max = 2, message = "validation.language.size")
-@Pattern(regexp = RegularExpression.LANGUAGE_CODE, message = "validation.language.pattern")
-public @interface Language {
-    String message() default "validation.language.pattern";
+@Size(min = 8, max = 64, message = "validation.password.size")
+public @interface Password {
+    String message() default "validation.password.size";
 
     Class<?>[] groups() default {};
 

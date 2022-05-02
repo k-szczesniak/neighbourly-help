@@ -1,4 +1,6 @@
-package pl.lodz.p.ks.it.neighbourlyhelp.validator;
+package pl.lodz.p.ks.it.neighbourlyhelp.validator.advertmodule;
+
+import pl.lodz.p.ks.it.neighbourlyhelp.validator.RegularExpression;
 
 import javax.validation.Constraint;
 import javax.validation.Payload;
@@ -10,15 +12,15 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Adnotacja służąca do weryfikacji kodu weryfikacjnego.
+ * Adnotacja służąca do weryfikacji nazwy miasta.
  */
 @Constraint(validatedBy = {})
 @Target({ElementType.FIELD, ElementType.PARAMETER})
 @Retention(RetentionPolicy.RUNTIME)
-@Size(min = 1, max = 128, message = "validation.pencode.size")
-@Pattern(regexp = RegularExpression.CONFIRMATION_TOKEN, message = "validation.pencode.pattern")
-public @interface ConfirmationToken {
-    String message() default "validation.pencode.size";
+@Size(min = 2, max = 31, message = "validation.city.name.size")
+@Pattern(regexp = RegularExpression.CITY_NAME, message = "validation.city.name.pattern")
+public @interface CityName {
+    String message() default "validation.city.name.pattern";
 
     Class<?>[] groups() default {};
 
