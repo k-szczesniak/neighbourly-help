@@ -33,19 +33,19 @@ public class Contract extends AbstractEntity {
 
 
 
+    @Setter
+    @JoinColumn(name = "advert_id", referencedColumnName = "id", nullable = true)
+    @ManyToOne(optional = true)
     private Advert advert;
 
 
     @NotNull
-    @Getter
     @Setter
     @Basic(optional = false)
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "start_date")
     private Date startDate;
 
-    @NotNull
-    @Getter
     @Setter
     @Basic(optional = false)
     @Temporal(TemporalType.TIMESTAMP)
@@ -56,12 +56,10 @@ public class Contract extends AbstractEntity {
 
 
 
-    @Getter
     @Setter
     @OneToOne(cascade = {CascadeType.MERGE, CascadeType.REFRESH}, mappedBy = "contract")
     private Rating rating;
 
-    @Getter
     @Setter
     @JoinColumn(name = "executor_id", referencedColumnName = "id", updatable = false)
     @ManyToOne(cascade = CascadeType.REFRESH, optional = false)

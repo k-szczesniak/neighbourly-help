@@ -24,9 +24,9 @@ import javax.validation.constraints.Size;
 import static pl.lodz.p.ks.it.neighbourlyhelp.advertmodule.domain.Rating.CONTRACT_ID_CONSTRAINT;
 
 @Getter
-@Table(name = "rating", uniqueConstraints = {@UniqueConstraint(name = CONTRACT_ID_CONSTRAINT, columnNames = {"booking_id"})},
+@Table(name = "rating", uniqueConstraints = {@UniqueConstraint(name = CONTRACT_ID_CONSTRAINT, columnNames = {"contract_id"})},
         indexes = {
-                @Index(name = "ix_rating_booking_id", columnList = "booking_id"),
+                @Index(name = "ix_rating_contract_id", columnList = "contract_id"),
                 @Index(name = "ix_rating_created_by", columnList = "created_by"),
                 @Index(name = "ix_rating_modified_by", columnList = "modified_by"),
         })
