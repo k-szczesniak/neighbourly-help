@@ -104,6 +104,19 @@ public class EmailServiceImpl implements EmailService {
         send(account.getEmail(), resetSubject, resetContent);
     }
 
+    /**
+     * Wysyła wiadomość email z informacją o usunięciu nieaktywowanego konta użytkownika.
+     *
+     * @param account odbiorca wiadomości.
+     * @throws AppBaseException wysyłanie wiadomości email nie powiodło się.
+     */
+    public void sendDeleteUnconfirmedAccountEmail(Account account) throws AppBaseException {
+        String lang = account.getLanguage();
+        String deleteUnconfirmedContent = mailConfig.getContentForType(lang, MailConfig.MailType.DELETE_UNCONFIRMED, account.getEmail());
+        String deleteUnconfirmedSubject = mailConfig.getSubjectForType(lang, MailConfig.MailType.DELETE_UNCONFIRMED);
+        send(account.getEmail(), deleteUnconfirmedSubject, deleteUnconfirmedContent);
+    }
+
     private String wrapCode(String code, String endpoint) {
         return String.join("/", mailConfig.getMailUri(), endpoint, code);
     }
