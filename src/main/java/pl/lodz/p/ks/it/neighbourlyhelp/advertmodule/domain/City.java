@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.Setter;
+import pl.lodz.p.ks.it.neighbourlyhelp.clientmodule.domain.ModeratorData;
 import pl.lodz.p.ks.it.neighbourlyhelp.validator.advertmodule.CityName;
 import pl.lodz.p.ks.it.neighbourlyhelp.validator.advertmodule.SimplyCityName;
 
@@ -57,4 +58,8 @@ public class City {
     @Setter
     @OneToMany(cascade = CascadeType.REFRESH, mappedBy = "city")
     private Set<Advert> advertList = new HashSet<>();
+
+    @Setter
+    @OneToMany(mappedBy = "city", cascade = {CascadeType.MERGE, CascadeType.REFRESH})
+    private Set<ModeratorData> moderatorDataList = new HashSet<>();
 }

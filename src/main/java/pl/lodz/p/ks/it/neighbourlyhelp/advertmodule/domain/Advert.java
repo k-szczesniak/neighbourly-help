@@ -5,7 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.Setter;
-import pl.lodz.p.ks.it.neighbourlyhelp.advertmodule.domain.enums.AdvertStatus;
+import pl.lodz.p.ks.it.neighbourlyhelp.advertmodule.domain.enums.AdvertCategory;
 import pl.lodz.p.ks.it.neighbourlyhelp.clientmodule.domain.Account;
 import pl.lodz.p.ks.it.neighbourlyhelp.utils.common.AbstractEntity;
 import pl.lodz.p.ks.it.neighbourlyhelp.validator.advertmodule.Description;
@@ -85,8 +85,8 @@ public class Advert extends AbstractEntity {
 
     @Setter
     @Enumerated(EnumType.ORDINAL)
-    @Column(name = "status", nullable = false)
-    private AdvertStatus status;
+    @Column(name = "category", nullable = false)
+    private AdvertCategory category;
 
     @Setter
     @JoinColumn(name = "account_id", referencedColumnName = "id", updatable = false)

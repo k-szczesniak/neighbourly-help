@@ -2,6 +2,7 @@ package pl.lodz.p.ks.it.neighbourlyhelp.advertmodule.domain;
 
 import lombok.Getter;
 import lombok.Setter;
+import pl.lodz.p.ks.it.neighbourlyhelp.advertmodule.domain.enums.ContractStatus;
 import pl.lodz.p.ks.it.neighbourlyhelp.clientmodule.domain.Account;
 import pl.lodz.p.ks.it.neighbourlyhelp.utils.common.AbstractEntity;
 
@@ -9,6 +10,8 @@ import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -54,6 +57,12 @@ public class Contract extends AbstractEntity {
 
 
 
+
+
+    @Setter
+    @Enumerated(EnumType.ORDINAL)
+    @Column(name = "status", nullable = false)
+    private ContractStatus status;
 
 
     @Setter

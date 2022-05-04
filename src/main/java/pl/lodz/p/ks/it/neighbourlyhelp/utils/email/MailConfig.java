@@ -62,8 +62,6 @@ public class MailConfig {
         RESET_PASSWORD("password_reset"),
         DELETE_UNCONFIRMED("delete"),
         ACTIVATE_ACCOUNT("activate"),
-        CHANGE_EMAIL("email_change"),
-        ADMIN_LOGIN("admin_login"),
         ACTIVATE_SUCCESS("activate_success"),
         CANCEL_RESERVATION("cancel_reservation"),
         CREATE_RESERVATION("create_reservation");
