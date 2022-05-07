@@ -70,6 +70,10 @@ public class Contract extends AbstractEntity {
     private Rating rating;
 
     @Setter
+    @OneToOne(cascade = {CascadeType.MERGE, CascadeType.REFRESH}, mappedBy = "contract")
+    private LoyaltyPoint loyaltyPoint;
+
+    @Setter
     @JoinColumn(name = "executor_id", referencedColumnName = "id", updatable = false)
     @ManyToOne(cascade = CascadeType.REFRESH, optional = false)
     private Account executor;

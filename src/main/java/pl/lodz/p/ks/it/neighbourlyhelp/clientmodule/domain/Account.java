@@ -8,6 +8,8 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import pl.lodz.p.ks.it.neighbourlyhelp.advertmodule.domain.Advert;
+import pl.lodz.p.ks.it.neighbourlyhelp.advertmodule.domain.Contract;
 import pl.lodz.p.ks.it.neighbourlyhelp.clientmodule.domain.enums.ThemeColor;
 import pl.lodz.p.ks.it.neighbourlyhelp.utils.common.AbstractEntity;
 import pl.lodz.p.ks.it.neighbourlyhelp.validator.clientmodule.ContactNumber;
@@ -156,6 +158,16 @@ public class Account extends AbstractEntity implements UserDetails {
     @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH, CascadeType.REMOVE},
             mappedBy = "account", orphanRemoval = true)
     private Set<ConfirmationToken> confirmationTokenList = new HashSet<>();
+
+    @Setter
+    @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE},
+            mappedBy = "publisher", fetch = FetchType.LAZY)
+    private Set<Advert> advertList = new HashSet<>();
+
+    @Setter
+    @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE},
+            mappedBy = "executor", fetch = FetchType.LAZY)
+    private Set<Contract> contractList = new HashSet<>();
 
     @Setter
     @Min(value = 0)
