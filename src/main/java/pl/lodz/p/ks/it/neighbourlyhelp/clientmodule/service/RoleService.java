@@ -1,9 +1,10 @@
 package pl.lodz.p.ks.it.neighbourlyhelp.clientmodule.service;
 
-import lombok.AllArgsConstructor;
-import lombok.extern.java.Log;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 import pl.lodz.p.ks.it.neighbourlyhelp.clientmodule.domain.Account;
 import pl.lodz.p.ks.it.neighbourlyhelp.clientmodule.domain.AdminData;
 import pl.lodz.p.ks.it.neighbourlyhelp.clientmodule.domain.ClientData;
@@ -20,8 +21,8 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
-@AllArgsConstructor
-@Log
+@RequiredArgsConstructor
+@Transactional(propagation = Propagation.MANDATORY)
 public class RoleService {
 
     private final AccountRepository accountRepository;
