@@ -20,10 +20,11 @@ import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.Size;
 
-import static pl.lodz.p.ks.it.neighbourlyhelp.advertmodule.domain.Rating.CONTRACT_ID_CONSTRAINT;
 
 @Getter
-@Table(name = "loyalty_point", uniqueConstraints = {@UniqueConstraint(name = CONTRACT_ID_CONSTRAINT, columnNames = {"contract_id"})},
+@Table(name = LoyaltyPoint.TABLE_NAME, uniqueConstraints = {
+        @UniqueConstraint(name = LoyaltyPoint.CONTRACT_ID_CONSTRAINT, columnNames = {"contract_id"})
+},
         indexes = {
                 @Index(name = "ix_loyalty_point_contract_id", columnList = "contract_id"),
                 @Index(name = "ix_loyalty_point_created_by", columnList = "created_by"),
@@ -32,6 +33,10 @@ import static pl.lodz.p.ks.it.neighbourlyhelp.advertmodule.domain.Rating.CONTRAC
 @NoArgsConstructor
 @Entity
 public class LoyaltyPoint extends AbstractEntity {
+
+    public static final String TABLE_NAME = "loyalty_point";
+
+    public static final String CONTRACT_ID_CONSTRAINT = "uk_loyalty_point_contract_id";
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seq_loyalty_point_id")

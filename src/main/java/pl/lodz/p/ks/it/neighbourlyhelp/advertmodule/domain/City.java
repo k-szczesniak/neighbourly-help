@@ -5,6 +5,7 @@ import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.Setter;
 import pl.lodz.p.ks.it.neighbourlyhelp.clientmodule.domain.ModeratorData;
+import pl.lodz.p.ks.it.neighbourlyhelp.utils.common.AbstractEntity;
 import pl.lodz.p.ks.it.neighbourlyhelp.validator.advertmodule.CityName;
 import pl.lodz.p.ks.it.neighbourlyhelp.validator.advertmodule.SimplyCityName;
 
@@ -18,18 +19,22 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.util.HashSet;
 import java.util.Set;
 
-@Entity
-@Table(name = City.TABLE_NAME)
+@Table(name = City.TABLE_NAME, uniqueConstraints = {
+        @UniqueConstraint(name = City.CITY_CONSTRAINT, columnNames = {"name"})
+})
 @NoArgsConstructor
 @Getter
-public class City {
+@Entity
+public class City extends AbstractEntity {
 
     public static final String TABLE_NAME = "city";
+    public static final String CITY_CONSTRAINT = "uk_city_name";
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seq_city_id")
