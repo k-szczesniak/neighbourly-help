@@ -5,7 +5,7 @@ import org.mapstruct.Mapping;
 import org.mapstruct.Mappings;
 import pl.lodz.p.ks.it.neighbourlyhelp.clientmodule.domain.Account;
 import pl.lodz.p.ks.it.neighbourlyhelp.clientmodule.domain.Role;
-import pl.lodz.p.ks.it.neighbourlyhelp.clientmodule.dto.RolesDto;
+import pl.lodz.p.ks.it.neighbourlyhelp.clientmodule.dto.response.RolesDto;
 
 import java.util.List;
 import java.util.stream.Collectors;

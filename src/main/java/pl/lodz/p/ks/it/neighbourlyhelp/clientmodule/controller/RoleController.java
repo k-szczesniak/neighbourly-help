@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import pl.lodz.p.ks.it.neighbourlyhelp.clientmodule.domain.enums.AccessLevel;
-import pl.lodz.p.ks.it.neighbourlyhelp.clientmodule.dto.RolesDto;
+import pl.lodz.p.ks.it.neighbourlyhelp.clientmodule.dto.response.RolesDto;
 import pl.lodz.p.ks.it.neighbourlyhelp.clientmodule.endpoint.RoleEndpoint;
 import pl.lodz.p.ks.it.neighbourlyhelp.exception.AppBaseException;
 import pl.lodz.p.ks.it.neighbourlyhelp.utils.consistency.MessageSigner;

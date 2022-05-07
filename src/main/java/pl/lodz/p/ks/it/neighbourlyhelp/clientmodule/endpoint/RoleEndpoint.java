@@ -2,7 +2,7 @@ package pl.lodz.p.ks.it.neighbourlyhelp.clientmodule.endpoint;
 
 import org.springframework.security.access.annotation.Secured;
 import pl.lodz.p.ks.it.neighbourlyhelp.clientmodule.domain.enums.AccessLevel;
-import pl.lodz.p.ks.it.neighbourlyhelp.clientmodule.dto.RolesDto;
+import pl.lodz.p.ks.it.neighbourlyhelp.clientmodule.dto.response.RolesDto;
 import pl.lodz.p.ks.it.neighbourlyhelp.exception.AppBaseException;
 
 public interface RoleEndpoint {

@@ -8,7 +8,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import pl.lodz.p.ks.it.neighbourlyhelp.clientmodule.domain.Account;
 import pl.lodz.p.ks.it.neighbourlyhelp.clientmodule.domain.enums.AccessLevel;
-import pl.lodz.p.ks.it.neighbourlyhelp.clientmodule.dto.RolesDto;
+import pl.lodz.p.ks.it.neighbourlyhelp.clientmodule.dto.response.RolesDto;
 import pl.lodz.p.ks.it.neighbourlyhelp.clientmodule.service.AccountService;
 import pl.lodz.p.ks.it.neighbourlyhelp.clientmodule.service.RoleService;
 import pl.lodz.p.ks.it.neighbourlyhelp.exception.AppBaseException;
