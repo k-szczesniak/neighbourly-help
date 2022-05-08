@@ -12,5 +12,6 @@ public class RegularExpression {
     public static final String CITY_NAME = "^[A-ZĆŁÓŚŹŻ\\s]{1}[A-Za-ząęćńóśłźż \\-]+$";
     public static final String SIMPLY_CITY_NAME = "^[a-z \\-]+$";
 
+    public static final String TITLE = "^[A-ZĆŁÓŚŹŻ\\s]{1}[A-Za-ząęćńóśłźż \\-]+$";
     public static final String DESCRIPTION = "^[A-Za-z0-9ĄĘĆŃÓŚŁŹŻąęćńóśłźż.,:\\s\\-]+$";
 }
