@@ -30,9 +30,10 @@ import java.util.Date;
 
 @Table(name = Contract.TABLE_NAME, indexes = {
         @Index(name = "ix_contract_executor_id", columnList = "executor_id"),
-        @Index(name = "ix_contract_created_by", columnList = "created_by")
+        @Index(name = "ix_contract_created_by", columnList = "created_by"),
+        @Index(name = "ix_contract_advert_id", columnList = "advert_id")
 })
-@Check(constraints = "startDate < finishDate")
+@Check(constraints = "start_date < finish_date")
 @Getter
 @NoArgsConstructor
 @Entity
@@ -48,8 +49,9 @@ public class Contract extends AbstractEntity {
 
 
 
+    @Getter
     @Setter
-    @OneToOne(cascade = {CascadeType.MERGE, CascadeType.REFRESH}, mappedBy = "contract")
+    @OneToOne(optional = false)
     private Advert advert;
 
 

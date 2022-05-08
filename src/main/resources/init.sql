@@ -14,3 +14,11 @@ VALUES ('ADMIN', -1, now(), null, 1, true, -1, null, -1),
 
 INSERT INTO admin_data(id) values (-1);
 INSERT INTO client_data(id) values (-2);
+
+INSERT INTO city(id, creation_date, modification_date, version, name, simply_name, created_by, modified_by)
+VALUES (-1, now(), null, 0, 'Łódź', 'lodz', -1, null),
+       (-2, now(), null, 0, 'Białystok', 'bialystok', -1, null);
+
+INSERT INTO advert(id, creation_date, modification_date, version, category, delete, description, publication_date, title, created_by, modified_by, city_id, publisher_id)
+VALUES (-1, now(), null, 0, 1, false, 'Szukam osoby która posprząta mi biurko. Będę niezwykle wdzięczny za szybką pomoc',
+        now(), 'Sprzątanie biurka', -1, null, -1, -1);

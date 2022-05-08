@@ -36,9 +36,8 @@ import java.util.Date;
 @NoArgsConstructor
 @Table(name = Advert.TABLE_NAME, indexes = {
         @Index(columnList = "id", name = "ix_advert_id", unique = true),
-        @Index(columnList = "account_id", name = "ix_advert_publisher_id"),
-        @Index(columnList = "city_id", name = "ix_advert_city_id"),
-        @Index(columnList = "contract_id", name = "ix_advert_contract_id")
+        @Index(columnList = "publisher_id", name = "ix_advert_publisher_id"),
+        @Index(columnList = "city_id", name = "ix_advert_city_id")
 })
 @Entity
 public class Advert extends AbstractEntity {
@@ -84,7 +83,7 @@ public class Advert extends AbstractEntity {
     private AdvertCategory category;
 
     @Setter
-    @JoinColumn(name = "account_id", referencedColumnName = "id", updatable = false)
+    @JoinColumn(name = "publisher_id", referencedColumnName = "id", updatable = false)
     @ManyToOne(cascade = CascadeType.REFRESH, optional = false)
     private Account publisher;
 
@@ -99,8 +98,7 @@ public class Advert extends AbstractEntity {
     @ManyToOne(cascade = CascadeType.REFRESH, optional = false)
     private City city;
 
-    @Getter
     @Setter
-    @OneToOne()
+    @OneToOne(cascade = {CascadeType.MERGE, CascadeType.REFRESH}, mappedBy = "advert")
     private Contract contract;
 }
