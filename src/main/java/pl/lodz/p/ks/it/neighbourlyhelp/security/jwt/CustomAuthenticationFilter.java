@@ -9,7 +9,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import pl.lodz.p.ks.it.neighbourlyhelp.clientmodule.dto.LoginCredentials;
+import pl.lodz.p.ks.it.neighbourlyhelp.clientmodule.dto.request.LoginCredentials;
 import pl.lodz.p.ks.it.neighbourlyhelp.clientmodule.dto.response.AuthTokenResponseDto;
 import pl.lodz.p.ks.it.neighbourlyhelp.exception.AppRuntimeException;
 

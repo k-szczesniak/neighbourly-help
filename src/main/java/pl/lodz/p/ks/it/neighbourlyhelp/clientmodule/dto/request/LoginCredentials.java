@@ -1,4 +1,4 @@
-package pl.lodz.p.ks.it.neighbourlyhelp.clientmodule.dto;
+package pl.lodz.p.ks.it.neighbourlyhelp.clientmodule.dto.request;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;

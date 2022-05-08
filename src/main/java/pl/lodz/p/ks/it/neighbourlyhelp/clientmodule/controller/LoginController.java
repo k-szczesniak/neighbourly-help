@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import pl.lodz.p.ks.it.neighbourlyhelp.clientmodule.dto.LoginCredentials;
+import pl.lodz.p.ks.it.neighbourlyhelp.clientmodule.dto.request.LoginCredentials;
 import pl.lodz.p.ks.it.neighbourlyhelp.clientmodule.dto.response.AuthTokenResponseDto;
 import pl.lodz.p.ks.it.neighbourlyhelp.clientmodule.endpoint.AuthEndpoint;
 import pl.lodz.p.ks.it.neighbourlyhelp.exception.AppBaseException;

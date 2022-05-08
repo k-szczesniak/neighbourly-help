@@ -24,7 +24,9 @@ import javax.validation.constraints.Size;
 import static pl.lodz.p.ks.it.neighbourlyhelp.advertmodule.domain.Rating.CONTRACT_ID_CONSTRAINT;
 
 @Getter
-@Table(name = "rating", uniqueConstraints = {@UniqueConstraint(name = CONTRACT_ID_CONSTRAINT, columnNames = {"contract_id"})},
+@Table(name = Rating.TABLE_NAME, uniqueConstraints = {
+        @UniqueConstraint(name = CONTRACT_ID_CONSTRAINT, columnNames = {"contract_id"})
+},
         indexes = {
                 @Index(name = "ix_rating_contract_id", columnList = "contract_id"),
                 @Index(name = "ix_rating_created_by", columnList = "created_by"),
@@ -33,6 +35,8 @@ import static pl.lodz.p.ks.it.neighbourlyhelp.advertmodule.domain.Rating.CONTRAC
 @NoArgsConstructor
 @Entity
 public class Rating extends AbstractEntity {
+
+    public static final String TABLE_NAME = "rating";
 
     public static final String CONTRACT_ID_CONSTRAINT = "uk_rating_contract_id";
 

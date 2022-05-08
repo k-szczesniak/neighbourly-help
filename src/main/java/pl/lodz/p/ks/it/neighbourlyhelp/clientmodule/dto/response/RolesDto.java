@@ -1,4 +1,4 @@
-package pl.lodz.p.ks.it.neighbourlyhelp.clientmodule.dto;
+package pl.lodz.p.ks.it.neighbourlyhelp.clientmodule.dto.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

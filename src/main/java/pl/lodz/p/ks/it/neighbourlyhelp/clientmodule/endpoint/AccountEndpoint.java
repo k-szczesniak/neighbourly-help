@@ -3,12 +3,12 @@ package pl.lodz.p.ks.it.neighbourlyhelp.clientmodule.endpoint;
 import org.springframework.security.access.annotation.Secured;
 import pl.lodz.p.ks.it.neighbourlyhelp.clientmodule.domain.enums.AccessLevel;
 import pl.lodz.p.ks.it.neighbourlyhelp.clientmodule.domain.enums.ThemeColor;
-import pl.lodz.p.ks.it.neighbourlyhelp.clientmodule.dto.AccountDto;
-import pl.lodz.p.ks.it.neighbourlyhelp.clientmodule.dto.RegisterAccountDto;
 import pl.lodz.p.ks.it.neighbourlyhelp.clientmodule.dto.request.AccountPersonalDetailsDto;
 import pl.lodz.p.ks.it.neighbourlyhelp.clientmodule.dto.request.PasswordChangeOtherRequestDto;
 import pl.lodz.p.ks.it.neighbourlyhelp.clientmodule.dto.request.PasswordChangeRequestDto;
 import pl.lodz.p.ks.it.neighbourlyhelp.clientmodule.dto.request.PasswordResetRequestDto;
+import pl.lodz.p.ks.it.neighbourlyhelp.clientmodule.dto.request.RegisterAccountDto;
+import pl.lodz.p.ks.it.neighbourlyhelp.clientmodule.dto.response.AccountDto;
 import pl.lodz.p.ks.it.neighbourlyhelp.exception.AppBaseException;
 
 import javax.annotation.security.PermitAll;

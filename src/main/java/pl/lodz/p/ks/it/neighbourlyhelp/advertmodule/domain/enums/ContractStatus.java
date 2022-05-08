@@ -1,7 +1,8 @@
 package pl.lodz.p.ks.it.neighbourlyhelp.advertmodule.domain.enums;
 
-public enum AdvertStatus {
+public enum ContractStatus {
     NEW,
     IN_PROGRESS,
+    TO_APPROVE,
     FINISHED
 }

@@ -5,7 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.Setter;
-import pl.lodz.p.ks.it.neighbourlyhelp.advertmodule.domain.enums.AdvertStatus;
+import pl.lodz.p.ks.it.neighbourlyhelp.advertmodule.domain.enums.AdvertCategory;
 import pl.lodz.p.ks.it.neighbourlyhelp.clientmodule.domain.Account;
 import pl.lodz.p.ks.it.neighbourlyhelp.utils.common.AbstractEntity;
 import pl.lodz.p.ks.it.neighbourlyhelp.validator.advertmodule.Description;
@@ -22,6 +22,7 @@ import javax.persistence.Id;
 import javax.persistence.Index;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -34,21 +35,15 @@ import java.util.Date;
 @EqualsAndHashCode
 @NoArgsConstructor
 @Table(name = Advert.TABLE_NAME, indexes = {
-        @Index(columnList = "id", name = Advert.IX_ADVERT_ID, unique = true),
-//        @Index(columnList = "email", name = Advert.IX_UQ_EMAIL, unique = true),
+        @Index(columnList = "id", name = "ix_advert_id", unique = true),
+        @Index(columnList = "account_id", name = "ix_advert_publisher_id"),
+        @Index(columnList = "city_id", name = "ix_advert_city_id"),
+        @Index(columnList = "contract_id", name = "ix_advert_contract_id")
 })
-//, uniqueConstraints = {
-//        @UniqueConstraint(columnNames = {"email"}, name = Advert.IX_UQ_EMAIL),
-//        @UniqueConstraint(columnNames = {"contact_number"}, name = Advert.IX_UQ_CONTACT_NUMBER)
-//})
 @Entity
 public class Advert extends AbstractEntity {
 
     public static final String TABLE_NAME = "advert";
-    public static final String IX_ADVERT_ID = "ix_advert_id";
-//    public static final String IX_UQ_EMAIL = "ix_uq_email";
-//    public static final String IX_UQ_CONTACT_NUMBER = "ix_uq_contact_number";
-//    public static final String ROLE_PREFIX = "ROLE_";
 
     @Id
     @SequenceGenerator(
@@ -85,8 +80,8 @@ public class Advert extends AbstractEntity {
 
     @Setter
     @Enumerated(EnumType.ORDINAL)
-    @Column(name = "status", nullable = false)
-    private AdvertStatus status;
+    @Column(name = "category", nullable = false)
+    private AdvertCategory category;
 
     @Setter
     @JoinColumn(name = "account_id", referencedColumnName = "id", updatable = false)
@@ -103,4 +98,9 @@ public class Advert extends AbstractEntity {
     @JoinColumn(name = "city_id", referencedColumnName = "id")
     @ManyToOne(cascade = CascadeType.REFRESH, optional = false)
     private City city;
+
+    @Getter
+    @Setter
+    @OneToOne()
+    private Contract contract;
 }
