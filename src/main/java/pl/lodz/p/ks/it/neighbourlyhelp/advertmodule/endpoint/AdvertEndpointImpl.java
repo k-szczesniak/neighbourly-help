@@ -12,6 +12,7 @@ import pl.lodz.p.ks.it.neighbourlyhelp.advertmodule.dto.response.AdvertResponseD
 import pl.lodz.p.ks.it.neighbourlyhelp.advertmodule.mapper.AdvertMapper;
 import pl.lodz.p.ks.it.neighbourlyhelp.advertmodule.service.AdvertService;
 import pl.lodz.p.ks.it.neighbourlyhelp.exception.AppBaseException;
+import pl.lodz.p.ks.it.neighbourlyhelp.utils.common.AbstractEndpoint;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -19,7 +20,7 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 @Transactional(propagation = Propagation.REQUIRES_NEW)
-public class AdvertEndpointImpl implements AdvertEndpoint {
+public class AdvertEndpointImpl extends AbstractEndpoint implements AdvertEndpoint {
 
     private final AdvertService advertService;
 
@@ -30,12 +31,23 @@ public class AdvertEndpointImpl implements AdvertEndpoint {
     }
 
     @Override
-    @Secured({"ROLE_ADMIN", "ROLE_MODERATOR", "ROLE_CLIENT"})
+    @Secured({"ROLE_ADMIN"})
     public List<AdvertResponseDto> getAllAdverts() {
-        AdvertMapper advertMapper = Mappers.getMapper(AdvertMapper.class);
         List<Advert> advertList = advertService.getAllAdverts();
+        return toListOfAdvertResponseDto(advertList);
+    }
 
-        return advertList.stream().map(advertMapper::toAdvertDto).collect(Collectors.toList());
+    @Override
+    public List<AdvertResponseDto> getAllApprovedAdverts() {
+        List<Advert> advertList = advertService.getAllApprovedAdverts();
+        return toListOfAdvertResponseDto(advertList);
+    }
+
+    @Override
+    @Secured({"ROLE_MODERATOR"})
+    public List<AdvertResponseDto> getAllWaitingToApprove() {
+        List<Advert> advertList = advertService.getAllWaitingToApproveAdverts(getEmail());
+        return toListOfAdvertResponseDto(advertList);
     }
 
     @Override
@@ -44,5 +56,43 @@ public class AdvertEndpointImpl implements AdvertEndpoint {
         Advert advert = new Advert();
         Mappers.getMapper(AdvertMapper.class).toAdvert(newAdvert, advert);
         advertService.addAdvert(advert, newAdvert.getCityId());
+    }
+
+    @Override
+    @Secured({"ROLE_MODERATOR"})
+    public void approveAdvert(Long advertId, String ifMatch) throws AppBaseException {
+        Advert advertToApprove = advertService.get(advertId);
+
+        AdvertResponseDto advertIntegrity = Mappers.getMapper(AdvertMapper.class).toAdvertDto(advertToApprove);
+        verifyIntegrity(advertIntegrity, ifMatch);
+
+        advertService.approveAdvert(advertToApprove, getEmail());
+    }
+
+    @Override
+    @Secured({"ROLE_MODERATOR"})
+    public void disapproveAdvert(Long advertId, String ifMatch) throws AppBaseException {
+        Advert advertToDisapprove = advertService.get(advertId);
+
+        AdvertResponseDto advertIntegrity = Mappers.getMapper(AdvertMapper.class).toAdvertDto(advertToDisapprove);
+        verifyIntegrity(advertIntegrity, ifMatch);
+
+        advertService.disapproveAdvert(advertToDisapprove, getEmail());
+    }
+
+    @Override
+    @Secured({"ROLE_CLIENT"})
+    public void deleteAdvert(Long advertId, String ifMatch) throws AppBaseException {
+        Advert advertToDelete = advertService.get(advertId);
+
+        AdvertResponseDto advertIntegrity = Mappers.getMapper(AdvertMapper.class).toAdvertDto(advertToDelete);
+        verifyIntegrity(advertIntegrity, ifMatch);
+
+        advertService.deleteAdvert(advertToDelete, getEmail());
+    }
+
+    private List<AdvertResponseDto> toListOfAdvertResponseDto(List<Advert> advertList) {
+        AdvertMapper advertMapper = Mappers.getMapper(AdvertMapper.class);
+        return advertList.stream().map(advertMapper::toAdvertDto).collect(Collectors.toList());
     }
 }

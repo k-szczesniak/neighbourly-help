@@ -88,12 +88,6 @@ public class Advert extends AbstractEntity {
     private Account publisher;
 
     @Setter
-    @NotNull
-    @Basic(optional = false)
-    @Column(name = "delete")
-    private boolean delete = false;
-
-    @Setter
     @JoinColumn(name = "city_id", referencedColumnName = "id")
     @ManyToOne(cascade = CascadeType.REFRESH, optional = false)
     private City city;
@@ -101,4 +95,10 @@ public class Advert extends AbstractEntity {
     @Setter
     @OneToOne(cascade = {CascadeType.MERGE, CascadeType.REFRESH}, mappedBy = "advert")
     private Contract contract;
+
+    @Setter
+    @NotNull
+    @Basic(optional = false)
+    @Column(name = "approved")
+    private boolean approved = false;
 }

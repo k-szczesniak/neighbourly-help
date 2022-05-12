@@ -12,5 +12,15 @@ public interface AdvertEndpoint {
 
     List<AdvertResponseDto> getAllAdverts();
 
+    List<AdvertResponseDto> getAllApprovedAdverts();
+
+    List<AdvertResponseDto> getAllWaitingToApprove();
+
     void addAdvert(NewAdvertRequestDto newAdvert) throws AppBaseException;
+
+    void deleteAdvert(Long advertId, String ifMatch) throws AppBaseException;
+
+    void approveAdvert(Long advertId, String ifMatch) throws AppBaseException;
+
+    void disapproveAdvert(Long advertId, String ifMatch) throws AppBaseException;
 }
