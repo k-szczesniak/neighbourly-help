@@ -1,7 +1,10 @@
 package pl.lodz.p.ks.it.neighbourlyhelp.validator;
 
+import org.apache.commons.lang3.StringUtils;
+
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -11,6 +14,8 @@ import java.util.stream.Stream;
  */
 public class ValueOfEnumValidator implements ConstraintValidator<ValueOfEnum, CharSequence> {
     private List<String> acceptedValues;
+
+    private static final String SPLIT_CHAR = ",";
 
     @Override
     public void initialize(ValueOfEnum constraintAnnotation) {
@@ -27,6 +32,8 @@ public class ValueOfEnumValidator implements ConstraintValidator<ValueOfEnum, Ch
             return true;
         }
 
-        return acceptedValues.contains(value.toString());
+        return Arrays.stream(StringUtils.defaultString(value.toString()).split(SPLIT_CHAR))
+                .filter(StringUtils::isNotEmpty)
+                .allMatch(x -> acceptedValues.contains(x));
     }
 }
