@@ -1,5 +1,6 @@
 package pl.lodz.p.ks.it.neighbourlyhelp.advertmodule.endpoint;
 
+import pl.lodz.p.ks.it.neighbourlyhelp.advertmodule.dto.request.EditAdvertRequestDto;
 import pl.lodz.p.ks.it.neighbourlyhelp.advertmodule.dto.request.NewAdvertRequestDto;
 import pl.lodz.p.ks.it.neighbourlyhelp.advertmodule.dto.response.AdvertResponseDto;
 import pl.lodz.p.ks.it.neighbourlyhelp.exception.AppBaseException;
@@ -23,4 +24,6 @@ public interface AdvertEndpoint {
     void approveAdvert(Long advertId, String ifMatch) throws AppBaseException;
 
     void disapproveAdvert(Long advertId, String ifMatch) throws AppBaseException;
+
+    void updateAdvert(EditAdvertRequestDto editedAdvert, String ifMatch) throws AppBaseException;
 }

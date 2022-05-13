@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import pl.lodz.p.ks.it.neighbourlyhelp.advertmodule.domain.Advert;
+import pl.lodz.p.ks.it.neighbourlyhelp.advertmodule.dto.request.EditAdvertRequestDto;
 import pl.lodz.p.ks.it.neighbourlyhelp.advertmodule.dto.request.NewAdvertRequestDto;
 import pl.lodz.p.ks.it.neighbourlyhelp.advertmodule.dto.response.AdvertResponseDto;
 import pl.lodz.p.ks.it.neighbourlyhelp.advertmodule.mapper.AdvertMapper;
@@ -19,7 +20,7 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-@Transactional(propagation = Propagation.REQUIRES_NEW)
+@Transactional(propagation = Propagation.REQUIRES_NEW, rollbackFor = AppBaseException.class)
 public class AdvertEndpointImpl extends AbstractEndpoint implements AdvertEndpoint {
 
     private final AdvertService advertService;
@@ -56,6 +57,19 @@ public class AdvertEndpointImpl extends AbstractEndpoint implements AdvertEndpoi
         Advert advert = new Advert();
         Mappers.getMapper(AdvertMapper.class).toAdvert(newAdvert, advert);
         advertService.addAdvert(advert, newAdvert.getCityId());
+    }
+
+    @Override
+    @Secured({"ROLE_CLIENT"})
+    public void updateAdvert(EditAdvertRequestDto editedAdvert, String ifMatch) throws AppBaseException {
+        Advert advert = advertService.get(editedAdvert.getId());
+
+        AdvertResponseDto advertIntegrity = Mappers.getMapper(AdvertMapper.class).toAdvertDto(advert);
+        verifyIntegrity(advertIntegrity, ifMatch);
+
+        Mappers.getMapper(AdvertMapper.class).toAdvert(editedAdvert, advert);
+
+        advertService.updateAdvert(advert, editedAdvert.getCityId(), getEmail());
     }
 
     @Override

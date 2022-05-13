@@ -8,10 +8,12 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import pl.lodz.p.ks.it.neighbourlyhelp.advertmodule.dto.request.EditAdvertRequestDto;
 import pl.lodz.p.ks.it.neighbourlyhelp.advertmodule.dto.request.NewAdvertRequestDto;
 import pl.lodz.p.ks.it.neighbourlyhelp.advertmodule.dto.response.AdvertResponseDto;
 import pl.lodz.p.ks.it.neighbourlyhelp.advertmodule.endpoint.AdvertEndpoint;
@@ -62,6 +64,13 @@ public class AdvertController {
     @Secured({"ROLE_CLIENT"})
     public void addAdvert(@NotNull @Valid @RequestBody NewAdvertRequestDto newAdvert) throws AppBaseException {
         advertEndpoint.addAdvert(newAdvert);
+    }
+
+    @PutMapping
+    @Secured({"ROLE_CLIENT"})
+    public void editAdvert(@RequestHeader("If-Match") String ifMatch,
+                           @NotNull @Valid @RequestBody EditAdvertRequestDto editedAdvert) throws AppBaseException {
+        advertEndpoint.updateAdvert(editedAdvert, ifMatch);
     }
 
     @PatchMapping("approve/{id}")

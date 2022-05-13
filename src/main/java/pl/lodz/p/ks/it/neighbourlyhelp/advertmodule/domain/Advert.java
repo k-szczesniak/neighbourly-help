@@ -1,6 +1,5 @@
 package pl.lodz.p.ks.it.neighbourlyhelp.advertmodule.domain;
 
-import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
@@ -37,7 +36,6 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Getter
-@EqualsAndHashCode
 @NoArgsConstructor
 @Table(name = Advert.TABLE_NAME, indexes = {
         @Index(columnList = "id", name = "ix_advert_id", unique = true),

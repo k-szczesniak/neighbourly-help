@@ -7,6 +7,7 @@ import org.mapstruct.MappingTarget;
 import org.mapstruct.Mappings;
 import pl.lodz.p.ks.it.neighbourlyhelp.advertmodule.domain.Advert;
 import pl.lodz.p.ks.it.neighbourlyhelp.advertmodule.domain.enums.PreferableSettlement;
+import pl.lodz.p.ks.it.neighbourlyhelp.advertmodule.dto.request.EditAdvertRequestDto;
 import pl.lodz.p.ks.it.neighbourlyhelp.advertmodule.dto.request.NewAdvertRequestDto;
 import pl.lodz.p.ks.it.neighbourlyhelp.advertmodule.dto.response.AdvertResponseDto;
 
@@ -25,6 +26,8 @@ public interface AdvertMapper {
     AdvertResponseDto toAdvertDto(Advert advert);
 
     void toAdvert(NewAdvertRequestDto newAdvert, @MappingTarget Advert advert);
+
+    void toAdvert(EditAdvertRequestDto editedAdvert, @MappingTarget Advert advert);
 
     default Set<PreferableSettlement> toPreferableSettlementList(String value) {
         return Arrays.stream(StringUtils.defaultString(value).split(","))

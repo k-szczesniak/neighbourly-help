@@ -1,6 +1,5 @@
 package pl.lodz.p.ks.it.neighbourlyhelp.clientmodule.domain;
 
-import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -46,7 +45,6 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Getter
-@EqualsAndHashCode
 @NoArgsConstructor
 @Table(name = Account.TABLE_NAME, indexes = {
         @Index(columnList = "id", name = Account.IX_ACCOUNT_ID, unique = true),

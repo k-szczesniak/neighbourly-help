@@ -23,7 +23,7 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-@Transactional(propagation = Propagation.MANDATORY)
+@Transactional(propagation = Propagation.MANDATORY, rollbackFor = AppBaseException.class)
 public class AdvertService {
 
     private final AdvertRepository advertRepository;
@@ -72,6 +72,18 @@ public class AdvertService {
         advert.setPublisher(publisher);
         advert.setCreatedBy(publisher);
         advert.setPublicationDate(new Date());
+        advertRepository.saveAndFlush(advert);
+    }
+
+    @Secured({"ROLE_CLIENT"})
+    public void updateAdvert(Advert advert, @NotNull Long cityId, String executorEmail) throws AppBaseException {
+        conditionVerifier(advert.getContract() != null, AdvertException.advertIsInProgress());
+        conditionVerifier(!advert.getPublisher().getEmail().equals(executorEmail), AdvertException.accessDenied());
+
+        advert.setModifiedBy(accountService.getExecutorAccount());
+        advert.setCity(cityService.get(cityId));
+        advert.setApproved(false);
+
         advertRepository.saveAndFlush(advert);
     }
 
