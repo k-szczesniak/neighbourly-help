@@ -30,7 +30,7 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-@Transactional(propagation = Propagation.REQUIRES_NEW)
+@Transactional(propagation = Propagation.REQUIRES_NEW, rollbackFor = AppBaseException.class)
 @Log
 public class AccountEndpointImpl extends AbstractEndpoint implements AccountEndpoint {
 

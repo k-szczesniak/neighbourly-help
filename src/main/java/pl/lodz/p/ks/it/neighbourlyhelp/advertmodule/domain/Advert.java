@@ -1,11 +1,12 @@
 package pl.lodz.p.ks.it.neighbourlyhelp.advertmodule.domain;
 
-import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.Setter;
 import pl.lodz.p.ks.it.neighbourlyhelp.advertmodule.domain.enums.AdvertCategory;
+import pl.lodz.p.ks.it.neighbourlyhelp.advertmodule.domain.enums.PreferableSettlement;
+import pl.lodz.p.ks.it.neighbourlyhelp.advertmodule.mapper.PreferableSettlementsConverter;
 import pl.lodz.p.ks.it.neighbourlyhelp.clientmodule.domain.Account;
 import pl.lodz.p.ks.it.neighbourlyhelp.utils.common.AbstractEntity;
 import pl.lodz.p.ks.it.neighbourlyhelp.validator.advertmodule.Description;
@@ -13,6 +14,7 @@ import pl.lodz.p.ks.it.neighbourlyhelp.validator.advertmodule.Description;
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
+import javax.persistence.Convert;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -30,15 +32,15 @@ import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 @Getter
-@EqualsAndHashCode
 @NoArgsConstructor
 @Table(name = Advert.TABLE_NAME, indexes = {
         @Index(columnList = "id", name = "ix_advert_id", unique = true),
-        @Index(columnList = "account_id", name = "ix_advert_publisher_id"),
-        @Index(columnList = "city_id", name = "ix_advert_city_id"),
-        @Index(columnList = "contract_id", name = "ix_advert_contract_id")
+        @Index(columnList = "publisher_id", name = "ix_advert_publisher_id"),
+        @Index(columnList = "city_id", name = "ix_advert_city_id")
 })
 @Entity
 public class Advert extends AbstractEntity {
@@ -84,23 +86,26 @@ public class Advert extends AbstractEntity {
     private AdvertCategory category;
 
     @Setter
-    @JoinColumn(name = "account_id", referencedColumnName = "id", updatable = false)
+    @JoinColumn(name = "publisher_id", referencedColumnName = "id", updatable = false)
     @ManyToOne(cascade = CascadeType.REFRESH, optional = false)
     private Account publisher;
-
-    @Setter
-    @NotNull
-    @Basic(optional = false)
-    @Column(name = "delete")
-    private boolean delete = false;
 
     @Setter
     @JoinColumn(name = "city_id", referencedColumnName = "id")
     @ManyToOne(cascade = CascadeType.REFRESH, optional = false)
     private City city;
 
-    @Getter
     @Setter
-    @OneToOne()
+    @OneToOne(cascade = {CascadeType.MERGE, CascadeType.REFRESH}, mappedBy = "advert")
     private Contract contract;
+
+    @Column(name = "preferable_settlement_list", nullable = false)
+    @Convert(converter = PreferableSettlementsConverter.class)
+    private Set<PreferableSettlement> preferableSettlementList = new HashSet<>();
+
+    @Setter
+    @NotNull
+    @Basic(optional = false)
+    @Column(name = "approved")
+    private boolean approved = false;
 }

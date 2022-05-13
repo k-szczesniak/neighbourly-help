@@ -8,6 +8,7 @@ public class NotFoundException extends AppBaseException {
     private static final String ACCOUNT_NOT_FOUND = "exception.not_found_exception.account_not_found";
     private static final String CONFIRMATION_TOKEN_NOT_FOUND = "exception.not_found_exception.confirmation_token_not_found";
     private static final String CITY_NOT_FOUND = "exception.not_found_exception.city_not_found";
+    private static final String ADVERT_NOT_FOUND = "exception.not_found_exception.advert_not_found";
 
     private NotFoundException(String message, Throwable cause) {
         super(message, cause);
@@ -52,6 +53,10 @@ public class NotFoundException extends AppBaseException {
 
     public static NotFoundException cityNotFound() {
         return new NotFoundException(CITY_NOT_FOUND);
+    }
+
+    public static NotFoundException advertNotFound() {
+        return new NotFoundException(ADVERT_NOT_FOUND);
     }
 
 }

@@ -1,5 +1,6 @@
 package pl.lodz.p.ks.it.neighbourlyhelp.clientmodule.domain;
 
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -19,6 +20,7 @@ import javax.persistence.Table;
 //        @Index(name = "ix_manager_data_hotel_id", columnList = "hotel_id")
 //})
 @DiscriminatorValue("MODERATOR")
+@EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor
 public class ModeratorData extends Role {
 

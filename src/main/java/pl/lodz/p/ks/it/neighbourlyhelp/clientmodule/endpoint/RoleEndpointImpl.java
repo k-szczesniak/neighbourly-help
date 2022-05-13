@@ -17,7 +17,7 @@ import pl.lodz.p.ks.it.neighbourlyhelp.utils.common.AbstractEndpoint;
 
 @Service
 @RequiredArgsConstructor
-@Transactional(propagation = Propagation.REQUIRES_NEW)
+@Transactional(propagation = Propagation.REQUIRES_NEW, rollbackFor = AppBaseException.class)
 public class RoleEndpointImpl extends AbstractEndpoint implements RoleEndpoint {
 
     private final RoleService roleService;

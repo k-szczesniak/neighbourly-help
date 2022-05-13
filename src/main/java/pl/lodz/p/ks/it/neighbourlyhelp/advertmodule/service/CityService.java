@@ -16,7 +16,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-@Transactional(propagation = Propagation.MANDATORY)
+@Transactional(propagation = Propagation.MANDATORY, rollbackFor = AppBaseException.class)
 public class CityService {
 
     private final CityRepository cityRepository;

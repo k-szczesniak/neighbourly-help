@@ -22,7 +22,7 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-@Transactional(propagation = Propagation.MANDATORY)
+@Transactional(propagation = Propagation.MANDATORY, rollbackFor = AppBaseException.class)
 public class RoleService {
 
     private final AccountRepository accountRepository;
