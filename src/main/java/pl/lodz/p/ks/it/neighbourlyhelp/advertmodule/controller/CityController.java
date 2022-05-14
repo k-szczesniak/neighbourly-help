@@ -65,4 +65,12 @@ public class CityController {
             throws AppBaseException {
         cityEndpoint.addModeratorToCity(cityId, moderatorEmail, ifMatch);
     }
+
+    @PatchMapping("/delete/{moderatorEmail}")
+    @Secured({"ROLE_ADMIN"})
+    public void deleteModeratorFromCity(@RequestHeader("If-Match") String ifMatch,
+                                   @PathVariable("moderatorEmail") String moderatorEmail)
+            throws AppBaseException {
+        cityEndpoint.deleteModeratorFromCity(moderatorEmail, ifMatch);
+    }
 }

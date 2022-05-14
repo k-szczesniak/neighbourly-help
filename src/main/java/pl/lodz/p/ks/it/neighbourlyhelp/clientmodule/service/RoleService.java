@@ -5,6 +5,7 @@ import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+import pl.lodz.p.ks.it.neighbourlyhelp.advertmodule.domain.City;
 import pl.lodz.p.ks.it.neighbourlyhelp.clientmodule.domain.Account;
 import pl.lodz.p.ks.it.neighbourlyhelp.clientmodule.domain.AdminData;
 import pl.lodz.p.ks.it.neighbourlyhelp.clientmodule.domain.ClientData;
@@ -104,6 +105,7 @@ public class RoleService {
         emailService.sendGrantAccessLevelEmail(account, accessLevel.toString());
     }
 
+    @Secured({"ROLE_ADMIN"})
     public ModeratorData getModeratorData(String moderatorEmail) throws AppBaseException {
         Account account = accountService.getAccountByEmail(moderatorEmail);
 
@@ -114,6 +116,25 @@ public class RoleService {
                 .orElseThrow(NotFoundException::enabledModeratorRoleNotFound);
 
         return getById(moderatorRole.getId());
+    }
+
+    @Secured({"ROLE_ADMIN"})
+    public ModeratorData findCityByModeratorEmail(String moderatorEmail) throws AppBaseException {
+        City city = moderatorDataRepository.findCityByModeratorEmail(moderatorEmail)
+                .orElseThrow(NotFoundException::moderatorAssignedCityNotFound);
+
+        return city.getModeratorDataList().stream()
+                .filter(manager -> manager.getAccount().getEmail().equals(moderatorEmail))
+                .findAny()
+                .orElseThrow(NotFoundException::moderatorAssignedCityNotFound);
+    }
+
+    @Secured({"ROLE_ADMIN"})
+    public void deleteModeratorFromCity(ModeratorData moderatorData) throws AppBaseException {
+        moderatorData.setCity(null);
+        moderatorData.setModifiedBy(accountService.getExecutorAccount());
+
+        moderatorDataRepository.saveAndFlush(moderatorData);
     }
 
     private ModeratorData getById(Long roleId) {
@@ -142,5 +163,4 @@ public class RoleService {
     private Account getEditorName() throws AppBaseException {
         return accountService.getExecutorAccount();
     }
-
 }

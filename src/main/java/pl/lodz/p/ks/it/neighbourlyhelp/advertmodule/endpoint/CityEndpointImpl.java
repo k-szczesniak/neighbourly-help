@@ -71,4 +71,15 @@ public class CityEndpointImpl extends AbstractEndpoint implements CityEndpoint {
 
         cityService.addModeratorToCity(cityId, moderatorData);
     }
+
+    @Override
+    @Secured({"ROLE_ADMIN"})
+    public void deleteModeratorFromCity(String moderatorEmail, String ifMatch) throws AppBaseException {
+        ModeratorData moderatorData = roleService.findCityByModeratorEmail(moderatorEmail);
+        ModeratorDataDto moderatorDataDto = Mappers.getMapper(RoleMapper.class).toModeratorDataDto(moderatorData);
+
+        verifyIntegrity(moderatorDataDto, ifMatch);
+
+        roleService.deleteModeratorFromCity(moderatorData);
+    }
 }

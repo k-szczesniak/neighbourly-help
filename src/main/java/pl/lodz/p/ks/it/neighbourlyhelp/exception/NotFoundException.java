@@ -10,6 +10,7 @@ public class NotFoundException extends AppBaseException {
     private static final String CITY_NOT_FOUND = "exception.not_found_exception.city_not_found";
     private static final String ADVERT_NOT_FOUND = "exception.not_found_exception.advert_not_found";
     private static final String ENABLED_MODERATOR_ROLE_NOT_FOUND = "exception.not_found_exception.enabled_moderator_role_not_found";
+    private static final String MODERATOR_ASSIGNED_HOTEL_NOT_FOUND = "exception.not_found_exception.moderator_assigned_hotel_not_found";
 
     private NotFoundException(String message, Throwable cause) {
         super(message, cause);
@@ -62,5 +63,9 @@ public class NotFoundException extends AppBaseException {
 
     public static NotFoundException enabledModeratorRoleNotFound() {
         return new NotFoundException(ENABLED_MODERATOR_ROLE_NOT_FOUND);
+    }
+
+    public static NotFoundException moderatorAssignedCityNotFound() {
+        return new NotFoundException(MODERATOR_ASSIGNED_HOTEL_NOT_FOUND);
     }
 }

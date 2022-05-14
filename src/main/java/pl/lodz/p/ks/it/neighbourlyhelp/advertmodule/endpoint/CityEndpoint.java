@@ -17,4 +17,6 @@ public interface CityEndpoint {
     void deleteCity(Long cityId, String ifMatch) throws AppBaseException;
 
     void addModeratorToCity(Long cityId, String moderatorEmail, String ifMatch) throws AppBaseException;
+
+    void deleteModeratorFromCity(String moderatorEmail, String ifMatch) throws AppBaseException;
 }
