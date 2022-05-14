@@ -12,7 +12,9 @@ import pl.lodz.p.ks.it.neighbourlyhelp.clientmodule.domain.ModeratorData;
 import pl.lodz.p.ks.it.neighbourlyhelp.clientmodule.domain.Role;
 import pl.lodz.p.ks.it.neighbourlyhelp.clientmodule.domain.enums.AccessLevel;
 import pl.lodz.p.ks.it.neighbourlyhelp.clientmodule.repository.AccountRepository;
+import pl.lodz.p.ks.it.neighbourlyhelp.clientmodule.repository.ModeratorDataRepository;
 import pl.lodz.p.ks.it.neighbourlyhelp.exception.AppBaseException;
+import pl.lodz.p.ks.it.neighbourlyhelp.exception.NotFoundException;
 import pl.lodz.p.ks.it.neighbourlyhelp.exception.RoleException;
 import pl.lodz.p.ks.it.neighbourlyhelp.utils.email.EmailService;
 
@@ -26,6 +28,7 @@ import java.util.stream.Collectors;
 public class RoleService {
 
     private final AccountRepository accountRepository;
+    private final ModeratorDataRepository moderatorDataRepository;
     private final AccountService accountService;
     private final EmailService emailService;
 
@@ -99,6 +102,22 @@ public class RoleService {
         account.setRoleList(new HashSet<>(account.getRoleList()));
         accountRepository.save(account);
         emailService.sendGrantAccessLevelEmail(account, accessLevel.toString());
+    }
+
+    public ModeratorData getModeratorData(String moderatorEmail) throws AppBaseException {
+        Account account = accountService.getAccountByEmail(moderatorEmail);
+
+        Role moderatorRole = account.getRoleList().stream()
+                .filter(Role::isEnabled)
+                .filter(role -> role.getAccessLevel() == AccessLevel.MODERATOR)
+                .findAny()
+                .orElseThrow(NotFoundException::enabledModeratorRoleNotFound);
+
+        return getById(moderatorRole.getId());
+    }
+
+    private ModeratorData getById(Long roleId) {
+        return moderatorDataRepository.getById(roleId);
     }
 
     /**

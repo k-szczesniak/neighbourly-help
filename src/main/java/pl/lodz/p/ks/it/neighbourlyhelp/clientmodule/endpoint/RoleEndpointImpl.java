@@ -7,12 +7,14 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import pl.lodz.p.ks.it.neighbourlyhelp.clientmodule.domain.Account;
+import pl.lodz.p.ks.it.neighbourlyhelp.clientmodule.domain.ModeratorData;
 import pl.lodz.p.ks.it.neighbourlyhelp.clientmodule.domain.enums.AccessLevel;
+import pl.lodz.p.ks.it.neighbourlyhelp.clientmodule.dto.response.ModeratorDataDto;
 import pl.lodz.p.ks.it.neighbourlyhelp.clientmodule.dto.response.RolesDto;
 import pl.lodz.p.ks.it.neighbourlyhelp.clientmodule.service.AccountService;
 import pl.lodz.p.ks.it.neighbourlyhelp.clientmodule.service.RoleService;
 import pl.lodz.p.ks.it.neighbourlyhelp.exception.AppBaseException;
-import pl.lodz.p.ks.it.neighbourlyhelp.mapper.IRoleMapper;
+import pl.lodz.p.ks.it.neighbourlyhelp.mapper.RoleMapper;
 import pl.lodz.p.ks.it.neighbourlyhelp.utils.common.AbstractEndpoint;
 
 @Service
@@ -50,12 +52,20 @@ public class RoleEndpointImpl extends AbstractEndpoint implements RoleEndpoint {
         return mapToRolesDto(accountService.getExecutorAccount());
     }
 
+    @Secured("ROLE_ADMIN")
     @Override
     public RolesDto getUserRole(String email) throws AppBaseException {
         return mapToRolesDto(accountService.getAccountByEmail(email));
     }
 
+    @Override
+    @Secured("ROLE_ADMIN")
+    public ModeratorDataDto getModeratorData(String email) throws AppBaseException {
+        ModeratorData moderatorData = roleService.getModeratorData(email);
+        return Mappers.getMapper(RoleMapper.class).toModeratorDataDto(moderatorData);
+    }
+
     private RolesDto mapToRolesDto(Account account) {
-        return Mappers.getMapper(IRoleMapper.class).toRolesDto(account);
+        return Mappers.getMapper(RoleMapper.class).toRolesDto(account);
     }
 }

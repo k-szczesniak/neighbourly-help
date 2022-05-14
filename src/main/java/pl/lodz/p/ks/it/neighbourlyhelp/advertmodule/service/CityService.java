@@ -7,6 +7,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import pl.lodz.p.ks.it.neighbourlyhelp.advertmodule.domain.City;
 import pl.lodz.p.ks.it.neighbourlyhelp.advertmodule.repository.CityRepository;
+import pl.lodz.p.ks.it.neighbourlyhelp.clientmodule.domain.ModeratorData;
 import pl.lodz.p.ks.it.neighbourlyhelp.clientmodule.service.AccountService;
 import pl.lodz.p.ks.it.neighbourlyhelp.exception.AppBaseException;
 import pl.lodz.p.ks.it.neighbourlyhelp.exception.CityException;
@@ -49,5 +50,20 @@ public class CityService {
             throw CityException.deleteHasAdvert();
         }
         cityRepository.delete(city);
+    }
+
+    @Secured({"ROLE_ADMIN"})
+    public void addModeratorToCity(Long cityId, ModeratorData moderatorData) throws AppBaseException {
+        if (moderatorData.getCity() != null) {
+            throw CityException.alreadyCityModerator();
+        }
+
+        City city = get(cityId);
+
+        moderatorData.setCity(city);
+        moderatorData.setModifiedBy(accountService.getExecutorAccount());
+        city.getModeratorDataList().add(moderatorData);
+
+        cityRepository.saveAndFlush(city);
     }
 }

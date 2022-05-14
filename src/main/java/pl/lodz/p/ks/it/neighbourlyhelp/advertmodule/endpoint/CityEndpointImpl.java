@@ -11,7 +11,11 @@ import pl.lodz.p.ks.it.neighbourlyhelp.advertmodule.dto.request.NewCityDto;
 import pl.lodz.p.ks.it.neighbourlyhelp.advertmodule.dto.response.CityDto;
 import pl.lodz.p.ks.it.neighbourlyhelp.advertmodule.mapper.ICityMapper;
 import pl.lodz.p.ks.it.neighbourlyhelp.advertmodule.service.CityService;
+import pl.lodz.p.ks.it.neighbourlyhelp.clientmodule.domain.ModeratorData;
+import pl.lodz.p.ks.it.neighbourlyhelp.clientmodule.dto.response.ModeratorDataDto;
+import pl.lodz.p.ks.it.neighbourlyhelp.clientmodule.service.RoleService;
 import pl.lodz.p.ks.it.neighbourlyhelp.exception.AppBaseException;
+import pl.lodz.p.ks.it.neighbourlyhelp.mapper.RoleMapper;
 import pl.lodz.p.ks.it.neighbourlyhelp.utils.common.AbstractEndpoint;
 
 import java.util.List;
@@ -23,6 +27,8 @@ import java.util.stream.Collectors;
 public class CityEndpointImpl extends AbstractEndpoint implements CityEndpoint {
 
     private final CityService cityService;
+
+    private final RoleService roleService;
 
     @Override
     @Secured({"ROLE_ADMIN", "ROLE_MODERATOR", "ROLE_CLIENT"})
@@ -53,5 +59,16 @@ public class CityEndpointImpl extends AbstractEndpoint implements CityEndpoint {
         verifyIntegrity(cityIntegrity, ifMatch);
 
         cityService.deleteCity(city);
+    }
+
+    @Override
+    @Secured({"ROLE_ADMIN"})
+    public void addModeratorToCity(Long cityId, String moderatorEmail, String ifMatch) throws AppBaseException {
+        ModeratorData moderatorData = roleService.getModeratorData(moderatorEmail);
+        ModeratorDataDto moderatorDataDto = Mappers.getMapper(RoleMapper.class).toModeratorDataDto(moderatorData);
+
+        verifyIntegrity(moderatorDataDto, ifMatch);
+
+        cityService.addModeratorToCity(cityId, moderatorData);
     }
 }
