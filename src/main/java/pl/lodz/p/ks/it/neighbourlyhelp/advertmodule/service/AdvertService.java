@@ -65,6 +65,24 @@ public class AdvertService {
     }
 
     @Secured({"ROLE_CLIENT"})
+    public List<Advert> getAllOwnAdverts() throws AppBaseException {
+        Account executorAccount = accountService.getExecutorAccount();
+        return advertRepository.findAll().stream()
+                .filter(Advert::isApproved)
+                .filter(advert -> advert.getPublisher() == executorAccount)
+                .collect(Collectors.toList());
+    }
+
+    @Secured({"ROLE_CLIENT"})
+    public List<Advert> getAllClientAdverts(Long userId) throws AppBaseException {
+        Account account = accountService.getAccountById(userId);
+        return advertRepository.findAll().stream()
+                .filter(Advert::isApproved)
+                .filter(advert -> advert.getPublisher() == account)
+                .collect(Collectors.toList());
+    }
+
+    @Secured({"ROLE_CLIENT"})
     public void addAdvert(Advert advert, @NotNull Long cityId) throws AppBaseException {
         advert.setCity(cityService.get(cityId));
         advert.setApproved(false);

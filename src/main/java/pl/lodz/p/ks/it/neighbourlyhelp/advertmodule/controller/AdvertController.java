@@ -60,6 +60,18 @@ public class AdvertController {
         return advertEndpoint.getAllWaitingToApprove();
     }
 
+    @GetMapping("own")
+    @Secured({"ROLE_CLIENT"})
+    public List<AdvertResponseDto> getAllOwnAdverts() throws AppBaseException {
+        return advertEndpoint.getAllOwnAdverts();
+    }
+
+    @GetMapping("ofUser/{userId}")
+    @Secured({"ROLE_CLIENT"})
+    public List<AdvertResponseDto> getAllClientAdverts(@NotNull @PathVariable("userId") Long userId) throws AppBaseException {
+        return advertEndpoint.getAllClientAdverts(userId);
+    }
+
     @PostMapping
     @Secured({"ROLE_CLIENT"})
     public void addAdvert(@NotNull @Valid @RequestBody NewAdvertRequestDto newAdvert) throws AppBaseException {

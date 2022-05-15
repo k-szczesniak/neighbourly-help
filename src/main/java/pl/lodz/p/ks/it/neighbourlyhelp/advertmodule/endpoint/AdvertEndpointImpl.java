@@ -53,6 +53,20 @@ public class AdvertEndpointImpl extends AbstractEndpoint implements AdvertEndpoi
 
     @Override
     @Secured({"ROLE_CLIENT"})
+    public List<AdvertResponseDto> getAllOwnAdverts() throws AppBaseException {
+        List<Advert> allOwnAdverts = advertService.getAllOwnAdverts();
+        return toListOfAdvertResponseDto(allOwnAdverts);
+    }
+
+    @Override
+    @Secured({"ROLE_CLIENT"})
+    public List<AdvertResponseDto> getAllClientAdverts(Long userId) throws AppBaseException {
+        List<Advert> allClientAdverts = advertService.getAllClientAdverts(userId);
+        return toListOfAdvertResponseDto(allClientAdverts);
+    }
+
+    @Override
+    @Secured({"ROLE_CLIENT"})
     public void addAdvert(NewAdvertRequestDto newAdvert) throws AppBaseException {
         Advert advert = new Advert();
         Mappers.getMapper(AdvertMapper.class).toAdvert(newAdvert, advert);

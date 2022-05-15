@@ -26,4 +26,8 @@ public interface AdvertEndpoint {
     void disapproveAdvert(Long advertId, String ifMatch) throws AppBaseException;
 
     void updateAdvert(EditAdvertRequestDto editedAdvert, String ifMatch) throws AppBaseException;
+
+    List<AdvertResponseDto> getAllClientAdverts(Long userId) throws AppBaseException;
+
+    List<AdvertResponseDto> getAllOwnAdverts() throws AppBaseException;
 }

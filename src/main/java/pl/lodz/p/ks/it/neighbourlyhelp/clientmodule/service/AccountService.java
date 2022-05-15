@@ -53,6 +53,11 @@ public class AccountService {
         }
     }
 
+    // TODO: 15.05.2022 add permission annotation
+    public Account getAccountById(Long accountId) throws AppBaseException {
+        return accountRepository.findById(accountId).orElseThrow(NotFoundException::accountNotFound);
+    }
+
     @Secured("ROLE_ADMIN") // TODO: 20.04.2022 exception when sth went wrong
     public List<Account> getAllAccounts() {
         return accountRepository.findAll();
