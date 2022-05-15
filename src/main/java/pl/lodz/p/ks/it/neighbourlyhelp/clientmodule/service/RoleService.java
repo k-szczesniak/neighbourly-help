@@ -5,6 +5,7 @@ import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+import pl.lodz.p.ks.it.neighbourlyhelp.advertmodule.domain.City;
 import pl.lodz.p.ks.it.neighbourlyhelp.clientmodule.domain.Account;
 import pl.lodz.p.ks.it.neighbourlyhelp.clientmodule.domain.AdminData;
 import pl.lodz.p.ks.it.neighbourlyhelp.clientmodule.domain.ClientData;
@@ -12,7 +13,9 @@ import pl.lodz.p.ks.it.neighbourlyhelp.clientmodule.domain.ModeratorData;
 import pl.lodz.p.ks.it.neighbourlyhelp.clientmodule.domain.Role;
 import pl.lodz.p.ks.it.neighbourlyhelp.clientmodule.domain.enums.AccessLevel;
 import pl.lodz.p.ks.it.neighbourlyhelp.clientmodule.repository.AccountRepository;
+import pl.lodz.p.ks.it.neighbourlyhelp.clientmodule.repository.ModeratorDataRepository;
 import pl.lodz.p.ks.it.neighbourlyhelp.exception.AppBaseException;
+import pl.lodz.p.ks.it.neighbourlyhelp.exception.NotFoundException;
 import pl.lodz.p.ks.it.neighbourlyhelp.exception.RoleException;
 import pl.lodz.p.ks.it.neighbourlyhelp.utils.email.EmailService;
 
@@ -26,6 +29,7 @@ import java.util.stream.Collectors;
 public class RoleService {
 
     private final AccountRepository accountRepository;
+    private final ModeratorDataRepository moderatorDataRepository;
     private final AccountService accountService;
     private final EmailService emailService;
 
@@ -101,6 +105,42 @@ public class RoleService {
         emailService.sendGrantAccessLevelEmail(account, accessLevel.toString());
     }
 
+    @Secured({"ROLE_ADMIN"})
+    public ModeratorData getModeratorData(String moderatorEmail) throws AppBaseException {
+        Account account = accountService.getAccountByEmail(moderatorEmail);
+
+        Role moderatorRole = account.getRoleList().stream()
+                .filter(Role::isEnabled)
+                .filter(role -> role.getAccessLevel() == AccessLevel.MODERATOR)
+                .findAny()
+                .orElseThrow(NotFoundException::enabledModeratorRoleNotFound);
+
+        return getById(moderatorRole.getId());
+    }
+
+    @Secured({"ROLE_ADMIN"})
+    public ModeratorData findCityByModeratorEmail(String moderatorEmail) throws AppBaseException {
+        City city = moderatorDataRepository.findCityByModeratorEmail(moderatorEmail)
+                .orElseThrow(NotFoundException::moderatorAssignedCityNotFound);
+
+        return city.getModeratorDataList().stream()
+                .filter(manager -> manager.getAccount().getEmail().equals(moderatorEmail))
+                .findAny()
+                .orElseThrow(NotFoundException::moderatorAssignedCityNotFound);
+    }
+
+    @Secured({"ROLE_ADMIN"})
+    public void deleteModeratorFromCity(ModeratorData moderatorData) throws AppBaseException {
+        moderatorData.setCity(null);
+        moderatorData.setModifiedBy(accountService.getExecutorAccount());
+
+        moderatorDataRepository.saveAndFlush(moderatorData);
+    }
+
+    private ModeratorData getById(Long roleId) {
+        return moderatorDataRepository.getById(roleId);
+    }
+
     /**
      * Create user role object in condition of access level.
      *
@@ -123,5 +163,4 @@ public class RoleService {
     private Account getEditorName() throws AppBaseException {
         return accountService.getExecutorAccount();
     }
-
 }

@@ -4,14 +4,16 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Mappings;
 import pl.lodz.p.ks.it.neighbourlyhelp.clientmodule.domain.Account;
+import pl.lodz.p.ks.it.neighbourlyhelp.clientmodule.domain.ModeratorData;
 import pl.lodz.p.ks.it.neighbourlyhelp.clientmodule.domain.Role;
+import pl.lodz.p.ks.it.neighbourlyhelp.clientmodule.dto.response.ModeratorDataDto;
 import pl.lodz.p.ks.it.neighbourlyhelp.clientmodule.dto.response.RolesDto;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Mapper
-public interface IRoleMapper {
+public interface RoleMapper {
 
     @Mappings({
             @Mapping(target = "roleName", source = "accessLevel"),
@@ -31,4 +33,10 @@ public interface IRoleMapper {
 
         return new RolesDto(account.getId(), revokedRoleList, grantedRoleList);
     }
+
+    @Mappings({
+            @Mapping(target = "cityName", source = "city.name"),
+            @Mapping(target = "id", source = "account.id")
+    })
+    ModeratorDataDto toModeratorDataDto(ModeratorData moderatorData);
 }

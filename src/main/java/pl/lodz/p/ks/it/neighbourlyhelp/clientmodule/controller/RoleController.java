@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import pl.lodz.p.ks.it.neighbourlyhelp.clientmodule.domain.enums.AccessLevel;
+import pl.lodz.p.ks.it.neighbourlyhelp.clientmodule.dto.response.ModeratorDataDto;
 import pl.lodz.p.ks.it.neighbourlyhelp.clientmodule.dto.response.RolesDto;
 import pl.lodz.p.ks.it.neighbourlyhelp.clientmodule.endpoint.RoleEndpoint;
 import pl.lodz.p.ks.it.neighbourlyhelp.exception.AppBaseException;
@@ -62,5 +63,15 @@ public class RoleController {
         return ResponseEntity.ok()
                 .eTag(messageSigner.sign(rolesDto))
                 .body(rolesDto);
+    }
+
+    @GetMapping("/moderator/{email}")
+    @Secured("ROLE_ADMIN")
+    public ResponseEntity<ModeratorDataDto> getModeratorData(@NotNull @Email @PathVariable("email") @Valid String email) throws AppBaseException {
+        ModeratorDataDto moderatorDataDto = roleEndpoint.getModeratorData(email);
+
+        return ResponseEntity.ok()
+                .eTag(messageSigner.sign(moderatorDataDto))
+                .body(moderatorDataDto);
     }
 }

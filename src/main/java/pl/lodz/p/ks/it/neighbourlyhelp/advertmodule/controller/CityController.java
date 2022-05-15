@@ -5,6 +5,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -50,9 +51,26 @@ public class CityController {
         cityEndpoint.addCity(newCityDto);
     }
 
-    @Secured({"ROLE_ADMIN"})
     @DeleteMapping("{id}")
+    @Secured({"ROLE_ADMIN"})
     public void deleteCity(@RequestHeader("If-Match") String ifMatch, @PathVariable("id") Long cityId) throws AppBaseException {
         cityEndpoint.deleteCity(cityId, ifMatch);
+    }
+
+    @PatchMapping("/add/{moderatorEmail}/{cityId}")
+    @Secured({"ROLE_ADMIN"})
+    public void addModeratorToCity(@RequestHeader("If-Match") String ifMatch,
+                                   @PathVariable("cityId") Long cityId,
+                                   @PathVariable("moderatorEmail") String moderatorEmail)
+            throws AppBaseException {
+        cityEndpoint.addModeratorToCity(cityId, moderatorEmail, ifMatch);
+    }
+
+    @PatchMapping("/delete/{moderatorEmail}")
+    @Secured({"ROLE_ADMIN"})
+    public void deleteModeratorFromCity(@RequestHeader("If-Match") String ifMatch,
+                                   @PathVariable("moderatorEmail") String moderatorEmail)
+            throws AppBaseException {
+        cityEndpoint.deleteModeratorFromCity(moderatorEmail, ifMatch);
     }
 }
