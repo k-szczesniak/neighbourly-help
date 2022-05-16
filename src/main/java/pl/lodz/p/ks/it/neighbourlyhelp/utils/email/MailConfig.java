@@ -64,7 +64,7 @@ public class MailConfig {
         ACTIVATE_ACCOUNT("activate"),
         ACTIVATE_SUCCESS("activate_success"),
         CANCEL_RESERVATION("cancel_reservation"),
-        CREATE_RESERVATION("create_reservation");
+        CREATE_CONTRACT("create_contract");
 
         @Getter
         private final String value;

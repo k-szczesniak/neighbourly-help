@@ -22,4 +22,6 @@ public interface EmailService {
     void sendResetPasswordEmail(Account account, String resetPasswordLink) throws AppBaseException;
 
     void sendDeleteUnconfirmedAccountEmail(Account account) throws AppBaseException;
+
+    void sendCreateContractEmail(Account account, Long contractId, String advertTitle) throws AppBaseException;
 }

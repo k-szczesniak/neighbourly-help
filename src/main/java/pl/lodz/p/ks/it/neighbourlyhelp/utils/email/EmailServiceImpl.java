@@ -117,6 +117,15 @@ public class EmailServiceImpl implements EmailService {
         send(account.getEmail(), deleteUnconfirmedSubject, deleteUnconfirmedContent);
     }
 
+    @Override
+    public void sendCreateContractEmail(Account account, Long contractId, String advertTitle) throws AppBaseException {
+        String lang = account.getLanguage();
+        String createContractContent = mailConfig.getContentForType(lang, MailConfig.MailType.CREATE_CONTRACT,
+                account.getEmail(), contractId.toString(), advertTitle);
+        String createContractSubject = mailConfig.getSubjectForType(lang, MailConfig.MailType.CREATE_CONTRACT);
+        send(account.getEmail(), createContractSubject, createContractContent);
+    }
+
     private String wrapCode(String code, String endpoint) {
         return String.join("/", mailConfig.getMailUri(), endpoint, code);
     }

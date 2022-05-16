@@ -1,5 +1,7 @@
 package pl.lodz.p.ks.it.neighbourlyhelp.advertmodule.domain;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -25,7 +27,6 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-import javax.validation.constraints.NotNull;
 import java.util.Date;
 
 @Table(name = Contract.TABLE_NAME, indexes = {
@@ -36,6 +37,8 @@ import java.util.Date;
 @Check(constraints = "start_date < finish_date")
 @Getter
 @NoArgsConstructor
+@AllArgsConstructor
+@Builder
 @Entity
 public class Contract extends AbstractEntity {
 
@@ -55,15 +58,14 @@ public class Contract extends AbstractEntity {
     private Advert advert;
 
 
-    @NotNull
     @Setter
-    @Basic(optional = false)
+    @Basic(optional = true)
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "start_date")
     private Date startDate;
 
     @Setter
-    @Basic(optional = false)
+    @Basic(optional = true)
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "finish_date")
     private Date finishDate;
