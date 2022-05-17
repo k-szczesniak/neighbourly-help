@@ -6,7 +6,7 @@ import pl.lodz.p.ks.it.neighbourlyhelp.advertmodule.dto.request.NewCityDto;
 import pl.lodz.p.ks.it.neighbourlyhelp.advertmodule.dto.response.CityDto;
 
 @Mapper
-public interface ICityMapper {
+public interface CityMapper {
 
     CityDto toCityDto(City city);
 
