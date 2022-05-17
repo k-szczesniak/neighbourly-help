@@ -15,6 +15,7 @@ import pl.lodz.p.ks.it.neighbourlyhelp.clientmodule.domain.Account;
 import pl.lodz.p.ks.it.neighbourlyhelp.clientmodule.service.AccountService;
 import pl.lodz.p.ks.it.neighbourlyhelp.exception.AppBaseException;
 import pl.lodz.p.ks.it.neighbourlyhelp.exception.ContractException;
+import pl.lodz.p.ks.it.neighbourlyhelp.exception.NotFoundException;
 import pl.lodz.p.ks.it.neighbourlyhelp.utils.email.EmailService;
 
 import java.util.List;
@@ -36,6 +37,11 @@ public class ContractService {
     private Integer maxAttempts;
 
     @Secured({"ROLE_CLIENT"})
+    public Contract get(Long contractId) throws AppBaseException {
+        return contractRepository.findById(contractId).orElseThrow(NotFoundException::contractNotFound);
+    }
+
+    @Secured({"ROLE_CLIENT"})
     public void createContract(NewContractRequestDto newContract) throws AppBaseException {
         Long advertId = newContract.getAdvertId();
         Advert advert = advertService.get(advertId);
@@ -47,11 +53,11 @@ public class ContractService {
 
         conditionVerifier(!advert.isApproved(), ContractException.advertIsDisapproved());
         conditionVerifier(allAssociatedContractsWithAdvert.stream()
-                        .anyMatch(contract -> contract.getStatus() != ContractStatus.CANCELLED),
+                        .anyMatch(contract -> !contract.getStatus().equals(ContractStatus.CANCELLED)),
                 ContractException.advertAlreadyTaken());
         conditionVerifier(allAssociatedContractsWithAdvert.stream()
-                        .filter(contract -> contract.getExecutor() == executorAccount)
-                        .filter(contract -> contract.getStatus() != ContractStatus.CANCELLED)
+                        .filter(contract -> contract.getExecutor().equals(executorAccount))
+                        .filter(contract -> contract.getStatus().equals(ContractStatus.CANCELLED))
                         .count() >= maxAttempts,
                 ContractException.maxTakeUpAttemptsLimitOverdrawn());
 
@@ -67,6 +73,25 @@ public class ContractService {
 
         contractRepository.saveAndFlush(contract);
         emailService.sendCreateContractEmail(executorAccount, contract.getId(), advert.getTitle());
+    }
+
+    @Secured({"ROLE_CLIENT"})
+    public void cancelContract(Contract contract) throws AppBaseException {
+        if (contract.getStatus().equals(ContractStatus.NEW)) {
+            Account modifier = contract.getExecutor();
+            contract.setStatus(ContractStatus.CANCELLED);
+            contract.setModifiedBy(modifier);
+            contractRepository.saveAndFlush(contract);
+            emailService.sendCancelContractEmail(modifier, contract.getId(), contract.getAdvert().getTitle());
+        } else if (contract.getStatus().equals(ContractStatus.IN_PROGRESS)) {
+            throw ContractException.inProgressContractCancellation();
+        } else if (contract.getStatus().equals(ContractStatus.TO_APPROVE)) {
+            throw ContractException.toApproveContractCancellation();
+        } else if (contract.getStatus().equals(ContractStatus.FINISHED)) {
+            throw ContractException.finishedContractCancellation();
+        } else {
+            throw ContractException.contractAlreadyCancelled();
+        }
     }
 
     private void conditionVerifier(boolean condition, ContractException exception) throws ContractException {

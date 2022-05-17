@@ -63,7 +63,7 @@ public class MailConfig {
         DELETE_UNCONFIRMED("delete"),
         ACTIVATE_ACCOUNT("activate"),
         ACTIVATE_SUCCESS("activate_success"),
-        CANCEL_RESERVATION("cancel_reservation"),
+        CANCEL_CONTRACT("cancel_contract"),
         CREATE_CONTRACT("create_contract");
 
         @Getter

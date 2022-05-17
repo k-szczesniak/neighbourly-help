@@ -28,8 +28,6 @@ public class AdvertResponseDto implements Signable {
 
     private Long cityId;
 
-    private Long contractId;
-
     private boolean approved;
 
     private Set<PreferableSettlement> preferableSettlementList;

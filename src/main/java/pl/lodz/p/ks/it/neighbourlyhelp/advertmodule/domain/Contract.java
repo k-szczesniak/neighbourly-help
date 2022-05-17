@@ -54,7 +54,7 @@ public class Contract extends AbstractEntity {
 
     @Getter
     @Setter
-    @OneToOne(optional = false)
+    @ManyToOne(cascade = CascadeType.REFRESH, optional = false)
     private Advert advert;
 
 

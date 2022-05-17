@@ -24,4 +24,6 @@ public interface EmailService {
     void sendDeleteUnconfirmedAccountEmail(Account account) throws AppBaseException;
 
     void sendCreateContractEmail(Account account, Long contractId, String advertTitle) throws AppBaseException;
+
+    void sendCancelContractEmail(Account account, Long contractId, String advertTitle) throws AppBaseException;
 }

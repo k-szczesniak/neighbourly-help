@@ -10,6 +10,10 @@ public class ContractException extends AppBaseException {
     private static final String ADVERT_IS_DISAPPROVED = "exception.contract.advert_is_disapproved";
     private static final String ADVERT_ALREADY_TAKEN = "exception.contract.advert_has_been_already_taken";
     private static final String MAX_TAKE_UP_ATTEMPTS_LIMIT_OVERDRAWN = "exception.contract.max_take_up_attempts_limit_overdrawn";
+    private static final String IN_PROGRESS_CONTRACT_CANCEL = "exception.contract.in_progress_cancel_contract";
+    private static final String TO_APPROVE_CONTRACT_CANCEL = "exception.contract.to_approve_cancel_contract";
+    private static final String FINISHED_CONTRACT_CANCEL = "exception.contract.finished_cancel_contract";
+    private static final String CANCELLED_CONTRACT = "exception.contract.cancelled_contract";
 
     protected ContractException(String message, Throwable cause) {
         super(message, cause);
@@ -52,5 +56,21 @@ public class ContractException extends AppBaseException {
 
     public static ContractException maxTakeUpAttemptsLimitOverdrawn() {
         return new ContractException(MAX_TAKE_UP_ATTEMPTS_LIMIT_OVERDRAWN);
+    }
+
+    public static ContractException inProgressContractCancellation() {
+        return new ContractException(IN_PROGRESS_CONTRACT_CANCEL);
+    }
+
+    public static ContractException toApproveContractCancellation() {
+        return new ContractException(TO_APPROVE_CONTRACT_CANCEL);
+    }
+
+    public static ContractException finishedContractCancellation() {
+        return new ContractException(FINISHED_CONTRACT_CANCEL);
+    }
+
+    public static ContractException contractAlreadyCancelled() {
+        return new ContractException(CANCELLED_CONTRACT);
     }
 }
