@@ -70,6 +70,7 @@ public class ContractHelperImpl extends AbstractEndpoint implements ContractHelp
     }
 
     @Override
+    @Secured({"ROLE_CLIENT"})
     public void approveFinishedContract(ApproveFinishedRequestDto approveFinishedRequestDto, String ifMatch) throws AppBaseException {
         Contract contract = contractService.get(approveFinishedRequestDto.getContractId());
         verifyPrivilegesAndIntegrity(() -> contractService.approveFinishedContract(contract, approveFinishedRequestDto),

@@ -138,6 +138,7 @@ public class ContractService {
         }
     }
 
+    @Secured({"ROLE_CLIENT"})
     public void approveFinishedContract(Contract contract, ApproveFinishedRequestDto requestDto) throws AppBaseException {
         if (contract.getStatus().equals(ContractStatus.TO_APPROVE)) {
             Account modifier = accountService.getExecutorAccount();
