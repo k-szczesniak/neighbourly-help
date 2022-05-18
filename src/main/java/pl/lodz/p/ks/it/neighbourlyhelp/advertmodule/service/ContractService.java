@@ -8,7 +8,10 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import pl.lodz.p.ks.it.neighbourlyhelp.advertmodule.domain.Advert;
 import pl.lodz.p.ks.it.neighbourlyhelp.advertmodule.domain.Contract;
+import pl.lodz.p.ks.it.neighbourlyhelp.advertmodule.domain.LoyaltyPoint;
 import pl.lodz.p.ks.it.neighbourlyhelp.advertmodule.domain.enums.ContractStatus;
+import pl.lodz.p.ks.it.neighbourlyhelp.advertmodule.domain.enums.LoyaltyPointStatus;
+import pl.lodz.p.ks.it.neighbourlyhelp.advertmodule.dto.request.ApproveFinishedRequestDto;
 import pl.lodz.p.ks.it.neighbourlyhelp.advertmodule.dto.request.NewContractRequestDto;
 import pl.lodz.p.ks.it.neighbourlyhelp.advertmodule.repository.ContractRepository;
 import pl.lodz.p.ks.it.neighbourlyhelp.clientmodule.domain.Account;
@@ -98,7 +101,7 @@ public class ContractService {
     @Secured({"ROLE_CLIENT"})
     public void startContract(Contract contract) throws AppBaseException {
         if (contract.getStatus().equals(ContractStatus.NEW)) {
-            Account modifier = contract.getExecutor();
+            Account modifier = accountService.getExecutorAccount();
             contract.setStatus(ContractStatus.IN_PROGRESS);
             contract.setModifiedBy(modifier);
             contract.setStartDate(new Date());
@@ -117,7 +120,7 @@ public class ContractService {
     @Secured({"ROLE_CLIENT"})
     public void endContract(Contract contract) throws AppBaseException {
         if (contract.getStatus().equals(ContractStatus.IN_PROGRESS)) {
-            Account modifier = contract.getExecutor();
+            Account modifier = accountService.getExecutorAccount();
             contract.setStatus(ContractStatus.TO_APPROVE);
             contract.setModifiedBy(modifier);
             contract.setFinishDate(new Date());
@@ -135,14 +138,22 @@ public class ContractService {
         }
     }
 
-    public void approveFinishedContract(Contract contract) throws AppBaseException {
+    public void approveFinishedContract(Contract contract, ApproveFinishedRequestDto requestDto) throws AppBaseException {
         if (contract.getStatus().equals(ContractStatus.TO_APPROVE)) {
-            Account modifier = contract.getExecutor();
+            Account modifier = accountService.getExecutorAccount();
             contract.setStatus(ContractStatus.FINISHED);
             contract.setModifiedBy(modifier);
-            contract.setFinishDate(new Date());
+
+            LoyaltyPoint loyaltyPoint = LoyaltyPoint.builder()
+                    .contract(contract)
+                    .status(LoyaltyPointStatus.valueOf(requestDto.getLoyaltyPointStatus()))
+                    .comment(requestDto.getComment())
+                    .build();
+            loyaltyPoint.setCreatedBy(modifier);
+
+            contract.setLoyaltyPoint(loyaltyPoint);
             contractRepository.saveAndFlush(contract);
-            // TODO: 18.05.2022 loyalitypoint
+
         } else if (contract.getStatus().equals(ContractStatus.NEW)) {
             throw ContractException.contractNotStartedYet();
         } else if (contract.getStatus().equals(ContractStatus.IN_PROGRESS)) {

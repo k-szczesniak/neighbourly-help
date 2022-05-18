@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import pl.lodz.p.ks.it.neighbourlyhelp.advertmodule.domain.Contract;
+import pl.lodz.p.ks.it.neighbourlyhelp.advertmodule.dto.request.ApproveFinishedRequestDto;
 import pl.lodz.p.ks.it.neighbourlyhelp.advertmodule.dto.request.NewContractRequestDto;
 import pl.lodz.p.ks.it.neighbourlyhelp.advertmodule.dto.response.DetailContractDto;
 import pl.lodz.p.ks.it.neighbourlyhelp.advertmodule.mapper.ContractMapper;
@@ -69,9 +70,10 @@ public class ContractHelperImpl extends AbstractEndpoint implements ContractHelp
     }
 
     @Override
-    public void approveFinishedContract(Long contractId, String ifMatch) throws AppBaseException {
-        Contract contract = contractService.get(contractId);
-        verifyPrivilegesAndIntegrity(() -> contractService.approveFinishedContract(contract), contract, ifMatch);
+    public void approveFinishedContract(ApproveFinishedRequestDto approveFinishedRequestDto, String ifMatch) throws AppBaseException {
+        Contract contract = contractService.get(approveFinishedRequestDto.getContractId());
+        verifyPrivilegesAndIntegrity(() -> contractService.approveFinishedContract(contract, approveFinishedRequestDto),
+                contract, ifMatch);
     }
 
     private void verifyPrivilegesAndIntegrity(VoidMethodExecutor executor, Contract contract, String ifMatch) throws AppBaseException {

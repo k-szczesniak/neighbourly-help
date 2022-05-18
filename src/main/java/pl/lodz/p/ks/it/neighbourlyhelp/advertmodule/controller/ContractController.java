@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import pl.lodz.p.ks.it.neighbourlyhelp.advertmodule.dto.request.ApproveFinishedRequestDto;
 import pl.lodz.p.ks.it.neighbourlyhelp.advertmodule.dto.request.NewContractRequestDto;
 import pl.lodz.p.ks.it.neighbourlyhelp.advertmodule.dto.response.DetailContractDto;
 import pl.lodz.p.ks.it.neighbourlyhelp.advertmodule.endpoint.ContractHelper;
@@ -68,11 +69,11 @@ public class ContractController {
         contractHelper.endContract(contractId, ifMatch);
     }
 
-    @PatchMapping("/approve/{contractId}")
+    @PatchMapping("/approve")
     @Secured({"ROLE_CLIENT"})
     public void approveFinishedContract(@RequestHeader("If-Match") String ifMatch,
-                            @PathVariable("contractId") Long contractId)
+                                        @NotNull @Valid @RequestBody ApproveFinishedRequestDto approveFinishedRequest)
             throws AppBaseException {
-        contractHelper.approveFinishedContract(contractId, ifMatch);
+        contractHelper.approveFinishedContract(approveFinishedRequest, ifMatch);
     }
 }

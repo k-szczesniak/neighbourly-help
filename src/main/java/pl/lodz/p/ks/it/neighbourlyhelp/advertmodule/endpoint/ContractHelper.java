@@ -1,5 +1,6 @@
 package pl.lodz.p.ks.it.neighbourlyhelp.advertmodule.endpoint;
 
+import pl.lodz.p.ks.it.neighbourlyhelp.advertmodule.dto.request.ApproveFinishedRequestDto;
 import pl.lodz.p.ks.it.neighbourlyhelp.advertmodule.dto.request.NewContractRequestDto;
 import pl.lodz.p.ks.it.neighbourlyhelp.advertmodule.dto.response.DetailContractDto;
 import pl.lodz.p.ks.it.neighbourlyhelp.exception.AppBaseException;
@@ -15,5 +16,5 @@ public interface ContractHelper {
 
     void endContract(Long contractId, String ifMatch) throws AppBaseException;
 
-    void approveFinishedContract(Long contractId, String ifMatch) throws AppBaseException;
+    void approveFinishedContract(ApproveFinishedRequestDto approveFinishedRequestDto, String ifMatch) throws AppBaseException;
 }
