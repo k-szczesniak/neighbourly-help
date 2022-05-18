@@ -10,4 +10,10 @@ public interface ContractHelper {
     void cancelContract(Long contractId, String ifMatch) throws AppBaseException;
 
     DetailContractDto get(Long contractId) throws AppBaseException;
+
+    void startContract(Long contractId, String ifMatch) throws AppBaseException;
+
+    void endContract(Long contractId, String ifMatch) throws AppBaseException;
+
+    void approveFinishedContract(Long contractId, String ifMatch) throws AppBaseException;
 }

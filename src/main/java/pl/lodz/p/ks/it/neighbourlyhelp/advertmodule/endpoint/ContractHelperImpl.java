@@ -53,4 +53,40 @@ public class ContractHelperImpl extends AbstractEndpoint implements ContractHelp
             throw ContractException.accessDenied();
         }
     }
+
+    @Override
+    @Secured({"ROLE_CLIENT"})
+    public void startContract(Long contractId, String ifMatch) throws AppBaseException {
+        Contract contract = contractService.get(contractId);
+        verifyPrivilegesAndIntegrity(() -> contractService.startContract(contract), contract, ifMatch);
+    }
+
+    @Override
+    @Secured({"ROLE_CLIENT"})
+    public void endContract(Long contractId, String ifMatch) throws AppBaseException {
+        Contract contract = contractService.get(contractId);
+        verifyPrivilegesAndIntegrity(() -> contractService.endContract(contract), contract, ifMatch);
+    }
+
+    @Override
+    public void approveFinishedContract(Long contractId, String ifMatch) throws AppBaseException {
+        Contract contract = contractService.get(contractId);
+        verifyPrivilegesAndIntegrity(() -> contractService.approveFinishedContract(contract), contract, ifMatch);
+    }
+
+    private void verifyPrivilegesAndIntegrity(VoidMethodExecutor executor, Contract contract, String ifMatch) throws AppBaseException {
+        if (getEmail().equals(contract.getExecutor().getEmail()) ||
+                getEmail().equals(contract.getAdvert().getPublisher().getEmail())) {
+            DetailContractDto contractIntegrity = Mappers.getMapper(ContractMapper.class).toDetailContractDto(contract);
+            verifyIntegrity(contractIntegrity, ifMatch);
+            executor.run();
+        } else {
+            throw ContractException.accessDenied();
+        }
+    }
+
+    @FunctionalInterface
+    public interface VoidMethodExecutor {
+        void run() throws AppBaseException;
+    }
 }

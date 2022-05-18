@@ -14,6 +14,7 @@ public class ContractException extends AppBaseException {
     private static final String TO_APPROVE_CONTRACT_CANCEL = "exception.contract.to_approve_cancel_contract";
     private static final String FINISHED_CONTRACT_CANCEL = "exception.contract.finished_cancel_contract";
     private static final String CANCELLED_CONTRACT = "exception.contract.cancelled_contract";
+    private static final String NOT_STARTED_CONTRACT = "exception.contract.not_started";
 
     protected ContractException(String message, Throwable cause) {
         super(message, cause);
@@ -72,5 +73,9 @@ public class ContractException extends AppBaseException {
 
     public static ContractException contractAlreadyCancelled() {
         return new ContractException(CANCELLED_CONTRACT);
+    }
+
+    public static ContractException contractNotStartedYet() {
+        return new ContractException(NOT_STARTED_CONTRACT);
     }
 }

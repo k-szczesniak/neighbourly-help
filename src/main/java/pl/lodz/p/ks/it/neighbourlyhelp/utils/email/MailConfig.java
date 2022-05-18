@@ -64,7 +64,9 @@ public class MailConfig {
         ACTIVATE_ACCOUNT("activate"),
         ACTIVATE_SUCCESS("activate_success"),
         CANCEL_CONTRACT("cancel_contract"),
-        CREATE_CONTRACT("create_contract");
+        CREATE_CONTRACT("create_contract"),
+        EXECUTOR_TO_APPROVE_CONTRACT("executor_to_approve_contract"),
+        PUBLISHER_TO_APPROVE_CONTRACT("publisher_to_approve_contract");
 
         @Getter
         private final String value;

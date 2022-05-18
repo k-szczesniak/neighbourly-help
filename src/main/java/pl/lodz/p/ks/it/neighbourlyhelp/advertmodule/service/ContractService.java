@@ -18,6 +18,7 @@ import pl.lodz.p.ks.it.neighbourlyhelp.exception.ContractException;
 import pl.lodz.p.ks.it.neighbourlyhelp.exception.NotFoundException;
 import pl.lodz.p.ks.it.neighbourlyhelp.utils.email.EmailService;
 
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -87,6 +88,65 @@ public class ContractService {
             throw ContractException.inProgressContractCancellation();
         } else if (contract.getStatus().equals(ContractStatus.TO_APPROVE)) {
             throw ContractException.toApproveContractCancellation();
+        } else if (contract.getStatus().equals(ContractStatus.FINISHED)) {
+            throw ContractException.finishedContractCancellation();
+        } else {
+            throw ContractException.contractAlreadyCancelled();
+        }
+    }
+
+    @Secured({"ROLE_CLIENT"})
+    public void startContract(Contract contract) throws AppBaseException {
+        if (contract.getStatus().equals(ContractStatus.NEW)) {
+            Account modifier = contract.getExecutor();
+            contract.setStatus(ContractStatus.IN_PROGRESS);
+            contract.setModifiedBy(modifier);
+            contract.setStartDate(new Date());
+            contractRepository.saveAndFlush(contract);
+        } else if (contract.getStatus().equals(ContractStatus.IN_PROGRESS)) {
+            throw ContractException.inProgressContractCancellation();
+        } else if (contract.getStatus().equals(ContractStatus.TO_APPROVE)) {
+            throw ContractException.toApproveContractCancellation();
+        } else if (contract.getStatus().equals(ContractStatus.FINISHED)) {
+            throw ContractException.finishedContractCancellation();
+        } else {
+            throw ContractException.contractAlreadyCancelled();
+        }
+    }
+
+    @Secured({"ROLE_CLIENT"})
+    public void endContract(Contract contract) throws AppBaseException {
+        if (contract.getStatus().equals(ContractStatus.IN_PROGRESS)) {
+            Account modifier = contract.getExecutor();
+            contract.setStatus(ContractStatus.TO_APPROVE);
+            contract.setModifiedBy(modifier);
+            contract.setFinishDate(new Date());
+            contractRepository.saveAndFlush(contract);
+            emailService.sendWaitingToApproveContractEmail(contract.getExecutor(), contract.getAdvert().getPublisher(),
+                    contract.getId(), contract.getAdvert().getTitle());
+        } else if (contract.getStatus().equals(ContractStatus.NEW)) {
+            throw ContractException.contractNotStartedYet();
+        } else if (contract.getStatus().equals(ContractStatus.TO_APPROVE)) {
+            throw ContractException.toApproveContractCancellation();
+        } else if (contract.getStatus().equals(ContractStatus.FINISHED)) {
+            throw ContractException.finishedContractCancellation();
+        } else {
+            throw ContractException.contractAlreadyCancelled();
+        }
+    }
+
+    public void approveFinishedContract(Contract contract) throws AppBaseException {
+        if (contract.getStatus().equals(ContractStatus.TO_APPROVE)) {
+            Account modifier = contract.getExecutor();
+            contract.setStatus(ContractStatus.FINISHED);
+            contract.setModifiedBy(modifier);
+            contract.setFinishDate(new Date());
+            contractRepository.saveAndFlush(contract);
+            // TODO: 18.05.2022 loyalitypoint
+        } else if (contract.getStatus().equals(ContractStatus.NEW)) {
+            throw ContractException.contractNotStartedYet();
+        } else if (contract.getStatus().equals(ContractStatus.IN_PROGRESS)) {
+            throw ContractException.inProgressContractCancellation();
         } else if (contract.getStatus().equals(ContractStatus.FINISHED)) {
             throw ContractException.finishedContractCancellation();
         } else {
