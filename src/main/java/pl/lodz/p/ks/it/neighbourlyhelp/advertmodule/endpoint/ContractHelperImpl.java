@@ -9,12 +9,16 @@ import org.springframework.transaction.annotation.Transactional;
 import pl.lodz.p.ks.it.neighbourlyhelp.advertmodule.domain.Contract;
 import pl.lodz.p.ks.it.neighbourlyhelp.advertmodule.dto.request.ApproveFinishedRequestDto;
 import pl.lodz.p.ks.it.neighbourlyhelp.advertmodule.dto.request.NewContractRequestDto;
+import pl.lodz.p.ks.it.neighbourlyhelp.advertmodule.dto.response.ContractDto;
 import pl.lodz.p.ks.it.neighbourlyhelp.advertmodule.dto.response.DetailContractDto;
 import pl.lodz.p.ks.it.neighbourlyhelp.advertmodule.mapper.ContractMapper;
 import pl.lodz.p.ks.it.neighbourlyhelp.advertmodule.service.ContractService;
 import pl.lodz.p.ks.it.neighbourlyhelp.exception.AppBaseException;
 import pl.lodz.p.ks.it.neighbourlyhelp.exception.ContractException;
 import pl.lodz.p.ks.it.neighbourlyhelp.utils.common.AbstractEndpoint;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -77,6 +81,34 @@ public class ContractHelperImpl extends AbstractEndpoint implements ContractHelp
                 contract, ifMatch);
     }
 
+    @Override
+    @Secured({"ROLE_CLIENT"})
+    public List<ContractDto> getMyActiveContract() throws AppBaseException {
+        List<Contract> activeContract = contractService.getMyActiveContract();
+        return toListOfAdvertResponseDto(activeContract);
+    }
+
+    @Override
+    @Secured({"ROLE_CLIENT"})
+    public List<ContractDto> getDelegateActiveContracts() throws AppBaseException {
+        List<Contract> activeContract = contractService.getDelegateActiveContracts();
+        return toListOfAdvertResponseDto(activeContract);
+    }
+
+    @Override
+    @Secured({"ROLE_CLIENT"})
+    public List<ContractDto> getMyFinishedContract() throws AppBaseException {
+        List<Contract> finishedContract = contractService.getMyFinishedContract();
+        return toListOfAdvertResponseDto(finishedContract);
+    }
+
+    @Override
+    @Secured({"ROLE_CLIENT"})
+    public List<ContractDto> getDelegateFinishedContracts() throws AppBaseException {
+        List<Contract> finishedContract = contractService.getDelegateFinishedContracts();
+        return toListOfAdvertResponseDto(finishedContract);
+    }
+
     private void verifyPrivilegesAndIntegrity(VoidMethodExecutor executor, Contract contract, String ifMatch) throws AppBaseException {
         if (getEmail().equals(contract.getExecutor().getEmail()) ||
                 getEmail().equals(contract.getAdvert().getPublisher().getEmail())) {
@@ -86,6 +118,11 @@ public class ContractHelperImpl extends AbstractEndpoint implements ContractHelp
         } else {
             throw ContractException.accessDenied();
         }
+    }
+
+    private List<ContractDto> toListOfAdvertResponseDto(List<Contract> contractList) {
+        ContractMapper contractMapper = Mappers.getMapper(ContractMapper.class);
+        return contractList.stream().map(contractMapper::toContractDto).collect(Collectors.toList());
     }
 
     @FunctionalInterface

@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import pl.lodz.p.ks.it.neighbourlyhelp.advertmodule.dto.request.ApproveFinishedRequestDto;
 import pl.lodz.p.ks.it.neighbourlyhelp.advertmodule.dto.request.NewContractRequestDto;
+import pl.lodz.p.ks.it.neighbourlyhelp.advertmodule.dto.response.ContractDto;
 import pl.lodz.p.ks.it.neighbourlyhelp.advertmodule.dto.response.DetailContractDto;
 import pl.lodz.p.ks.it.neighbourlyhelp.advertmodule.endpoint.ContractHelper;
 import pl.lodz.p.ks.it.neighbourlyhelp.exception.AppBaseException;
@@ -20,6 +21,7 @@ import pl.lodz.p.ks.it.neighbourlyhelp.utils.consistency.MessageSigner;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
+import java.util.List;
 
 @RestController
 @RequestMapping("contract")
@@ -75,5 +77,45 @@ public class ContractController {
                                         @NotNull @Valid @RequestBody ApproveFinishedRequestDto approveFinishedRequest)
             throws AppBaseException {
         contractHelper.approveFinishedContract(approveFinishedRequest, ifMatch);
+    }
+
+    /**
+     * @return list of active contracts where user is executor of the job
+     * @throws AppBaseException when something went wrong
+     */
+    @GetMapping("/active/executor")
+    @Secured({"ROLE_CLIENT"})
+    public List<ContractDto> getMyActiveContracts() throws AppBaseException {
+        return contractHelper.getMyActiveContract();
+    }
+
+    /**
+     * @return list of active contracts where user is publisher of the advert
+     * @throws AppBaseException when something went wrong
+     */
+    @GetMapping("/active/publisher")
+    @Secured({"ROLE_CLIENT"})
+    public List<ContractDto> getDelegateActiveContracts() throws AppBaseException {
+        return contractHelper.getDelegateActiveContracts();
+    }
+
+    /**
+     * @return list of finished contracts where user is executor of the job
+     * @throws AppBaseException when something went wrong
+     */
+    @GetMapping("/finished/executor")
+    @Secured({"ROLE_CLIENT"})
+    public List<ContractDto> getMyFinishedContracts() throws AppBaseException {
+        return contractHelper.getMyFinishedContract();
+    }
+
+    /**
+     * @return list of finished contracts where user is publisher of the advert
+     * @throws AppBaseException when something went wrong
+     */
+    @GetMapping("/finished/publisher")
+    @Secured({"ROLE_CLIENT"})
+    public List<ContractDto> getDelegateFinishedContracts() throws AppBaseException {
+        return contractHelper.getDelegateFinishedContracts();
     }
 }

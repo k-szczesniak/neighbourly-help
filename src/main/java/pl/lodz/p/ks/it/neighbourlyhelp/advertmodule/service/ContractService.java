@@ -166,6 +166,48 @@ public class ContractService {
         }
     }
 
+    @Secured({"ROLE_CLIENT"})
+    public List<Contract> getMyActiveContract() throws AppBaseException {
+        Account executorAccount = accountService.getExecutorAccount();
+
+        return contractRepository.findAll().stream()
+                .filter(contract -> contract.getExecutor().equals(executorAccount))
+                .filter(contract -> !contract.getStatus().equals(ContractStatus.CANCELLED))
+                .filter(contract -> !contract.getStatus().equals(ContractStatus.FINISHED))
+                .collect(Collectors.toList());
+    }
+
+    @Secured({"ROLE_CLIENT"})
+    public List<Contract> getDelegateActiveContracts() throws AppBaseException {
+        Account executorAccount = accountService.getExecutorAccount();
+
+        return contractRepository.findAll().stream()
+                .filter(contract -> contract.getAdvert().getPublisher().equals(executorAccount))
+                .filter(contract -> !contract.getStatus().equals(ContractStatus.CANCELLED))
+                .filter(contract -> !contract.getStatus().equals(ContractStatus.FINISHED))
+                .collect(Collectors.toList());
+    }
+
+    @Secured({"ROLE_CLIENT"})
+    public List<Contract> getMyFinishedContract() throws AppBaseException {
+        Account executorAccount = accountService.getExecutorAccount();
+
+        return contractRepository.findAll().stream()
+                .filter(contract -> contract.getExecutor().equals(executorAccount))
+                .filter(contract -> contract.getStatus().equals(ContractStatus.FINISHED))
+                .collect(Collectors.toList());
+    }
+
+    @Secured({"ROLE_CLIENT"})
+    public List<Contract> getDelegateFinishedContracts() throws AppBaseException {
+        Account executorAccount = accountService.getExecutorAccount();
+
+        return contractRepository.findAll().stream()
+                .filter(contract -> contract.getAdvert().getPublisher().equals(executorAccount))
+                .filter(contract -> contract.getStatus().equals(ContractStatus.FINISHED))
+                .collect(Collectors.toList());
+    }
+
     private void conditionVerifier(boolean condition, ContractException exception) throws ContractException {
         if (condition) {
             throw exception;
