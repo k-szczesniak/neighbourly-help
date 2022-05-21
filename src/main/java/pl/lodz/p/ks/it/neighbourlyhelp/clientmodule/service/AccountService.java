@@ -24,6 +24,7 @@ import pl.lodz.p.ks.it.neighbourlyhelp.exception.NotFoundException;
 import pl.lodz.p.ks.it.neighbourlyhelp.utils.email.EmailService;
 
 import javax.annotation.security.PermitAll;
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
@@ -258,6 +259,7 @@ public class AccountService {
         accountRepository.saveAndFlush(account);
     }
 
+    @Secured({"ROLE_ADMIN", "ROLE_MODERATOR", "ROLE_CLIENT"})
     public void changeThemeColor(Account account, ThemeColor themeColor) throws AppBaseException {
         if (account.getThemeColor().equals(themeColor)) {
             throw AccountException.themeAlreadySet();
@@ -265,6 +267,14 @@ public class AccountService {
 
         account.setThemeColor(themeColor);
         account.setModifiedBy(account);
+
+        accountRepository.saveAndFlush(account);
+    }
+
+    @Secured({"ROLE_ADMIN"})
+    public void updateAccountRating(Long accountId, BigDecimal accountRating) throws AppBaseException {
+        Account account = accountRepository.findById(accountId).orElseThrow(NotFoundException::accountNotFound);
+        account.setRating(accountRating);
 
         accountRepository.saveAndFlush(account);
     }

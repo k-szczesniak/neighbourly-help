@@ -1,5 +1,6 @@
 package pl.lodz.p.ks.it.neighbourlyhelp.advertmodule.domain;
 
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -69,4 +70,12 @@ public class Rating extends AbstractEntity {
     @Setter
     @OneToOne(optional = false)
     private Contract contract;
+
+    @Builder
+    public Rating(short rate, String comment, boolean hidden, Contract contract) {
+        this.rate = rate;
+        this.comment = comment;
+        this.hidden = hidden;
+        this.contract = contract;
+    }
 }

@@ -35,9 +35,12 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.UniqueConstraint;
+import javax.validation.constraints.Digits;
+import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlTransient;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -171,6 +174,13 @@ public class Account extends AbstractEntity implements UserDetails {
     @Min(value = 0)
     @Column(name = "failed_login_attempts_counter", columnDefinition = "integer default 0")
     private Integer failedLoginAttemptsCounter = 0;
+
+    @Setter
+    @Min(value = 1)
+    @Max(value = 5)
+    @Digits(integer = 1, fraction = 1)
+    @Column(name = "rating")
+    private BigDecimal rating;
 
     public Account(String firstName, String lastName, String email, String password) {
         this.firstName = firstName;
