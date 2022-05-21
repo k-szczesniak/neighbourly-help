@@ -18,7 +18,7 @@ import pl.lodz.p.ks.it.neighbourlyhelp.clientmodule.dto.request.RegisterAccountD
 import pl.lodz.p.ks.it.neighbourlyhelp.clientmodule.dto.response.AccountDto;
 import pl.lodz.p.ks.it.neighbourlyhelp.clientmodule.service.AccountService;
 import pl.lodz.p.ks.it.neighbourlyhelp.exception.AppBaseException;
-import pl.lodz.p.ks.it.neighbourlyhelp.mapper.IAccountMapper;
+import pl.lodz.p.ks.it.neighbourlyhelp.mapper.AccountMapper;
 import pl.lodz.p.ks.it.neighbourlyhelp.utils.common.AbstractEndpoint;
 
 import javax.annotation.security.PermitAll;
@@ -42,7 +42,7 @@ public class AccountEndpointImpl extends AbstractEndpoint implements AccountEndp
     @PermitAll
     public void registerAccount(RegisterAccountDto registerAccountDto) throws AppBaseException {
         Account account = new Account();
-        Mappers.getMapper(IAccountMapper.class).toAccount(registerAccountDto, account);
+        Mappers.getMapper(AccountMapper.class).toAccount(registerAccountDto, account);
         account.setLanguage(servletRequest.getLocale().getLanguage().toLowerCase());
         accountService.register(account);
     }
@@ -59,7 +59,7 @@ public class AccountEndpointImpl extends AbstractEndpoint implements AccountEndp
         List<Account> accounts = accountService.getAllAccounts();
 
         return accounts.stream()
-                .map(account -> Mappers.getMapper(IAccountMapper.class).toAccountDto(account))
+                .map(account -> Mappers.getMapper(AccountMapper.class).toAccountDto(account))
                 .collect(Collectors.toList());
     }
 
@@ -82,7 +82,7 @@ public class AccountEndpointImpl extends AbstractEndpoint implements AccountEndp
     @Secured("ROLE_ADMIN")
     public void blockAccount(String email, String ifMatch) throws AppBaseException {
         Account account = accountService.getAccountByEmail(email);
-        AccountDto accountIntegrity = Mappers.getMapper(IAccountMapper.class).toAccountDto(account);
+        AccountDto accountIntegrity = Mappers.getMapper(AccountMapper.class).toAccountDto(account);
         verifyIntegrity(accountIntegrity, ifMatch);
         accountService.blockAccount(account);
     }
@@ -91,7 +91,7 @@ public class AccountEndpointImpl extends AbstractEndpoint implements AccountEndp
     @Secured("ROLE_ADMIN")
     public void unblockAccount(String email, String ifMatch) throws AppBaseException {
         Account account = accountService.getAccountByEmail(email);
-        AccountDto accountIntegrity = Mappers.getMapper(IAccountMapper.class).toAccountDto(account);
+        AccountDto accountIntegrity = Mappers.getMapper(AccountMapper.class).toAccountDto(account);
         verifyIntegrity(accountIntegrity, ifMatch);
         accountService.unblockAccount(account);
     }
@@ -99,14 +99,14 @@ public class AccountEndpointImpl extends AbstractEndpoint implements AccountEndp
     @Override
     @Secured({"ROLE_ADMIN", "ROLE_MODERATOR", "ROLE_CLIENT"})
     public AccountDto getOwnAccountInfo() throws AppBaseException {
-        return Mappers.getMapper(IAccountMapper.class)
+        return Mappers.getMapper(AccountMapper.class)
                 .toAccountDto(accountService.getExecutorAccount());
     }
 
     @Override
     @Secured("ROLE_ADMIN")
     public AccountDto getAccountInfo(String email) throws AppBaseException {
-        return Mappers.getMapper(IAccountMapper.class)
+        return Mappers.getMapper(AccountMapper.class)
                 .toAccountDto(accountService.getAccountByEmail(email));
     }
 
@@ -114,9 +114,9 @@ public class AccountEndpointImpl extends AbstractEndpoint implements AccountEndp
     @Secured({"ROLE_ADMIN", "ROLE_MODERATOR", "ROLE_CLIENT"})
     public void editOwnAccountDetails(AccountPersonalDetailsDto accountPersonalDetailsDto, String ifMatch) throws AppBaseException {
         Account editAccount = accountService.getExecutorAccount();
-        AccountDto accountIntegrity = Mappers.getMapper(IAccountMapper.class).toAccountDto(editAccount);
+        AccountDto accountIntegrity = Mappers.getMapper(AccountMapper.class).toAccountDto(editAccount);
         verifyIntegrity(accountIntegrity, ifMatch);
-        Mappers.getMapper(IAccountMapper.class).toAccount(accountPersonalDetailsDto, editAccount);
+        Mappers.getMapper(AccountMapper.class).toAccount(accountPersonalDetailsDto, editAccount);
         accountService.editAccountDetails(editAccount);
     }
 
@@ -124,9 +124,9 @@ public class AccountEndpointImpl extends AbstractEndpoint implements AccountEndp
     @Secured("ROLE_ADMIN")
     public void editOtherAccountDetails(String email, AccountPersonalDetailsDto accountPersonalDetailsDto, String ifMatch) throws AppBaseException {
         Account editAccount = accountService.getAccountByEmail(email);
-        AccountDto accountIntegrity = Mappers.getMapper(IAccountMapper.class).toAccountDto(editAccount);
+        AccountDto accountIntegrity = Mappers.getMapper(AccountMapper.class).toAccountDto(editAccount);
         verifyIntegrity(accountIntegrity, ifMatch);
-        Mappers.getMapper(IAccountMapper.class).toAccount(accountPersonalDetailsDto, editAccount);
+        Mappers.getMapper(AccountMapper.class).toAccount(accountPersonalDetailsDto, editAccount);
         accountService.editAccountDetails(editAccount);
     }
 
@@ -134,7 +134,7 @@ public class AccountEndpointImpl extends AbstractEndpoint implements AccountEndp
     @Secured({"ROLE_ADMIN", "ROLE_MODERATOR", "ROLE_CLIENT"})
     public void changePassword(PasswordChangeRequestDto passwordChangeDto, String ifMatch) throws AppBaseException {
         Account editAccount = accountService.getExecutorAccount();
-        AccountDto accountIntegrity = Mappers.getMapper(IAccountMapper.class).toAccountDto(editAccount);
+        AccountDto accountIntegrity = Mappers.getMapper(AccountMapper.class).toAccountDto(editAccount);
         verifyIntegrity(accountIntegrity, ifMatch);
 
         accountService.changePassword(editAccount, passwordChangeDto);
@@ -157,7 +157,7 @@ public class AccountEndpointImpl extends AbstractEndpoint implements AccountEndp
     @Override
     public void changeOtherPassword(PasswordChangeOtherRequestDto passwordChangeOtherDto, String ifMatch) throws AppBaseException {
         Account editAccount = accountService.getAccountByEmail(passwordChangeOtherDto.getEmail());
-        AccountDto accountIntegrity = Mappers.getMapper(IAccountMapper.class).toAccountDto(editAccount);
+        AccountDto accountIntegrity = Mappers.getMapper(AccountMapper.class).toAccountDto(editAccount);
         verifyIntegrity(accountIntegrity, ifMatch);
 
         accountService.changeOtherPassword(editAccount, passwordChangeOtherDto.getGivenPassword());
@@ -167,7 +167,7 @@ public class AccountEndpointImpl extends AbstractEndpoint implements AccountEndp
     @Secured({"ROLE_ADMIN", "ROLE_MODERATOR", "ROLE_CLIENT"})
     public void editOwnLanguage(String language, String ifMatch) throws AppBaseException {
         Account editAccount = accountService.getExecutorAccount();
-        AccountDto accountIntegrity = Mappers.getMapper(IAccountMapper.class).toAccountDto(editAccount);
+        AccountDto accountIntegrity = Mappers.getMapper(AccountMapper.class).toAccountDto(editAccount);
         verifyIntegrity(accountIntegrity, ifMatch);
 
         accountService.changeAccountLanguage(editAccount, language);
@@ -177,7 +177,7 @@ public class AccountEndpointImpl extends AbstractEndpoint implements AccountEndp
     @Secured({"ROLE_ADMIN", "ROLE_MODERATOR", "ROLE_CLIENT"})
     public void changeThemeColor(ThemeColor themeColor, String ifMatch) throws AppBaseException {
         Account editAccount = accountService.getExecutorAccount();
-        AccountDto accountIntegrity = Mappers.getMapper(IAccountMapper.class).toAccountDto(editAccount);
+        AccountDto accountIntegrity = Mappers.getMapper(AccountMapper.class).toAccountDto(editAccount);
         verifyIntegrity(accountIntegrity, ifMatch);
 
         accountService.changeThemeColor(editAccount, themeColor);

@@ -6,7 +6,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import pl.lodz.p.ks.it.neighbourlyhelp.advertmodule.domain.Advert;
-import pl.lodz.p.ks.it.neighbourlyhelp.advertmodule.domain.Contract;
 import pl.lodz.p.ks.it.neighbourlyhelp.advertmodule.domain.enums.ContractStatus;
 import pl.lodz.p.ks.it.neighbourlyhelp.advertmodule.repository.AdvertRepository;
 import pl.lodz.p.ks.it.neighbourlyhelp.clientmodule.domain.Account;
@@ -57,12 +56,12 @@ public class AdvertService {
                 .collect(Collectors.toList());
     }
 
-    @Secured({"ROLE_ADMIN", "ROLE_MODERATOR", "ROLE_CLIENT"})
-    public List<Advert> getAllActiveAdverts() {
-        return getAllAdverts().stream()
-                .filter(advert -> advert.getContract() != null)
-                .collect(Collectors.toList());
-    }
+//    @Secured({"ROLE_ADMIN", "ROLE_MODERATOR", "ROLE_CLIENT"})
+//    public List<Advert> getAllActiveAdverts() {
+//        return getAllAdverts().stream()
+//                .filter(advert -> advert.getContract() != null)
+//                .collect(Collectors.toList());
+//    }
 
     @Secured({"ROLE_CLIENT"})
     public List<Advert> getAllOwnAdverts() throws AppBaseException {
@@ -95,7 +94,7 @@ public class AdvertService {
 
     @Secured({"ROLE_CLIENT"})
     public void updateAdvert(Advert advert, @NotNull Long cityId, String executorEmail) throws AppBaseException {
-        conditionVerifier(advert.getContract() != null, AdvertException.advertIsInProgress());
+        verifyIfAdvertIsRelatedWithContractInProgress(advert);
         conditionVerifier(!advert.getPublisher().getEmail().equals(executorEmail), AdvertException.accessDenied());
 
         advert.setModifiedBy(accountService.getExecutorAccount());
@@ -127,13 +126,16 @@ public class AdvertService {
         advertRepository.delete(advert);
     }
 
+    private void verifyIfAdvertIsRelatedWithContractInProgress(Advert advertToProcess) throws AdvertException {
+        conditionVerifier(advertToProcess.getContractList().stream()
+                        .anyMatch(contract -> contract.getStatus().equals(ContractStatus.IN_PROGRESS)),
+                AdvertException.advertIsInProgress());
+    }
+
     private void verifyCanBeDisapprovedOrDelete(Advert advertToProcess, String executorEmail) throws AppBaseException {
         conditionVerifier(!verifyExecutorPrivileges(advertToProcess, executorEmail), AdvertException.accessDenied());
 
-        Contract contract = advertToProcess.getContract();
-        if (contract != null) {
-            conditionVerifier(contract.getStatus().equals(ContractStatus.IN_PROGRESS), AdvertException.advertIsInProgress());
-        }
+        verifyIfAdvertIsRelatedWithContractInProgress(advertToProcess);
 
         conditionVerifier(!advertToProcess.isApproved(), AdvertException.advertIsDisapproved());
     }

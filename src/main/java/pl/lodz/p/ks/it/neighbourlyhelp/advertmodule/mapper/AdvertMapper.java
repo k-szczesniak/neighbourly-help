@@ -20,7 +20,6 @@ public interface AdvertMapper {
 
     @Mappings({
             @Mapping(target = "cityId", source = "city.id"),
-            @Mapping(target = "contractId", source = "contract.id"),
             @Mapping(target = "publisherId", source = "publisher.id")
     })
     AdvertResponseDto toAdvertDto(Advert advert);

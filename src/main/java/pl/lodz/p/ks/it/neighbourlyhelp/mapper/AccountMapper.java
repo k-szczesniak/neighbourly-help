@@ -9,7 +9,7 @@ import pl.lodz.p.ks.it.neighbourlyhelp.clientmodule.dto.response.AccountDto;
 import pl.lodz.p.ks.it.neighbourlyhelp.exception.AppBaseException;
 
 @Mapper
-public interface IAccountMapper {
+public interface AccountMapper {
 
     AccountDto toAccountDto(Account account);
 

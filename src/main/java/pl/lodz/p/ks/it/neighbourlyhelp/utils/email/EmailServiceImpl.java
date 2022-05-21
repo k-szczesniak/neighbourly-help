@@ -117,6 +117,39 @@ public class EmailServiceImpl implements EmailService {
         send(account.getEmail(), deleteUnconfirmedSubject, deleteUnconfirmedContent);
     }
 
+    @Override
+    public void sendCreateContractEmail(Account account, Long contractId, String advertTitle) throws AppBaseException {
+        String lang = account.getLanguage();
+        String createContractContent = mailConfig.getContentForType(lang, MailConfig.MailType.CREATE_CONTRACT,
+                account.getEmail(), contractId.toString(), advertTitle);
+        String createContractSubject = mailConfig.getSubjectForType(lang, MailConfig.MailType.CREATE_CONTRACT);
+        send(account.getEmail(), createContractSubject, createContractContent);
+    }
+
+    @Override
+    public void sendCancelContractEmail(Account account, Long contractId, String advertTitle) throws AppBaseException {
+        String lang = account.getLanguage();
+        String cancelContractContent = mailConfig.getContentForType(lang, MailConfig.MailType.CANCEL_CONTRACT,
+                account.getEmail(), contractId.toString(), advertTitle);
+        String cancelContractSubject = mailConfig.getSubjectForType(lang, MailConfig.MailType.CANCEL_CONTRACT);
+        send(account.getEmail(), cancelContractSubject, cancelContractContent);
+    }
+
+    @Override
+    public void sendWaitingToApproveContractEmail(Account executor, Account publisher, Long contractId, String advertTitle) throws AppBaseException {
+        String executorLang = executor.getLanguage();
+        String executorToApproveContractContent = mailConfig.getContentForType(executorLang, MailConfig.MailType.EXECUTOR_TO_APPROVE_CONTRACT,
+                executor.getEmail(), contractId.toString(), advertTitle);
+        String executorToApproveContractSubject = mailConfig.getSubjectForType(executorLang, MailConfig.MailType.EXECUTOR_TO_APPROVE_CONTRACT);
+        send(executor.getEmail(), executorToApproveContractSubject, executorToApproveContractContent);
+
+        String publisherLang = publisher.getLanguage();
+        String publisherToApproveContractContent = mailConfig.getContentForType(publisherLang, MailConfig.MailType.PUBLISHER_TO_APPROVE_CONTRACT,
+                publisher.getEmail(), contractId.toString(), advertTitle);
+        String publisherToApproveContractSubject = mailConfig.getSubjectForType(publisherLang, MailConfig.MailType.PUBLISHER_TO_APPROVE_CONTRACT);
+        send(publisher.getEmail(), publisherToApproveContractSubject, publisherToApproveContractContent);
+    }
+
     private String wrapCode(String code, String endpoint) {
         return String.join("/", mailConfig.getMailUri(), endpoint, code);
     }

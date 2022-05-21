@@ -1,5 +1,6 @@
 package pl.lodz.p.ks.it.neighbourlyhelp.advertmodule.domain;
 
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -58,4 +59,11 @@ public class LoyaltyPoint extends AbstractEntity {
     @Size(min = 4, max = 255)
     @Column(name = "comment")
     private String comment;
+
+    @Builder
+    public LoyaltyPoint(Contract contract, LoyaltyPointStatus status, String comment) {
+        this.contract = contract;
+        this.status = status;
+        this.comment = comment;
+    }
 }

@@ -24,7 +24,7 @@ import javax.persistence.Id;
 import javax.persistence.Index;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -96,8 +96,8 @@ public class Advert extends AbstractEntity {
     private City city;
 
     @Setter
-    @OneToOne(cascade = {CascadeType.MERGE, CascadeType.REFRESH}, mappedBy = "advert")
-    private Contract contract;
+    @OneToMany(cascade = {CascadeType.MERGE, CascadeType.REFRESH}, mappedBy = "advert")
+    private Set<Contract> contractList = new HashSet<>();
 
     @Column(name = "preferable_settlement_list", nullable = false)
     @Convert(converter = PreferableSettlementsConverter.class)
