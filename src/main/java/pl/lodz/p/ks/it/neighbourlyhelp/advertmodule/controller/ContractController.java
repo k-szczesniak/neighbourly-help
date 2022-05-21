@@ -118,4 +118,30 @@ public class ContractController {
     public List<ContractDto> getDelegateFinishedContracts() throws AppBaseException {
         return contractHelper.getDelegateFinishedContracts();
     }
+
+    @GetMapping("/unrated")
+    @Secured({"ROLE_CLIENT"})
+    public List<ContractDto> getUnratedFinishedContracts() throws AppBaseException {
+        return contractHelper.getUnratedFinishedContracts();
+    }
+
+    /**
+     * @return list of unpaid contracts where user is executor of the job
+     * @throws AppBaseException when something went wrong
+     */
+    @GetMapping("/unpaid/executor")
+    @Secured({"ROLE_CLIENT"})
+    public List<ContractDto> getMyUnpaidFinishedContracts() throws AppBaseException {
+        return contractHelper.getMyUnpaidFinishedContracts();
+    }
+
+    /**
+     * @return list of unpaid contracts where user is publisher of the advert
+     * @throws AppBaseException when something went wrong
+     */
+    @GetMapping("/unpaid/publisher")
+    @Secured({"ROLE_CLIENT"})
+    public List<ContractDto> getDelegateUnpaidFinishedContracts() throws AppBaseException {
+        return contractHelper.getDelegateUnpaidFinishedContracts();
+    }
 }

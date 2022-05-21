@@ -109,6 +109,27 @@ public class ContractHelperImpl extends AbstractEndpoint implements ContractHelp
         return toListOfAdvertResponseDto(finishedContract);
     }
 
+    @Override
+    @Secured({"ROLE_CLIENT"})
+    public List<ContractDto> getUnratedFinishedContracts() throws AppBaseException {
+        List<Contract> unratedFinishedContracts = contractService.getUnratedFinishedContracts();
+        return toListOfAdvertResponseDto(unratedFinishedContracts);
+    }
+
+    @Override
+    @Secured({"ROLE_CLIENT"})
+    public List<ContractDto> getMyUnpaidFinishedContracts() throws AppBaseException {
+        List<Contract> unpaidFinishedContracts = contractService.getMyUnpaidFinishedContracts();
+        return toListOfAdvertResponseDto(unpaidFinishedContracts);
+    }
+
+    @Override
+    @Secured({"ROLE_CLIENT"})
+    public List<ContractDto> getDelegateUnpaidFinishedContracts() throws AppBaseException {
+        List<Contract> unpaidFinishedContracts = contractService.getDelegateUnpaidFinishedContracts();
+        return toListOfAdvertResponseDto(unpaidFinishedContracts);
+    }
+
     private void verifyPrivilegesAndIntegrity(VoidMethodExecutor executor, Contract contract, String ifMatch) throws AppBaseException {
         if (getEmail().equals(contract.getExecutor().getEmail()) ||
                 getEmail().equals(contract.getAdvert().getPublisher().getEmail())) {

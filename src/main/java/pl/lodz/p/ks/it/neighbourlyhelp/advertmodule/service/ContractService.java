@@ -208,6 +208,39 @@ public class ContractService {
                 .collect(Collectors.toList());
     }
 
+    @Secured({"ROLE_CLIENT"})
+    public List<Contract> getUnratedFinishedContracts() throws AppBaseException {
+        Account executorAccount = accountService.getExecutorAccount();
+
+        return contractRepository.findAll().stream()
+                .filter(contract -> contract.getExecutor().equals(executorAccount))
+                .filter(contract -> contract.getStatus().equals(ContractStatus.FINISHED))
+                .filter(contract -> contract.getRating() == null)
+                .collect(Collectors.toList());
+    }
+
+    @Secured({"ROLE_CLIENT"})
+    public List<Contract> getMyUnpaidFinishedContracts() throws AppBaseException {
+        Account executorAccount = accountService.getExecutorAccount();
+
+        return contractRepository.findAll().stream()
+                .filter(contract -> contract.getExecutor().equals(executorAccount))
+                .filter(contract -> contract.getStatus().equals(ContractStatus.FINISHED))
+                .filter(contract -> contract.getLoyaltyPoint() == null || contract.getLoyaltyPoint().getStatus().equals(LoyaltyPointStatus.TO_PAYOFF))
+                .collect(Collectors.toList());
+    }
+
+    @Secured({"ROLE_CLIENT"})
+    public List<Contract> getDelegateUnpaidFinishedContracts() throws AppBaseException {
+        Account executorAccount = accountService.getExecutorAccount();
+
+        return contractRepository.findAll().stream()
+                .filter(contract -> contract.getAdvert().getPublisher().equals(executorAccount))
+                .filter(contract -> contract.getStatus().equals(ContractStatus.FINISHED))
+                .filter(contract -> contract.getLoyaltyPoint() == null || contract.getLoyaltyPoint().getStatus().equals(LoyaltyPointStatus.TO_PAYOFF))
+                .collect(Collectors.toList());
+    }
+
     private void conditionVerifier(boolean condition, ContractException exception) throws ContractException {
         if (condition) {
             throw exception;
