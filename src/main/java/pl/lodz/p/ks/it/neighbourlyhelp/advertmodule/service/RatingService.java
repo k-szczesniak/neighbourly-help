@@ -9,10 +9,12 @@ import pl.lodz.p.ks.it.neighbourlyhelp.advertmodule.domain.Contract;
 import pl.lodz.p.ks.it.neighbourlyhelp.advertmodule.domain.Rating;
 import pl.lodz.p.ks.it.neighbourlyhelp.advertmodule.domain.enums.ContractStatus;
 import pl.lodz.p.ks.it.neighbourlyhelp.advertmodule.dto.request.NewRatingDto;
+import pl.lodz.p.ks.it.neighbourlyhelp.advertmodule.dto.request.UpdateRatingDto;
 import pl.lodz.p.ks.it.neighbourlyhelp.advertmodule.repository.RatingRepository;
 import pl.lodz.p.ks.it.neighbourlyhelp.clientmodule.domain.Account;
 import pl.lodz.p.ks.it.neighbourlyhelp.clientmodule.service.AccountService;
 import pl.lodz.p.ks.it.neighbourlyhelp.exception.AppBaseException;
+import pl.lodz.p.ks.it.neighbourlyhelp.exception.NotFoundException;
 import pl.lodz.p.ks.it.neighbourlyhelp.exception.RatingException;
 
 import java.math.BigDecimal;
@@ -28,7 +30,12 @@ public class RatingService {
     private final ContractService contractService;
     private final AccountService accountService;
 
-    @Secured({"ROLE_ADMIN"})
+    @Secured({"ROLE_CLIENT"})
+    public Rating get(Long ratingId) throws AppBaseException {
+        return ratingRepository.findById(ratingId).orElseThrow(NotFoundException::ratingNotFound);
+    }
+
+    @Secured({"ROLE_CLIENT"})
     public void addRating(NewRatingDto newRatingDto) throws AppBaseException {
         Contract ratedContract = contractService.get(newRatingDto.getContractId());
 
@@ -52,6 +59,24 @@ public class RatingService {
         ratingRepository.saveAndFlush(rating);
 
         Account accountToRate = isAdvertPublisher ? ratedContract.getExecutor() : ratedContract.getAdvert().getPublisher();
+
+        BigDecimal averageRating = calculateAverageRating(accountToRate.getId());
+        accountService.updateAccountRating(accountToRate.getId(), averageRating);
+    }
+
+    @Secured({"ROLE_CLIENT"})
+    public void updateRating(UpdateRatingDto updateRatingDto) throws AppBaseException {
+        Rating rating = get(updateRatingDto.getId());
+
+        Account executorAccount = accountService.getExecutorAccount();
+        rating.setRate(updateRatingDto.getRate());
+        rating.setComment(updateRatingDto.getComment());
+        rating.setModifiedBy(executorAccount);
+        ratingRepository.saveAndFlush(rating);
+
+        Account ratingAuthor = rating.getCreatedBy();
+        boolean isAdvertPublisher = ratingAuthor.equals(executorAccount);
+        Account accountToRate = isAdvertPublisher ? rating.getContract().getExecutor() : rating.getContract().getAdvert().getPublisher();
 
         BigDecimal averageRating = calculateAverageRating(accountToRate.getId());
         accountService.updateAccountRating(accountToRate.getId(), averageRating);

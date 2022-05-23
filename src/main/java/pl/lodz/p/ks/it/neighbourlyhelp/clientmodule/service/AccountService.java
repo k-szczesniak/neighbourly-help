@@ -271,7 +271,7 @@ public class AccountService {
         accountRepository.saveAndFlush(account);
     }
 
-    @Secured({"ROLE_ADMIN"})
+    @Secured({"ROLE_CLIENT"})
     public void updateAccountRating(Long accountId, BigDecimal accountRating) throws AppBaseException {
         Account account = accountRepository.findById(accountId).orElseThrow(NotFoundException::accountNotFound);
         account.setRating(accountRating);
