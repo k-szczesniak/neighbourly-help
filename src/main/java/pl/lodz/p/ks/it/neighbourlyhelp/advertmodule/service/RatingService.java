@@ -20,6 +20,7 @@ import pl.lodz.p.ks.it.neighbourlyhelp.exception.RatingException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -30,9 +31,18 @@ public class RatingService {
     private final ContractService contractService;
     private final AccountService accountService;
 
-    @Secured({"ROLE_CLIENT"})
+    @Secured({"ROLE_MODERATOR", "ROLE_CLIENT"})
     public Rating get(Long ratingId) throws AppBaseException {
         return ratingRepository.findById(ratingId).orElseThrow(NotFoundException::ratingNotFound);
+    }
+
+    @Secured({"ROLE_MODERATOR", "ROLE_CLIENT"})
+    public List<Rating> getAllAccountRatings(Long accountId) {
+        return ratingRepository.findAll().stream()
+                .filter(rating -> rating.getContract().getExecutor().getId().equals(accountId) ||
+                        rating.getContract().getAdvert().getPublisher().getId().equals(accountId))
+                .filter(rating -> !rating.getCreatedBy().getId().equals(accountId))
+                .collect(Collectors.toList());
     }
 
     @Secured({"ROLE_CLIENT"})
@@ -77,6 +87,28 @@ public class RatingService {
         Account ratingAuthor = rating.getCreatedBy();
         boolean isAdvertPublisher = ratingAuthor.equals(executorAccount);
         Account accountToRate = isAdvertPublisher ? rating.getContract().getExecutor() : rating.getContract().getAdvert().getPublisher();
+
+        BigDecimal averageRating = calculateAverageRating(accountToRate.getId());
+        accountService.updateAccountRating(accountToRate.getId(), averageRating);
+    }
+
+    @Secured({"ROLE_MODERATOR"})
+    public void changeVisibility(Rating rating) throws AppBaseException {
+        rating.setHidden(!rating.isHidden());
+        rating.setModifiedBy(accountService.getExecutorAccount());
+
+        ratingRepository.saveAndFlush(rating);
+    }
+
+    @Secured({"ROLE_CLIENT"})
+    public void deleteRating(Rating rating) throws AppBaseException {
+        Account executorAccount = accountService.getExecutorAccount();
+
+        Account ratingAuthor = rating.getCreatedBy();
+        boolean isAdvertPublisher = ratingAuthor.equals(executorAccount);
+        Account accountToRate = isAdvertPublisher ? rating.getContract().getExecutor() : rating.getContract().getAdvert().getPublisher();
+
+        ratingRepository.delete(rating);
 
         BigDecimal averageRating = calculateAverageRating(accountToRate.getId());
         accountService.updateAccountRating(accountToRate.getId(), averageRating);

@@ -3,7 +3,9 @@ package pl.lodz.p.ks.it.neighbourlyhelp.advertmodule.controller;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -20,6 +22,7 @@ import pl.lodz.p.ks.it.neighbourlyhelp.utils.consistency.MessageSigner;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
+import java.util.List;
 
 @RestController
 @RequestMapping("rating")
@@ -31,12 +34,18 @@ public class RatingController {
     private final MessageSigner messageSigner;
 
     @GetMapping("{id}")
-    @Secured({"ROLE_ADMIN", "ROLE_MODERATOR", "ROLE_CLIENT"})
+    @Secured({"ROLE_MODERATOR", "ROLE_CLIENT"})
     public ResponseEntity<RatingDto> get(@PathVariable("id") Long ratingId) throws AppBaseException {
         RatingDto ratingDto = ratingHelper.get(ratingId);
         return ResponseEntity.ok()
                 .eTag(messageSigner.sign(ratingDto))
                 .body(ratingDto);
+    }
+
+    @GetMapping("all/{accountId}")
+    @Secured({"ROLE_MODERATOR", "ROLE_CLIENT"})
+    public List<RatingDto> getAllAccountRatings(@PathVariable("accountId") Long accountId) {
+        return ratingHelper.getAllAccountRatings(accountId);
     }
 
     @PostMapping
@@ -52,5 +61,19 @@ public class RatingController {
         ratingHelper.updateRating(updateRatingDto, ifMatch);
     }
 
+    @PatchMapping("/changeVisibility/{ratingId}")
+    @Secured({"ROLE_MODERATOR"})
+    public void changeVisibility(@RequestHeader("If-Match") String ifMatch,
+                                   @PathVariable("ratingId") Long ratingId)
+            throws AppBaseException {
+        ratingHelper.changeVisibility(ratingId, ifMatch);
+    }
+
+    @DeleteMapping("{id}")
+    @Secured({"ROLE_CLIENT"})
+    public void deleteRating(@RequestHeader("If-Match") String ifMatch,
+                             @NotNull @PathVariable("id") Long ratingId) throws AppBaseException {
+        ratingHelper.deleteRating(ratingId, ifMatch);
+    }
 
 }
