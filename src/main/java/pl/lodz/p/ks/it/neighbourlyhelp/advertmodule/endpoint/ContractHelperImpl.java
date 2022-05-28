@@ -85,49 +85,49 @@ public class ContractHelperImpl extends AbstractEndpoint implements ContractHelp
     @Secured({"ROLE_CLIENT"})
     public List<ContractDto> getMyActiveContract() throws AppBaseException {
         List<Contract> activeContract = contractService.getMyActiveContract();
-        return toListOfAdvertResponseDto(activeContract);
+        return toListOfContractResponseDto(activeContract);
     }
 
     @Override
     @Secured({"ROLE_CLIENT"})
     public List<ContractDto> getDelegateActiveContracts() throws AppBaseException {
         List<Contract> activeContract = contractService.getDelegateActiveContracts();
-        return toListOfAdvertResponseDto(activeContract);
+        return toListOfContractResponseDto(activeContract);
     }
 
     @Override
     @Secured({"ROLE_CLIENT"})
     public List<ContractDto> getMyFinishedContract() throws AppBaseException {
         List<Contract> finishedContract = contractService.getMyFinishedContract();
-        return toListOfAdvertResponseDto(finishedContract);
+        return toListOfContractResponseDto(finishedContract);
     }
 
     @Override
     @Secured({"ROLE_CLIENT"})
     public List<ContractDto> getDelegateFinishedContracts() throws AppBaseException {
         List<Contract> finishedContract = contractService.getDelegateFinishedContracts();
-        return toListOfAdvertResponseDto(finishedContract);
+        return toListOfContractResponseDto(finishedContract);
     }
 
     @Override
     @Secured({"ROLE_CLIENT"})
     public List<ContractDto> getUnratedFinishedContracts() throws AppBaseException {
         List<Contract> unratedFinishedContracts = contractService.getUnratedFinishedContracts();
-        return toListOfAdvertResponseDto(unratedFinishedContracts);
+        return toListOfContractResponseDto(unratedFinishedContracts);
     }
 
     @Override
     @Secured({"ROLE_CLIENT"})
     public List<ContractDto> getMyUnpaidFinishedContracts() throws AppBaseException {
         List<Contract> unpaidFinishedContracts = contractService.getMyUnpaidFinishedContracts();
-        return toListOfAdvertResponseDto(unpaidFinishedContracts);
+        return toListOfContractResponseDto(unpaidFinishedContracts);
     }
 
     @Override
     @Secured({"ROLE_CLIENT"})
     public List<ContractDto> getDelegateUnpaidFinishedContracts() throws AppBaseException {
         List<Contract> unpaidFinishedContracts = contractService.getDelegateUnpaidFinishedContracts();
-        return toListOfAdvertResponseDto(unpaidFinishedContracts);
+        return toListOfContractResponseDto(unpaidFinishedContracts);
     }
 
     private void verifyPrivilegesAndIntegrity(VoidMethodExecutor executor, Contract contract, String ifMatch) throws AppBaseException {
@@ -141,7 +141,7 @@ public class ContractHelperImpl extends AbstractEndpoint implements ContractHelp
         }
     }
 
-    private List<ContractDto> toListOfAdvertResponseDto(List<Contract> contractList) {
+    private List<ContractDto> toListOfContractResponseDto(List<Contract> contractList) {
         ContractMapper contractMapper = Mappers.getMapper(ContractMapper.class);
         return contractList.stream().map(contractMapper::toContractDto).collect(Collectors.toList());
     }

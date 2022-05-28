@@ -12,6 +12,7 @@ public class NotFoundException extends AppBaseException {
     private static final String CONTRACT_NOT_FOUND = "exception.not_found_exception.contract_not_found";
     private static final String ENABLED_MODERATOR_ROLE_NOT_FOUND = "exception.not_found_exception.enabled_moderator_role_not_found";
     private static final String MODERATOR_ASSIGNED_HOTEL_NOT_FOUND = "exception.not_found_exception.moderator_assigned_hotel_not_found";
+    private static final String RATING_NOT_FOUND = "exception.not_found_exception.rating_not_found";
 
     private NotFoundException(String message, Throwable cause) {
         super(message, cause);
@@ -72,5 +73,9 @@ public class NotFoundException extends AppBaseException {
 
     public static NotFoundException contractNotFound() {
         return new NotFoundException(CONTRACT_NOT_FOUND);
+    }
+
+    public static NotFoundException ratingNotFound() {
+        return new NotFoundException(RATING_NOT_FOUND);
     }
 }
