@@ -13,6 +13,7 @@ import java.util.Date;
 @AllArgsConstructor
 @NoArgsConstructor
 public class AccountDto implements Signable {
+    private Long id;
     private String firstName;
     private String lastName;
     private String email;
@@ -29,6 +30,6 @@ public class AccountDto implements Signable {
 
     @Override
     public String getMessageToSign() {
-        return String.format("%d", version);
+        return String.format("%d;%d", id, version);
     }
 }

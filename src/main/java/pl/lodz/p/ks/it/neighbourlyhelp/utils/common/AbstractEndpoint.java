@@ -14,14 +14,14 @@ public abstract class AbstractEndpoint {
 
     public void verifyIntegrity(Signable signable, String eTag) throws AppOptimisticLockException {
         String valueFromSigner = signer.sign(signable);
-        if(!valueFromSigner.equals(eTag)) {
+        if (!valueFromSigner.equals(eTag.substring(1, eTag.length() - 1))) {
             throw AppOptimisticLockException.optimisticLockException();
         }
     }
 
     protected String getEmail() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if(authentication != null) {
+        if (authentication != null) {
             return authentication.getName();
         }
         return "Guest";
