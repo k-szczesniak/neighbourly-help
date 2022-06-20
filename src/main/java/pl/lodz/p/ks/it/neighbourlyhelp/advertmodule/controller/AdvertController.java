@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import pl.lodz.p.ks.it.neighbourlyhelp.advertmodule.dto.request.EditAdvertRequestDto;
 import pl.lodz.p.ks.it.neighbourlyhelp.advertmodule.dto.request.NewAdvertRequestDto;
+import pl.lodz.p.ks.it.neighbourlyhelp.advertmodule.dto.response.AdvertDetailsResponseDto;
 import pl.lodz.p.ks.it.neighbourlyhelp.advertmodule.dto.response.AdvertResponseDto;
 import pl.lodz.p.ks.it.neighbourlyhelp.advertmodule.endpoint.AdvertEndpoint;
 import pl.lodz.p.ks.it.neighbourlyhelp.exception.AppBaseException;
@@ -37,6 +38,15 @@ public class AdvertController {
     @Secured({"ROLE_ADMIN", "ROLE_MODERATOR", "ROLE_CLIENT"})
     public ResponseEntity<AdvertResponseDto> get(@PathVariable("id") Long advertId) throws AppBaseException {
         AdvertResponseDto advertDto = advertEndpoint.get(advertId);
+        return ResponseEntity.ok()
+                .eTag(messageSigner.sign(advertDto))
+                .body(advertDto);
+    }
+
+    @GetMapping("details/{id}")
+    @Secured({"ROLE_ADMIN", "ROLE_MODERATOR", "ROLE_CLIENT"})
+    public ResponseEntity<AdvertDetailsResponseDto> getDetails(@PathVariable("id") Long advertId) throws AppBaseException {
+        AdvertDetailsResponseDto advertDto = advertEndpoint.getDetails(advertId);
         return ResponseEntity.ok()
                 .eTag(messageSigner.sign(advertDto))
                 .body(advertDto);

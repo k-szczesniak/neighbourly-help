@@ -29,7 +29,11 @@ INSERT INTO client_data(id) values (-5);
 
 INSERT INTO advert(id, creation_date, modification_date, version, approved, category, description,
                    preferable_settlement_list, publication_date, title, created_by, modified_by, city_id, publisher_id)
-VALUES (-1, now(), null, 0, true, 1, 'Szukam osoby która posprząta mi biurko. Będę niezwykle wdzięczny za szybką pomoc',
+VALUES (-1, now(), null, 0, true, 0, 'Szukam osoby która posprząta mi biurko. Będę niezwykle wdzięczny za szybką pomoc',
         'PAYMENT,DIFFERENT', now(), 'Sprzątanie biurka', -1, null, -1, -1),
-       (-2, now(), null, 0, false, 0, 'Szukam osoby która wypieli mi ogródek',
-        'PAYMENT', now(), 'Pielenie ogrodu', -1, null, -1, -1);
+       (-2, now(), null, 0, false, 1, 'Szukam osoby która wypieli mi ogródek',
+        'PAYMENT', now(), 'Pielenie ogrodu', -1, null, -1, -1),
+       (-3, now(), null, 0, true, 2, 'Szukam osoby która zaopiekuje się moim dzieckiem w piątek wieczorem.',
+        'PAYMENT,DIFFERENT', now(), 'Opieka nad dzieckiem', -1, null, -1, -1),
+       (-4, now(), null, 0, false, 3, 'Szukam osoby będzie wyprowadzać mojego psa.',
+        'PAYMENT', now(), 'Wyprowadzanie psa', -1, null, -1, -1);

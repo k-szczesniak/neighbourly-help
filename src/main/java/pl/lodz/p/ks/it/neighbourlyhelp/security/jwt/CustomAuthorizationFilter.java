@@ -38,7 +38,7 @@ public class CustomAuthorizationFilter extends OncePerRequestFilter {
 
         String authorizationHeader = request.getHeader(AUTHORIZATION);
 
-        final List<String> permitAllEndpoints = List.of("/register", "/login", "/auth/token/refresh", "/confirm");
+        final List<String> permitAllEndpoints = List.of("/register", "/login", "/auth/token/refresh", "/confirm", "account/user/reset");
         Predicate<HttpServletRequest> isApiSecured = r -> permitAllEndpoints.stream()
                 .noneMatch(uri -> r.getServletPath().contains(uri));
 

@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 import pl.lodz.p.ks.it.neighbourlyhelp.advertmodule.domain.Advert;
 import pl.lodz.p.ks.it.neighbourlyhelp.advertmodule.dto.request.EditAdvertRequestDto;
 import pl.lodz.p.ks.it.neighbourlyhelp.advertmodule.dto.request.NewAdvertRequestDto;
+import pl.lodz.p.ks.it.neighbourlyhelp.advertmodule.dto.response.AdvertDetailsResponseDto;
 import pl.lodz.p.ks.it.neighbourlyhelp.advertmodule.dto.response.AdvertResponseDto;
 import pl.lodz.p.ks.it.neighbourlyhelp.advertmodule.mapper.AdvertMapper;
 import pl.lodz.p.ks.it.neighbourlyhelp.advertmodule.service.AdvertService;
@@ -29,6 +30,11 @@ public class AdvertEndpointImpl extends AbstractEndpoint implements AdvertEndpoi
     @Secured({"ROLE_ADMIN", "ROLE_MODERATOR", "ROLE_CLIENT"})
     public AdvertResponseDto get(Long advertId) throws AppBaseException {
         return Mappers.getMapper(AdvertMapper.class).toAdvertDto(advertService.get(advertId));
+    }
+
+    @Override
+    public AdvertDetailsResponseDto getDetails(Long advertId) throws AppBaseException {
+        return Mappers.getMapper(AdvertMapper.class).toAdvertDetailsDto(advertService.get(advertId));
     }
 
     @Override
