@@ -33,8 +33,9 @@ public class AuthEndpointImpl implements AuthEndpoint {
     @Override
     public AuthTokenResponseDto refreshToken(String refreshToken) throws AppBaseException {
         try {
-            tokenVerifier.validateToken(refreshToken);
-            String email = tokenVerifier.getClaims(refreshToken).getSubject();
+            String rfToken = refreshToken.substring(1, refreshToken.length() - 1); // it cut first and last ' " ' added to request by frontend app
+            tokenVerifier.validateToken(rfToken);
+            String email = tokenVerifier.getClaims(rfToken).getSubject();
             UserDetails user = accountService.getAccountByEmail(email);
             String accessToken = Jwts.builder()
                     .setSubject(user.getUsername())
@@ -47,7 +48,7 @@ public class AuthEndpointImpl implements AuthEndpoint {
 
             return AuthTokenResponseDto.builder()
                     .accessToken(accessToken)
-                    .refreshToken(refreshToken)
+                    .refreshToken(rfToken)
                     .build();
         } catch (JwtTokenMalformedException | JwtTokenMissingException e) {
             throw AppRuntimeException.jwtException(e);
