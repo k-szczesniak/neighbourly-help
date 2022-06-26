@@ -124,7 +124,7 @@ public class RoleService {
                 .orElseThrow(NotFoundException::moderatorAssignedCityNotFound);
 
         return city.getModeratorDataList().stream()
-                .filter(manager -> manager.getAccount().getEmail().equals(moderatorEmail))
+                .filter(moderator -> moderator.getAccount().getEmail().equals(moderatorEmail))
                 .findAny()
                 .orElseThrow(NotFoundException::moderatorAssignedCityNotFound);
     }
