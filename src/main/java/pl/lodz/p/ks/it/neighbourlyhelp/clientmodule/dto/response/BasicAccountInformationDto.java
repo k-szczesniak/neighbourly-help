@@ -12,6 +12,7 @@ import pl.lodz.p.ks.it.neighbourlyhelp.utils.consistency.Signable;
 @NoArgsConstructor
 public class BasicAccountInformationDto implements Signable {
     private Long id;
+    private String email;
     private String firstName;
     private String lastName;
     private Long version;
