@@ -78,6 +78,14 @@ public class RoleEndpointImpl extends AbstractEndpoint implements RoleEndpoint {
         return allModeratorsList.stream().map(accountMapper::toBasicAccountInformationDto).collect(Collectors.toList());
     }
 
+    @Override
+    @Secured({"ROLE_ADMIN"})
+    public List<BasicAccountInformationDto> getModeratorsAssignedToCity(Long cityId) {
+        AccountMapper accountMapper = Mappers.getMapper(AccountMapper.class);
+        List<Account> allModeratorsList = roleService.getModeratorsAssignedToCity(cityId);
+        return allModeratorsList.stream().map(accountMapper::toBasicAccountInformationDto).collect(Collectors.toList());
+    }
+
     private RolesDto mapToRolesDto(Account account) {
         return Mappers.getMapper(RoleMapper.class).toRolesDto(account);
     }

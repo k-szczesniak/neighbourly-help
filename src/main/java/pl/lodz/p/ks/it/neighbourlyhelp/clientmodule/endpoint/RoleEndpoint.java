@@ -40,4 +40,6 @@ public interface RoleEndpoint {
     ModeratorDataDto getModeratorData(String email) throws AppBaseException;
 
     List<BasicAccountInformationDto> getAllFreeModeratorsList();
+
+    List<BasicAccountInformationDto> getModeratorsAssignedToCity(Long cityId);
 }

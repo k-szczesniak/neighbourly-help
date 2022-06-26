@@ -82,4 +82,10 @@ public class RoleController {
     public List<BasicAccountInformationDto> getAllFreeModeratorsList() {
         return roleEndpoint.getAllFreeModeratorsList();
     }
+
+    @GetMapping("/moderatorsAssignedToCity/{cityId}")
+    @Secured({"ROLE_ADMIN"})
+    public List<BasicAccountInformationDto> getModeratorsAssignedToCity(@NotNull @PathVariable("cityId") @Valid Long cityId) {
+        return roleEndpoint.getModeratorsAssignedToCity(cityId);
+    }
 }

@@ -157,6 +157,25 @@ public class RoleService {
         return result;
     }
 
+    @Secured({"ROLE_ADMIN"})
+    public List<Account> getModeratorsAssignedToCity(Long cityId) {
+        List<Account> allAccounts = accountService.getAllAccounts();
+        List<Account> result = new ArrayList<>();
+
+        for (Account account : allAccounts) {
+            Set<Role> roleList = account.getRoleList();
+            for (Role role : roleList) {
+                if (role.getAccessLevel().equals(AccessLevel.MODERATOR)
+                        && role.isEnabled()
+                        && getById(role.getId()).getCity() != null
+                        && getById(role.getId()).getCity().getId().equals(cityId)) {
+                    result.add(account);
+                }
+            }
+        }
+        return result;
+    }
+
     private ModeratorData getById(Long roleId) {
         return moderatorDataRepository.getById(roleId);
     }
