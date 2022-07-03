@@ -13,11 +13,11 @@ public class ContractDto {
 
     private Long id;
 
-    private Long executorId;
+    private ContractDto_Executor executor;
 
-    private Long publisherId;
+    private ContractDto_Publisher publisher;
 
-    private Long advertId;
+    private ContractDto_Advert advert;
 
     private Date startDate;
 
@@ -26,4 +26,27 @@ public class ContractDto {
     private String contractStatus;
 
     private Long version;
+
+    @Data
+    @AllArgsConstructor
+    public static class ContractDto_Publisher {
+        private Long id;
+        private String firstName;
+        private String lastName;
+    }
+
+    @Data
+    @AllArgsConstructor
+    public static class ContractDto_Executor {
+        private Long id;
+        private String firstName;
+        private String lastName;
+    }
+
+    @Data
+    @AllArgsConstructor
+    public static class ContractDto_Advert {
+        private Long id;
+        private String title;
+    }
 }

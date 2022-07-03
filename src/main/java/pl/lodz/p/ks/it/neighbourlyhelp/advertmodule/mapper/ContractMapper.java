@@ -19,9 +19,7 @@ public interface ContractMapper {
     DetailContractDto toDetailContractDto(Contract contract);
 
     @Mappings({
-            @Mapping(target = "advertId", source = "advert.id"),
-            @Mapping(target = "executorId", source = "executor.id"),
-            @Mapping(target = "publisherId", source = "advert.publisher.id"),
+            @Mapping(target = "publisher", source = "advert.publisher"),
             @Mapping(target = "contractStatus", source = "status")
     })
     ContractDto toContractDto(Contract contract);
