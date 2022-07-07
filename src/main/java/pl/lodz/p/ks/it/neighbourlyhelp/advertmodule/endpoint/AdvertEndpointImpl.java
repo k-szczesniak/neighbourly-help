@@ -45,8 +45,8 @@ public class AdvertEndpointImpl extends AbstractEndpoint implements AdvertEndpoi
     }
 
     @Override
-    public List<AdvertResponseDto> getAllApprovedAdverts() {
-        List<Advert> advertList = advertService.getAllApprovedAdverts();
+    public List<AdvertResponseDto> getAllApprovedAdvertsToTake() {
+        List<Advert> advertList = advertService.getAllApprovedAdvertsToTake();
         return toListOfAdvertResponseDto(advertList);
     }
 

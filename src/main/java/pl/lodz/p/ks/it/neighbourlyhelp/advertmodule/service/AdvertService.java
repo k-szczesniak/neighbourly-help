@@ -18,6 +18,7 @@ import pl.lodz.p.ks.it.neighbourlyhelp.exception.NotFoundException;
 import javax.validation.constraints.NotNull;
 import java.util.Date;
 import java.util.List;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 @Service
@@ -41,10 +42,14 @@ public class AdvertService {
         return advertRepository.findAll();
     }
 
-    @Secured({"ROLE_ADMIN", "ROLE_MODERATOR", "ROLE_CLIENT"})
-    public List<Advert> getAllApprovedAdverts() {
+    @Secured({"ROLE_MODERATOR", "ROLE_CLIENT"})
+    public List<Advert> getAllApprovedAdvertsToTake() {
+        Predicate<Advert> advertPredicate = advert -> advert.getContractList().stream()
+                .noneMatch(contract -> contract.getAdvert().getId().equals(advert.getId())
+                        && !contract.getStatus().equals(ContractStatus.CANCELLED));
         return advertRepository.findAll().stream()
                 .filter(Advert::isApproved)
+                .filter(advertPredicate)
                 .collect(Collectors.toList());
     }
 

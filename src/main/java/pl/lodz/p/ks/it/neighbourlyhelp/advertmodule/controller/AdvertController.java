@@ -60,8 +60,8 @@ public class AdvertController {
 
     @GetMapping("approved")
     @Secured({"ROLE_ADMIN", "ROLE_MODERATOR", "ROLE_CLIENT"})
-    public List<AdvertResponseDto> getAllApproved() {
-        return advertEndpoint.getAllApprovedAdverts();
+    public List<AdvertResponseDto> getAllApprovedAdvertsToTake() {
+        return advertEndpoint.getAllApprovedAdvertsToTake();
     }
 
     @GetMapping("waitingToApprove")

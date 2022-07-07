@@ -16,7 +16,7 @@ public interface AdvertEndpoint {
 
     List<AdvertResponseDto> getAllAdverts();
 
-    List<AdvertResponseDto> getAllApprovedAdverts();
+    List<AdvertResponseDto> getAllApprovedAdvertsToTake();
 
     List<AdvertResponseDto> getAllWaitingToApprove();
 

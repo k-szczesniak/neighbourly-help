@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import pl.lodz.p.ks.it.neighbourlyhelp.advertmodule.domain.enums.PreferableSettlement;
 import pl.lodz.p.ks.it.neighbourlyhelp.utils.consistency.Signable;
 
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.Set;
 
@@ -50,6 +51,7 @@ public class AdvertDetailsResponseDto implements Signable {
         private String lastName;
         private String email;
         private String contactNumber;
+        private BigDecimal rating;
     }
 
     @Data
