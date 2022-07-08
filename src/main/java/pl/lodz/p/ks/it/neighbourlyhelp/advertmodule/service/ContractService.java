@@ -64,6 +64,7 @@ public class ContractService {
                         .filter(contract -> contract.getStatus().equals(ContractStatus.CANCELLED))
                         .count() >= maxAttempts,
                 ContractException.maxTakeUpAttemptsLimitOverdrawn());
+        conditionVerifier(advert.getPublisher().equals(executorAccount), ContractException.forbiddenToTakeOwnAdvert());
 
         // TODO: 16.05.2022 more validation cases
 
@@ -124,6 +125,7 @@ public class ContractService {
             contract.setStatus(ContractStatus.TO_APPROVE);
             contract.setModifiedBy(modifier);
             contract.setFinishDate(new Date());
+            contract.setContractEndedBy(modifier);
             contractRepository.saveAndFlush(contract);
             emailService.sendWaitingToApproveContractEmail(contract.getExecutor(), contract.getAdvert().getPublisher(),
                     contract.getId(), contract.getAdvert().getTitle());
@@ -140,8 +142,10 @@ public class ContractService {
 
     @Secured({"ROLE_CLIENT"})
     public void approveFinishedContract(Contract contract, ApproveFinishedRequestDto requestDto) throws AppBaseException {
+        Account modifier = accountService.getExecutorAccount();
+
+        conditionVerifier(contract.getContractEndedBy().equals(modifier), ContractException.forbiddenToApproveEndedMyselfContract());
         if (contract.getStatus().equals(ContractStatus.TO_APPROVE)) {
-            Account modifier = accountService.getExecutorAccount();
             contract.setStatus(ContractStatus.FINISHED);
             contract.setModifiedBy(modifier);
 
