@@ -3,12 +3,11 @@ package pl.lodz.p.ks.it.neighbourlyhelp.integrationtest.cases;
 import io.restassured.http.ContentType;
 import io.restassured.response.Response;
 import io.restassured.specification.RequestSpecification;
-import lombok.extern.java.Log;
-import org.json.JSONException;
-import org.json.JSONObject;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.jdbc.Sql;
+import pl.lodz.p.ks.it.neighbourlyhelp.clientmodule.dto.request.LoginCredentials;
 import pl.lodz.p.ks.it.neighbourlyhelp.clientmodule.dto.request.RegisterAccountDto;
 import pl.lodz.p.ks.it.neighbourlyhelp.clientmodule.dto.response.AuthTokenResponseDto;
 import pl.lodz.p.ks.it.neighbourlyhelp.integrationtest.BaseIT;
@@ -17,31 +16,22 @@ import pl.lodz.p.ks.it.neighbourlyhelp.integrationtest.infrastructure.annotation
 import static io.restassured.RestAssured.given;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
-//import static pl.lodz.p.ks.it.neighbourlyhelp.integrationtest.BaseIT.Resources.AUTH_ENDPOINT;
+import static pl.lodz.p.ks.it.neighbourlyhelp.integrationtest.BaseIT.Resources.AUTH_ENDPOINT;
+import static pl.lodz.p.ks.it.neighbourlyhelp.integrationtest.BaseIT.Resources.REGISTRATION_ENDPOINT;
 
-@Log
 @ActiveProfiles("test")
 @IntegrationTest
 public class ExampleTestIT extends BaseIT {
 
     @Test
+    @Sql("/test-init.sql")
     public void shouldAuthenticateCorrectly() {
         // given
-//        Customer customer = createCustomer();
 
-        JSONObject body = new JSONObject();
-        try {
-            body.put("email", "adam@amc.pl");
-            body.put("password", "zaq1@WSX");
-        } catch (JSONException e) {
-            log.info("problem with parsing");
-        }
-
-
-//        String body = {
-//                "email": "adam@amc.pl",
-//                "password": "zaq1@WSX"
-//}
+        LoginCredentials body = LoginCredentials.builder()
+                .email("adam@amc.pl")
+                .password("zaq1@WSX")
+                .build();
 
         final RequestSpecification requestSpecification = given()
                 .log().all()
@@ -51,8 +41,7 @@ public class ExampleTestIT extends BaseIT {
         // when
         final Response response = requestSpecification
                 .when()
-//                .post(AUTH_ENDPOINT.build());
-                .post("/auth/login");
+                .post(AUTH_ENDPOINT.build());
 
         // then
         final AuthTokenResponseDto authTokenResponseDto = response
@@ -64,9 +53,6 @@ public class ExampleTestIT extends BaseIT {
 
         assertThat(authTokenResponseDto.getAccessToken()).isNotEmpty();
         assertThat(authTokenResponseDto.getRefreshToken()).isNotEmpty();
-//        assertThat(customerResponse.getFirstName()).isEqualTo(customer.getFirstName());
-//        assertThat(customerResponse.getLastName()).isEqualTo(customer.getLastName());
-//        assertThat(customerResponse.getAge()).isEqualTo(customer.getAge());
     }
 
     @Test
@@ -100,7 +86,7 @@ public class ExampleTestIT extends BaseIT {
         // when
         final Response response = requestSpecification
                 .when()
-                .post("/account/register");
+                .post(REGISTRATION_ENDPOINT.build());
 
         // then
         response
