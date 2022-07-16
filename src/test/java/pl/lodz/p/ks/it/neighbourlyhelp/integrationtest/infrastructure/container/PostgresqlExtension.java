@@ -16,12 +16,12 @@ public class PostgresqlExtension implements BeforeAllCallback, AfterAllCallback 
     public void beforeAll(ExtensionContext extensionContext) throws Exception {
         postgresqlContainer = new PostgresqlContainer();
         log.info("Starting PostgreSQL Container");
-        postgresqlContainer.start();
 
-//        System.setProperty("MONGO_DB_HOST", postgresqlContainer.getContainerIpAddress()); todo: deprcated
-//        System.setProperty("MONGO_DB_HOST", postgresqlContainer.getHost()); // TODO: 15.07.2022 zmienić to -> są to odniesienia do application.properties
-//        System.setProperty("MONGO_DB_PORT", String.valueOf(postgresqlContainer.getPort()));
-//        System.setProperty("MONGO_DB_NAME", "MDB");
+        try {
+            postgresqlContainer.start();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
 
         log.info("Finished starting PostgreSQL Container");
     }
@@ -30,9 +30,6 @@ public class PostgresqlExtension implements BeforeAllCallback, AfterAllCallback 
     public void afterAll(ExtensionContext extensionContext) throws Exception {
         log.info("Stopping PostgreSQL Container");
         postgresqlContainer.stop();
-//        System.clearProperty("MONGO_DB_HOST");
-//        System.clearProperty("MONGO_DB_PORT");
-//        System.clearProperty("MONGO_DB_NAME");
         log.info("Finished stopping PostgreSQL Container");
     }
 
