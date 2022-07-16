@@ -12,6 +12,7 @@ import org.springframework.test.context.ActiveProfiles;
 import pl.lodz.p.ks.it.neighbourlyhelp.clientmodule.dto.request.RegisterAccountDto;
 import pl.lodz.p.ks.it.neighbourlyhelp.clientmodule.dto.response.AuthTokenResponseDto;
 import pl.lodz.p.ks.it.neighbourlyhelp.integrationtest.BaseIT;
+import pl.lodz.p.ks.it.neighbourlyhelp.integrationtest.infrastructure.annotation.IntegrationTest;
 
 import static io.restassured.RestAssured.given;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -20,7 +21,7 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 @Log
 @ActiveProfiles("test")
-//@IntegrationTest
+@IntegrationTest
 public class ExampleTestIT extends BaseIT {
 
     @Test

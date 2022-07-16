@@ -2,6 +2,8 @@ package pl.lodz.p.ks.it.neighbourlyhelp.integrationtest.infrastructure.annotatio
 
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.annotation.DirtiesContext;
+import org.testcontainers.junit.jupiter.Testcontainers;
 import pl.lodz.p.ks.it.neighbourlyhelp.integrationtest.infrastructure.configuration.TestConfig;
 import pl.lodz.p.ks.it.neighbourlyhelp.integrationtest.infrastructure.container.PostgresqlExtension;
 
@@ -18,5 +20,7 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 @SpringBootTest(classes = TestConfig.class,
         webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @Inherited
+@Testcontainers
+@DirtiesContext
 public @interface IntegrationTest {
 }
