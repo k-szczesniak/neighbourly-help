@@ -7,7 +7,6 @@ import lombok.Setter;
 import pl.lodz.p.ks.it.neighbourlyhelp.clientmodule.domain.ModeratorData;
 import pl.lodz.p.ks.it.neighbourlyhelp.utils.common.AbstractEntity;
 import pl.lodz.p.ks.it.neighbourlyhelp.validator.advertmodule.CityName;
-import pl.lodz.p.ks.it.neighbourlyhelp.validator.advertmodule.SimplyCityName;
 
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
@@ -50,15 +49,6 @@ public class City extends AbstractEntity {
     @Column(name = "name")
     @CityName
     private String name;
-
-    @Setter
-    @NotNull
-    @NonNull
-    @Basic(optional = false)
-    @Size(min = 1, max = 31)
-    @Column(name = "simply_name")
-    @SimplyCityName
-    private String simplyName;
 
     @Setter
     @OneToMany(cascade = CascadeType.REFRESH, mappedBy = "city")

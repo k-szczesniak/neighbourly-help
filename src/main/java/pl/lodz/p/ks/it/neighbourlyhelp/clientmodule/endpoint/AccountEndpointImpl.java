@@ -16,6 +16,7 @@ import pl.lodz.p.ks.it.neighbourlyhelp.clientmodule.dto.request.PasswordChangeRe
 import pl.lodz.p.ks.it.neighbourlyhelp.clientmodule.dto.request.PasswordResetRequestDto;
 import pl.lodz.p.ks.it.neighbourlyhelp.clientmodule.dto.request.RegisterAccountDto;
 import pl.lodz.p.ks.it.neighbourlyhelp.clientmodule.dto.response.AccountDto;
+import pl.lodz.p.ks.it.neighbourlyhelp.clientmodule.dto.response.BasicAccountInformationDto;
 import pl.lodz.p.ks.it.neighbourlyhelp.clientmodule.service.AccountService;
 import pl.lodz.p.ks.it.neighbourlyhelp.exception.AppBaseException;
 import pl.lodz.p.ks.it.neighbourlyhelp.mapper.AccountMapper;
@@ -108,6 +109,13 @@ public class AccountEndpointImpl extends AbstractEndpoint implements AccountEndp
     public AccountDto getAccountInfo(String email) throws AppBaseException {
         return Mappers.getMapper(AccountMapper.class)
                 .toAccountDto(accountService.getAccountByEmail(email));
+    }
+
+    @Override
+    @Secured({"ROLE_ADMIN", "ROLE_MODERATOR", "ROLE_CLIENT"})
+    public BasicAccountInformationDto get(Long accountId) throws AppBaseException {
+        return Mappers.getMapper(AccountMapper.class)
+                .toBasicAccountInformationDto(accountService.getAccountById(accountId));
     }
 
     @Override

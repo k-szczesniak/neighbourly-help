@@ -2,9 +2,12 @@ package pl.lodz.p.ks.it.neighbourlyhelp.clientmodule.endpoint;
 
 import org.springframework.security.access.annotation.Secured;
 import pl.lodz.p.ks.it.neighbourlyhelp.clientmodule.domain.enums.AccessLevel;
+import pl.lodz.p.ks.it.neighbourlyhelp.clientmodule.dto.response.BasicAccountInformationDto;
 import pl.lodz.p.ks.it.neighbourlyhelp.clientmodule.dto.response.ModeratorDataDto;
 import pl.lodz.p.ks.it.neighbourlyhelp.clientmodule.dto.response.RolesDto;
 import pl.lodz.p.ks.it.neighbourlyhelp.exception.AppBaseException;
+
+import java.util.List;
 
 public interface RoleEndpoint {
 
@@ -35,4 +38,8 @@ public interface RoleEndpoint {
     RolesDto getUserRole(String email) throws AppBaseException;
 
     ModeratorDataDto getModeratorData(String email) throws AppBaseException;
+
+    List<BasicAccountInformationDto> getAllFreeModeratorsList();
+
+    List<BasicAccountInformationDto> getModeratorsAssignedToCity(Long cityId);
 }

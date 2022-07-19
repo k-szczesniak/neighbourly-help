@@ -9,6 +9,7 @@ import pl.lodz.p.ks.it.neighbourlyhelp.clientmodule.dto.request.PasswordChangeRe
 import pl.lodz.p.ks.it.neighbourlyhelp.clientmodule.dto.request.PasswordResetRequestDto;
 import pl.lodz.p.ks.it.neighbourlyhelp.clientmodule.dto.request.RegisterAccountDto;
 import pl.lodz.p.ks.it.neighbourlyhelp.clientmodule.dto.response.AccountDto;
+import pl.lodz.p.ks.it.neighbourlyhelp.clientmodule.dto.response.BasicAccountInformationDto;
 import pl.lodz.p.ks.it.neighbourlyhelp.exception.AppBaseException;
 
 import javax.annotation.security.PermitAll;
@@ -45,6 +46,8 @@ public interface AccountEndpoint {
 
     @Secured("ROLE_ADMIN")
     AccountDto getAccountInfo(String email) throws AppBaseException;
+
+    BasicAccountInformationDto get(Long accountId) throws AppBaseException;
 
     @Secured({"ROLE_ADMIN", "ROLE_MODERATOR", "ROLE_CLIENT"})
     void editOwnAccountDetails(AccountPersonalDetailsDto accountPersonalDetailsDto, String ifMatch) throws AppBaseException;

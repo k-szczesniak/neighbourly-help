@@ -135,8 +135,7 @@ public class AccountService {
 
         confirmationToken.setConfirmedAt(LocalDateTime.now());
 
-        tokenService.saveConfirmationToken(confirmationToken);
-        accountRepository.save(account);
+        accountRepository.saveAndFlush(account);
         emailService.sendActivationSuccessEmail(account);
     }
 

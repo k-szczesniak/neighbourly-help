@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import pl.lodz.p.ks.it.neighbourlyhelp.clientmodule.domain.enums.AccessLevel;
+import pl.lodz.p.ks.it.neighbourlyhelp.clientmodule.dto.response.BasicAccountInformationDto;
 import pl.lodz.p.ks.it.neighbourlyhelp.clientmodule.dto.response.ModeratorDataDto;
 import pl.lodz.p.ks.it.neighbourlyhelp.clientmodule.dto.response.RolesDto;
 import pl.lodz.p.ks.it.neighbourlyhelp.clientmodule.endpoint.RoleEndpoint;
@@ -19,6 +20,7 @@ import pl.lodz.p.ks.it.neighbourlyhelp.validator.clientmodule.Email;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
+import java.util.List;
 
 @RestController
 @RequestMapping("/role")
@@ -73,5 +75,17 @@ public class RoleController {
         return ResponseEntity.ok()
                 .eTag(messageSigner.sign(moderatorDataDto))
                 .body(moderatorDataDto);
+    }
+
+    @GetMapping("/freeModerators")
+    @Secured({"ROLE_ADMIN"})
+    public List<BasicAccountInformationDto> getAllFreeModeratorsList() {
+        return roleEndpoint.getAllFreeModeratorsList();
+    }
+
+    @GetMapping("/moderatorsAssignedToCity/{cityId}")
+    @Secured({"ROLE_ADMIN"})
+    public List<BasicAccountInformationDto> getModeratorsAssignedToCity(@NotNull @PathVariable("cityId") @Valid Long cityId) {
+        return roleEndpoint.getModeratorsAssignedToCity(cityId);
     }
 }

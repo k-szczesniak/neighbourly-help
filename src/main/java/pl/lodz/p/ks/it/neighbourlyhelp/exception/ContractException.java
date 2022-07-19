@@ -15,6 +15,8 @@ public class ContractException extends AppBaseException {
     private static final String FINISHED_CONTRACT_CANCEL = "exception.contract.finished_cancel_contract";
     private static final String CANCELLED_CONTRACT = "exception.contract.cancelled_contract";
     private static final String NOT_STARTED_CONTRACT = "exception.contract.not_started";
+    private static final String FORBIDDEN_TO_TAKE_OWN_ADVERT = "exception.contract.forbidden_to_take_own_advert";
+    private static final String FORBIDDEN_TO_APPROVE_ENDED_MYSELF_CONTRACT = "exception.contract.forbidden_to_approve_ended_myself_contract";
 
     protected ContractException(String message, Throwable cause) {
         super(message, cause);
@@ -77,5 +79,13 @@ public class ContractException extends AppBaseException {
 
     public static ContractException contractNotStartedYet() {
         return new ContractException(NOT_STARTED_CONTRACT);
+    }
+
+    public static ContractException forbiddenToTakeOwnAdvert() {
+        return new ContractException(FORBIDDEN_TO_TAKE_OWN_ADVERT);
+    }
+
+    public static ContractException forbiddenToApproveEndedMyselfContract() {
+        return new ContractException(FORBIDDEN_TO_APPROVE_ENDED_MYSELF_CONTRACT);
     }
 }

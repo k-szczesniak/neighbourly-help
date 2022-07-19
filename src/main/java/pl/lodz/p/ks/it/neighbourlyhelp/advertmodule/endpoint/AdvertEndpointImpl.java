@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 import pl.lodz.p.ks.it.neighbourlyhelp.advertmodule.domain.Advert;
 import pl.lodz.p.ks.it.neighbourlyhelp.advertmodule.dto.request.EditAdvertRequestDto;
 import pl.lodz.p.ks.it.neighbourlyhelp.advertmodule.dto.request.NewAdvertRequestDto;
+import pl.lodz.p.ks.it.neighbourlyhelp.advertmodule.dto.response.AdvertDetailsResponseDto;
 import pl.lodz.p.ks.it.neighbourlyhelp.advertmodule.dto.response.AdvertResponseDto;
 import pl.lodz.p.ks.it.neighbourlyhelp.advertmodule.mapper.AdvertMapper;
 import pl.lodz.p.ks.it.neighbourlyhelp.advertmodule.service.AdvertService;
@@ -32,6 +33,11 @@ public class AdvertEndpointImpl extends AbstractEndpoint implements AdvertEndpoi
     }
 
     @Override
+    public AdvertDetailsResponseDto getDetails(Long advertId) throws AppBaseException {
+        return Mappers.getMapper(AdvertMapper.class).toAdvertDetailsDto(advertService.get(advertId));
+    }
+
+    @Override
     @Secured({"ROLE_ADMIN"})
     public List<AdvertResponseDto> getAllAdverts() {
         List<Advert> advertList = advertService.getAllAdverts();
@@ -39,8 +45,8 @@ public class AdvertEndpointImpl extends AbstractEndpoint implements AdvertEndpoi
     }
 
     @Override
-    public List<AdvertResponseDto> getAllApprovedAdverts() {
-        List<Advert> advertList = advertService.getAllApprovedAdverts();
+    public List<AdvertResponseDto> getAllApprovedAdvertsToTake() {
+        List<Advert> advertList = advertService.getAllApprovedAdvertsToTake();
         return toListOfAdvertResponseDto(advertList);
     }
 

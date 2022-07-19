@@ -19,7 +19,9 @@ import pl.lodz.p.ks.it.neighbourlyhelp.exception.NotFoundException;
 import pl.lodz.p.ks.it.neighbourlyhelp.exception.RoleException;
 import pl.lodz.p.ks.it.neighbourlyhelp.utils.email.EmailService;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -124,7 +126,7 @@ public class RoleService {
                 .orElseThrow(NotFoundException::moderatorAssignedCityNotFound);
 
         return city.getModeratorDataList().stream()
-                .filter(manager -> manager.getAccount().getEmail().equals(moderatorEmail))
+                .filter(moderator -> moderator.getAccount().getEmail().equals(moderatorEmail))
                 .findAny()
                 .orElseThrow(NotFoundException::moderatorAssignedCityNotFound);
     }
@@ -135,6 +137,43 @@ public class RoleService {
         moderatorData.setModifiedBy(accountService.getExecutorAccount());
 
         moderatorDataRepository.saveAndFlush(moderatorData);
+    }
+
+    @Secured({"ROLE_ADMIN"})
+    public List<Account> getAllFreeModeratorsList() {
+        List<Account> allAccounts = accountService.getAllAccounts();
+        List<Account> result = new ArrayList<>();
+
+        for (Account account : allAccounts) {
+            Set<Role> roleList = account.getRoleList();
+            for (Role role : roleList) {
+                if (role.getAccessLevel().equals(AccessLevel.MODERATOR)
+                        && role.isEnabled()
+                        && getById(role.getId()).getCity() == null) {
+                    result.add(account);
+                }
+            }
+        }
+        return result;
+    }
+
+    @Secured({"ROLE_ADMIN"})
+    public List<Account> getModeratorsAssignedToCity(Long cityId) {
+        List<Account> allAccounts = accountService.getAllAccounts();
+        List<Account> result = new ArrayList<>();
+
+        for (Account account : allAccounts) {
+            Set<Role> roleList = account.getRoleList();
+            for (Role role : roleList) {
+                if (role.getAccessLevel().equals(AccessLevel.MODERATOR)
+                        && role.isEnabled()
+                        && getById(role.getId()).getCity() != null
+                        && getById(role.getId()).getCity().getId().equals(cityId)) {
+                    result.add(account);
+                }
+            }
+        }
+        return result;
     }
 
     private ModeratorData getById(Long roleId) {

@@ -50,13 +50,10 @@ public class Contract extends AbstractEntity {
     @Column(name = "id", updatable = false)
     private Long id;
 
-
-
     @Getter
     @Setter
     @ManyToOne(cascade = CascadeType.REFRESH, optional = false)
     private Advert advert;
-
 
     @Setter
     @Basic(optional = true)
@@ -69,10 +66,6 @@ public class Contract extends AbstractEntity {
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "finish_date")
     private Date finishDate;
-
-
-
-
 
     @Setter
     @Enumerated(EnumType.ORDINAL)
@@ -93,5 +86,9 @@ public class Contract extends AbstractEntity {
     @ManyToOne(cascade = CascadeType.REFRESH, optional = false)
     private Account executor;
 
+    @Setter
+    @OneToOne
+    @JoinColumn(name = "contract_ended_by")
+    private Account contractEndedBy;
 
 }

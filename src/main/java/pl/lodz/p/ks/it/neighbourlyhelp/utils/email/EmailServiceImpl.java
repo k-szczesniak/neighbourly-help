@@ -1,11 +1,15 @@
 package pl.lodz.p.ks.it.neighbourlyhelp.utils.email;
 
+import com.sun.mail.util.MailConnectException;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.mail.MailSendException;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 import pl.lodz.p.ks.it.neighbourlyhelp.clientmodule.domain.Account;
 import pl.lodz.p.ks.it.neighbourlyhelp.exception.AppBaseException;
 import pl.lodz.p.ks.it.neighbourlyhelp.exception.EmailException;
@@ -16,6 +20,7 @@ import javax.mail.internet.MimeMessage;
 @Service
 @AllArgsConstructor
 @Slf4j
+@Transactional(propagation = Propagation.MANDATORY, noRollbackFor = MailConnectException.class)
 // todo: translate javadoc to english and move to interface
 public class EmailServiceImpl implements EmailService {
 
@@ -29,13 +34,12 @@ public class EmailServiceImpl implements EmailService {
         try {
             MimeMessage mimeMessage = mailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, "utf-8");
-            helper.setFrom("hello@test.com");
+            helper.setFrom("neighbourly@email.com");
             helper.setTo(to);
             helper.setSubject(subject);
             helper.setText(content, true);
             mailSender.send(mimeMessage);
-        } catch (MessagingException e) {
-            log.error("Failed to send email", e);
+        } catch (MessagingException | MailSendException e) {
             throw EmailException.emailNotSent(e);
         }
     }

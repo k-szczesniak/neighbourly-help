@@ -20,6 +20,7 @@ import pl.lodz.p.ks.it.neighbourlyhelp.clientmodule.dto.request.PasswordChangeRe
 import pl.lodz.p.ks.it.neighbourlyhelp.clientmodule.dto.request.PasswordResetRequestDto;
 import pl.lodz.p.ks.it.neighbourlyhelp.clientmodule.dto.request.RegisterAccountDto;
 import pl.lodz.p.ks.it.neighbourlyhelp.clientmodule.dto.response.AccountDto;
+import pl.lodz.p.ks.it.neighbourlyhelp.clientmodule.dto.response.BasicAccountInformationDto;
 import pl.lodz.p.ks.it.neighbourlyhelp.clientmodule.endpoint.AccountEndpoint;
 import pl.lodz.p.ks.it.neighbourlyhelp.exception.AppBaseException;
 import pl.lodz.p.ks.it.neighbourlyhelp.exception.AppRuntimeException;
@@ -81,6 +82,15 @@ public class AccountController {
         return ResponseEntity.ok()
                 .eTag(messageSigner.sign(ownAccountInfo))
                 .body(ownAccountInfo);
+    }
+
+    @GetMapping("{id}")
+    @Secured({"ROLE_ADMIN", "ROLE_MODERATOR", "ROLE_CLIENT"})
+    public ResponseEntity<BasicAccountInformationDto> getAccountInformationById(@NotNull @PathVariable("id") @Valid Long accountId) throws AppBaseException {
+        BasicAccountInformationDto accountInfo = accountEndpoint.get(accountId);
+        return ResponseEntity.ok()
+                .eTag(messageSigner.sign(accountInfo))
+                .body(accountInfo);
     }
 
     @GetMapping("/user/{email}")
