@@ -3,12 +3,11 @@ package pl.lodz.p.ks.it.neighbourlyhelp.advertmodule.dto.response;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import pl.lodz.p.ks.it.neighbourlyhelp.advertmodule.domain.enums.PreferableSettlement;
 import pl.lodz.p.ks.it.neighbourlyhelp.utils.consistency.Signable;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.Date;
-import java.util.Set;
 
 @Data
 @AllArgsConstructor
@@ -33,7 +32,7 @@ public class AdvertDetailsResponseDto implements Signable {
 
     private boolean approved;
 
-    private Set<PreferableSettlement> preferableSettlementList;
+    private BigInteger prize;
 
     private Long version;
 

@@ -5,8 +5,6 @@ import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.Setter;
 import pl.lodz.p.ks.it.neighbourlyhelp.advertmodule.domain.enums.AdvertCategory;
-import pl.lodz.p.ks.it.neighbourlyhelp.advertmodule.domain.enums.PreferableSettlement;
-import pl.lodz.p.ks.it.neighbourlyhelp.advertmodule.mapper.PreferableSettlementsConverter;
 import pl.lodz.p.ks.it.neighbourlyhelp.clientmodule.domain.Account;
 import pl.lodz.p.ks.it.neighbourlyhelp.utils.common.AbstractEntity;
 import pl.lodz.p.ks.it.neighbourlyhelp.validator.advertmodule.Description;
@@ -14,7 +12,6 @@ import pl.lodz.p.ks.it.neighbourlyhelp.validator.advertmodule.Description;
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
-import javax.persistence.Convert;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -99,10 +96,6 @@ public class Advert extends AbstractEntity {
     @Setter
     @OneToMany(cascade = {CascadeType.MERGE, CascadeType.REFRESH}, mappedBy = "advert")
     private Set<Contract> contractList = new HashSet<>();
-
-    @Column(name = "preferable_settlement_list", nullable = false)
-    @Convert(converter = PreferableSettlementsConverter.class)
-    private Set<PreferableSettlement> preferableSettlementList = new HashSet<>();
 
     @Setter
     @NotNull
