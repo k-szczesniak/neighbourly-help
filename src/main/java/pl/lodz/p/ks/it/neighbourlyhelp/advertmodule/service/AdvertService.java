@@ -16,6 +16,7 @@ import pl.lodz.p.ks.it.neighbourlyhelp.exception.AppBaseException;
 import pl.lodz.p.ks.it.neighbourlyhelp.exception.NotFoundException;
 
 import javax.validation.constraints.NotNull;
+import java.math.BigInteger;
 import java.util.Date;
 import java.util.List;
 import java.util.function.Predicate;
@@ -102,13 +103,16 @@ public class AdvertService {
     }
 
     @Secured({"ROLE_CLIENT"})
-    public void updateAdvert(Advert advert, @NotNull Long cityId, String executorEmail) throws AppBaseException {
+    public void updateAdvert(Advert advert, @NotNull Long cityId, String executorEmail, BigInteger oldPrize) throws AppBaseException {
         verifyIfAdvertIsRelatedWithContractInProgress(advert);
         conditionVerifier(!advert.getPublisher().getEmail().equals(executorEmail), AdvertException.accessDenied());
 
-        advert.setModifiedBy(accountService.getExecutorAccount());
+        Account editor = accountService.getExecutorAccount();
+        advert.setModifiedBy(editor);
         advert.setCity(cityService.get(cityId));
         advert.setApproved(false);
+
+        loyaltyPointService.recalculatePointsBalance(editor, advert, oldPrize);
 
         advertRepository.saveAndFlush(advert);
     }

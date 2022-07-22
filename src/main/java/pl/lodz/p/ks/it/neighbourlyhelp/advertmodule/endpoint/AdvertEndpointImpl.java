@@ -16,6 +16,7 @@ import pl.lodz.p.ks.it.neighbourlyhelp.advertmodule.service.AdvertService;
 import pl.lodz.p.ks.it.neighbourlyhelp.exception.AppBaseException;
 import pl.lodz.p.ks.it.neighbourlyhelp.utils.common.AbstractEndpoint;
 
+import java.math.BigInteger;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -83,13 +84,14 @@ public class AdvertEndpointImpl extends AbstractEndpoint implements AdvertEndpoi
     @Secured({"ROLE_CLIENT"})
     public void updateAdvert(EditAdvertRequestDto editedAdvert, String ifMatch) throws AppBaseException {
         Advert advert = advertService.get(editedAdvert.getId());
+        BigInteger oldPrize = advert.getPrize();
 
         AdvertResponseDto advertIntegrity = Mappers.getMapper(AdvertMapper.class).toAdvertDto(advert);
         verifyIntegrity(advertIntegrity, ifMatch);
 
         Mappers.getMapper(AdvertMapper.class).toAdvert(editedAdvert, advert);
 
-        advertService.updateAdvert(advert, editedAdvert.getCityId(), getEmail());
+        advertService.updateAdvert(advert, editedAdvert.getCityId(), getEmail(), oldPrize);
     }
 
     @Override

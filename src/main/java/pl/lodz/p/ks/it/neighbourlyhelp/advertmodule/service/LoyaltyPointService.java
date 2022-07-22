@@ -47,9 +47,41 @@ public class LoyaltyPointService {
 
         publisherLoyaltyPoint.setTotalPoints(newTotalPointsValue);
         publisherLoyaltyPoint.setBlockedPoints(newBlockedPointsValue);
+        publisherLoyaltyPoint.setModifiedBy(account);
 
         loyaltyPointRepository.saveAndFlush(publisherLoyaltyPoint);
 
+    }
+
+    @Secured({"ROLE_CLIENT"})
+    public void recalculatePointsBalance(Account account, Advert advert, BigInteger oldPrize) throws AppBaseException {
+        ClientData publisher = extractClientData(account);
+
+        LoyaltyPoint publisherLoyaltyPoint = get(publisher.getLoyaltyPoint().getId());
+
+        BigInteger totalPoints = publisherLoyaltyPoint.getTotalPoints();
+        BigInteger blockedPoints = publisherLoyaltyPoint.getBlockedPoints();
+        BigInteger difference = advert.getPrize().subtract(oldPrize);
+
+        BigInteger newTotalPointsValue;
+        BigInteger newBlockedPointsValue;
+
+        if(difference.compareTo(BigInteger.ZERO) > 0) {
+            conditionVerifier(totalPoints.compareTo(difference) < 0, LoyaltyPointException.loyaltyPointsAccountBalanceExceeded());
+            // TODO: 22.07.2022 more condition cases
+            newTotalPointsValue = totalPoints.subtract(difference);
+            newBlockedPointsValue = blockedPoints.add(difference);
+        } else {
+            difference = difference.negate();
+            newTotalPointsValue = totalPoints.add(difference);
+            newBlockedPointsValue = blockedPoints.subtract(difference);
+        }
+
+        publisherLoyaltyPoint.setTotalPoints(newTotalPointsValue);
+        publisherLoyaltyPoint.setBlockedPoints(newBlockedPointsValue);
+        publisherLoyaltyPoint.setModifiedBy(account);
+
+        loyaltyPointRepository.saveAndFlush(publisherLoyaltyPoint);
     }
 
     @Secured({"ROLE_CLIENT"})
