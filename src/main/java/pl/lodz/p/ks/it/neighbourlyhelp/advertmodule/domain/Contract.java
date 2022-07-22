@@ -72,14 +72,9 @@ public class Contract extends AbstractEntity {
     @Column(name = "status", nullable = false)
     private ContractStatus status;
 
-
     @Setter
     @OneToOne(cascade = {CascadeType.MERGE, CascadeType.REFRESH}, mappedBy = "contract")
     private Rating rating;
-
-    @Setter
-    @OneToOne(cascade = {CascadeType.MERGE, CascadeType.REFRESH}, mappedBy = "contract")
-    private LoyaltyPoint loyaltyPoint;
 
     @Setter
     @JoinColumn(name = "executor_id", referencedColumnName = "id", updatable = false)

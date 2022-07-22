@@ -35,6 +35,7 @@ public class ContractService {
     private final AdvertService advertService;
     private final AccountService accountService;
     private final EmailService emailService;
+    private final LoyaltyPointService loyaltyPointService;
 
 
     @Value("${contract.maxTakeUpAttempts}")
@@ -149,15 +150,8 @@ public class ContractService {
             contract.setStatus(ContractStatus.FINISHED);
             contract.setModifiedBy(modifier);
 
-            LoyaltyPoint loyaltyPoint = LoyaltyPoint.builder()
-                    .contract(contract)
-                    .status(LoyaltyPointStatus.valueOf(requestDto.getLoyaltyPointStatus()))
-                    .comment(requestDto.getComment())
-                    .build();
-            loyaltyPoint.setCreatedBy(modifier);
-
-            contract.setLoyaltyPoint(loyaltyPoint);
             contractRepository.saveAndFlush(contract);
+            loyaltyPointService.executeDonate(contract);
 
         } else if (contract.getStatus().equals(ContractStatus.NEW)) {
             throw ContractException.contractNotStartedYet();

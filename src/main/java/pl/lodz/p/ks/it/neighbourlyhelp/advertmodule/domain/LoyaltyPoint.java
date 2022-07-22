@@ -4,40 +4,30 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import pl.lodz.p.ks.it.neighbourlyhelp.advertmodule.domain.enums.LoyaltyPointStatus;
+import pl.lodz.p.ks.it.neighbourlyhelp.clientmodule.domain.ClientData;
 import pl.lodz.p.ks.it.neighbourlyhelp.utils.common.AbstractEntity;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.Index;
 import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
-import javax.validation.constraints.Size;
+import java.math.BigInteger;
 
 
 @Getter
-@Table(name = LoyaltyPoint.TABLE_NAME, uniqueConstraints = {
-        @UniqueConstraint(name = LoyaltyPoint.CONTRACT_ID_CONSTRAINT, columnNames = {"contract_id"})
-},
-        indexes = {
-                @Index(name = "ix_loyalty_point_contract_id", columnList = "contract_id"),
-                @Index(name = "ix_loyalty_point_created_by", columnList = "created_by"),
-                @Index(name = "ix_loyalty_point_modified_by", columnList = "modified_by"),
-        })
+@Table(name = LoyaltyPoint.TABLE_NAME)
 @NoArgsConstructor
 @Entity
 public class LoyaltyPoint extends AbstractEntity {
 
     public static final String TABLE_NAME = "loyalty_point";
 
-    public static final String CONTRACT_ID_CONSTRAINT = "uk_loyalty_point_contract_id";
+    public static final String CLIENT_ID_CONSTRAINT = "uk_loyalty_point_client_id";
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seq_loyalty_point_id")
@@ -45,25 +35,22 @@ public class LoyaltyPoint extends AbstractEntity {
     @Column(updatable = false)
     private Long id;
 
-    @Getter
     @Setter
-    @OneToOne(optional = false)
-    private Contract contract;
+    @Column(name = "total_points")
+    private BigInteger totalPoints;
 
     @Setter
-    @Enumerated(EnumType.ORDINAL)
-    @Column(name = "status", nullable = false)
-    private LoyaltyPointStatus status;
+    @Column(name = "blocked_points")
+    private BigInteger blockedPoints;
 
     @Setter
-    @Size(min = 4, max = 255)
-    @Column(name = "comment")
-    private String comment;
+    @OneToOne(cascade = {CascadeType.MERGE, CascadeType.REFRESH}, mappedBy = "loyaltyPoint")
+    private ClientData client;
 
     @Builder
-    public LoyaltyPoint(Contract contract, LoyaltyPointStatus status, String comment) {
-        this.contract = contract;
-        this.status = status;
-        this.comment = comment;
+    public LoyaltyPoint(BigInteger totalPoints, BigInteger blockedPoints, ClientData client) {
+        this.totalPoints = totalPoints;
+        this.blockedPoints = blockedPoints;
+        this.client = client;
     }
 }

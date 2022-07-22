@@ -12,7 +12,6 @@ public interface ContractMapper {
 
     @Mappings({
             @Mapping(target = "ratingId", source = "rating.id"),
-            @Mapping(target = "loyaltyPointId", source = "loyaltyPoint.id"),
             @Mapping(target = "advertId", source = "advert.id"),
             @Mapping(target = "contractStatus", source = "status")
     })

@@ -16,9 +16,6 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name = "moderator_data")
-//@Table(name = "manager_data", indexes = {
-//        @Index(name = "ix_manager_data_hotel_id", columnList = "hotel_id")
-//})
 @DiscriminatorValue("MODERATOR")
 @EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor
@@ -35,7 +32,7 @@ public class ModeratorData extends Role {
         ToStringBuilder toStringBuilder = new ToStringBuilder(this)
                 .append(super.toString());
         if (city != null) {
-            toStringBuilder.append("hotel", city.getId());
+            toStringBuilder.append("city", city.getId());
         }
         return toStringBuilder.toString();
     }

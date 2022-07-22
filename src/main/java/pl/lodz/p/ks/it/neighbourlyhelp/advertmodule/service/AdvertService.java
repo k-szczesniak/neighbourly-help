@@ -32,6 +32,8 @@ public class AdvertService {
 
     private final AccountService accountService;
 
+    private final LoyaltyPointService loyaltyPointService;
+
     @Secured({"ROLE_ADMIN", "ROLE_MODERATOR", "ROLE_CLIENT"})
     public Advert get(Long advertId) throws AppBaseException {
         return advertRepository.findById(advertId).orElseThrow(NotFoundException::advertNotFound);
@@ -95,6 +97,8 @@ public class AdvertService {
         advert.setCreatedBy(publisher);
         advert.setPublicationDate(new Date());
         advertRepository.saveAndFlush(advert);
+
+        loyaltyPointService.blockLoyaltyPoints(publisher, advert.getPrize());
     }
 
     @Secured({"ROLE_CLIENT"})

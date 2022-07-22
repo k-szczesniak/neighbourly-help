@@ -31,6 +31,7 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import java.math.BigInteger;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
@@ -102,6 +103,12 @@ public class Advert extends AbstractEntity {
     @Column(name = "preferable_settlement_list", nullable = false)
     @Convert(converter = PreferableSettlementsConverter.class)
     private Set<PreferableSettlement> preferableSettlementList = new HashSet<>();
+
+    @Setter
+    @NotNull
+    @NonNull
+    @Column(name = "prize")
+    private BigInteger prize;
 
     @Setter
     @NotNull

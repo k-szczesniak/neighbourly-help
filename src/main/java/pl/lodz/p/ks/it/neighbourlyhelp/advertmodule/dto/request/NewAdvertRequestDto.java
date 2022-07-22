@@ -10,6 +10,7 @@ import pl.lodz.p.ks.it.neighbourlyhelp.validator.advertmodule.Description;
 import pl.lodz.p.ks.it.neighbourlyhelp.validator.advertmodule.Title;
 
 import javax.validation.constraints.NotNull;
+import java.math.BigInteger;
 
 @Data
 @AllArgsConstructor
@@ -31,5 +32,8 @@ public class NewAdvertRequestDto {
 
     @NotNull
     private Long cityId;
+
+    @NotNull
+    private BigInteger prize;
 
 }
