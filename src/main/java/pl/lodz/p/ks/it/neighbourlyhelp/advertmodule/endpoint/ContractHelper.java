@@ -31,7 +31,4 @@ public interface ContractHelper {
 
     List<ContractDto> getUnratedFinishedContracts() throws AppBaseException;
 
-    List<ContractDto> getMyUnpaidFinishedContracts() throws AppBaseException;
-
-    List<ContractDto> getDelegateUnpaidFinishedContracts() throws AppBaseException;
 }

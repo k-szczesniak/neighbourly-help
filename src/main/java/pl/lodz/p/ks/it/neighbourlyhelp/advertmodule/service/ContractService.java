@@ -8,9 +8,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import pl.lodz.p.ks.it.neighbourlyhelp.advertmodule.domain.Advert;
 import pl.lodz.p.ks.it.neighbourlyhelp.advertmodule.domain.Contract;
-import pl.lodz.p.ks.it.neighbourlyhelp.advertmodule.domain.LoyaltyPoint;
 import pl.lodz.p.ks.it.neighbourlyhelp.advertmodule.domain.enums.ContractStatus;
-import pl.lodz.p.ks.it.neighbourlyhelp.advertmodule.domain.enums.LoyaltyPointStatus;
 import pl.lodz.p.ks.it.neighbourlyhelp.advertmodule.dto.request.ApproveFinishedRequestDto;
 import pl.lodz.p.ks.it.neighbourlyhelp.advertmodule.dto.request.NewContractRequestDto;
 import pl.lodz.p.ks.it.neighbourlyhelp.advertmodule.repository.ContractRepository;
@@ -214,28 +212,6 @@ public class ContractService {
                 .filter(contract -> contract.getExecutor().equals(executorAccount))
                 .filter(contract -> contract.getStatus().equals(ContractStatus.FINISHED))
                 .filter(contract -> contract.getRating() == null)
-                .collect(Collectors.toList());
-    }
-
-    @Secured({"ROLE_CLIENT"})
-    public List<Contract> getMyUnpaidFinishedContracts() throws AppBaseException {
-        Account executorAccount = accountService.getExecutorAccount();
-
-        return contractRepository.findAll().stream()
-                .filter(contract -> contract.getExecutor().equals(executorAccount))
-                .filter(contract -> contract.getStatus().equals(ContractStatus.FINISHED))
-                .filter(contract -> contract.getLoyaltyPoint() == null || contract.getLoyaltyPoint().getStatus().equals(LoyaltyPointStatus.TO_PAYOFF))
-                .collect(Collectors.toList());
-    }
-
-    @Secured({"ROLE_CLIENT"})
-    public List<Contract> getDelegateUnpaidFinishedContracts() throws AppBaseException {
-        Account executorAccount = accountService.getExecutorAccount();
-
-        return contractRepository.findAll().stream()
-                .filter(contract -> contract.getAdvert().getPublisher().equals(executorAccount))
-                .filter(contract -> contract.getStatus().equals(ContractStatus.FINISHED))
-                .filter(contract -> contract.getLoyaltyPoint() == null || contract.getLoyaltyPoint().getStatus().equals(LoyaltyPointStatus.TO_PAYOFF))
                 .collect(Collectors.toList());
     }
 
