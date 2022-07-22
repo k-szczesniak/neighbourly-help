@@ -8,6 +8,7 @@ import pl.lodz.p.ks.it.neighbourlyhelp.validator.ValueOfEnum;
 import pl.lodz.p.ks.it.neighbourlyhelp.validator.advertmodule.Description;
 import pl.lodz.p.ks.it.neighbourlyhelp.validator.advertmodule.Title;
 
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import java.math.BigInteger;
 
@@ -30,6 +31,7 @@ public class NewAdvertRequestDto {
     private Long cityId;
 
     @NotNull
+    @Min(value = 0)
     private BigInteger prize;
 
 }

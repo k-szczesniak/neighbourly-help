@@ -16,6 +16,7 @@ import javax.persistence.Id;
 import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.validation.constraints.Min;
 import java.math.BigInteger;
 
 
@@ -36,12 +37,14 @@ public class LoyaltyPoint extends AbstractEntity {
     private Long id;
 
     @Setter
+    @Min(value = 0)
     @Column(name = "total_points")
-    private BigInteger totalPoints;
+    private BigInteger totalPoints = BigInteger.ZERO;
 
     @Setter
+    @Min(value = 0)
     @Column(name = "blocked_points")
-    private BigInteger blockedPoints;
+    private BigInteger blockedPoints = BigInteger.ZERO;
 
     @Setter
     @OneToOne(cascade = {CascadeType.MERGE, CascadeType.REFRESH}, mappedBy = "loyaltyPoint")
