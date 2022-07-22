@@ -10,6 +10,8 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+import pl.lodz.p.ks.it.neighbourlyhelp.advertmodule.domain.LoyaltyPoint;
+import pl.lodz.p.ks.it.neighbourlyhelp.advertmodule.service.LoyaltyPointService;
 import pl.lodz.p.ks.it.neighbourlyhelp.clientmodule.domain.Account;
 import pl.lodz.p.ks.it.neighbourlyhelp.clientmodule.domain.ClientData;
 import pl.lodz.p.ks.it.neighbourlyhelp.clientmodule.domain.ConfirmationToken;
@@ -25,6 +27,7 @@ import pl.lodz.p.ks.it.neighbourlyhelp.utils.email.EmailService;
 
 import javax.annotation.security.PermitAll;
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
@@ -41,6 +44,7 @@ public class AccountService {
     private final EmailService emailService;
     private final UserDetailsServiceImpl userService;
     private final ConfirmationTokenService tokenService;
+    private final LoyaltyPointService loyaltyPointService;
 
     @Value("${incorrectLoginAttemptsLimit}")
     private String INCORRECT_LOGIN_ATTEMPTS_LIMIT;
@@ -109,23 +113,22 @@ public class AccountService {
         if (account.isEnabled()) {
             throw AccountException.alreadyActivated();
         }
-        // TODO: 06.02.2022 poprawic ponizsze walidacje
-//        if (confirmationToken.getConfirmedAt() != null) {
-//            log.info("Email already confirmed");
-//            throw new IllegalStateException("email already confirmed");
-//        }
-//
-//        LocalDateTime expiredAt = confirmationToken.getExpiresAt();
-//
-//        if (expiredAt.isBefore(LocalDateTime.now())) {
-//            log.info("Token expired");
-//            throw new IllegalStateException("token expired");
-//        }
-//koniec walidacji
 
         ClientData clientData = new ClientData();
         clientData.setAccount(account);
         clientData.setCreatedBy(account);
+
+        LoyaltyPoint loyaltyPoint = LoyaltyPoint.builder()
+                .totalPoints(BigInteger.ZERO)
+                .blockedPoints(BigInteger.ZERO)
+                .build();
+
+        loyaltyPoint.setClient(clientData);
+        loyaltyPoint.setCreatedBy(account);
+        clientData.setLoyaltyPoint(loyaltyPoint);
+
+        loyaltyPointService.createLoyaltyPoint(loyaltyPoint);
+
         account.getRoleList().add(clientData);
         account.setModifiedBy(account);
 

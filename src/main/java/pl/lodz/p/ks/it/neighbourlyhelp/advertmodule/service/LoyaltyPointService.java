@@ -31,6 +31,11 @@ public class LoyaltyPointService {
         return loyaltyPointRepository.findById(loyaltyPointId).orElseThrow(NotFoundException::loyaltyPointNotFound);
     }
 
+    // TODO: 22.07.2022 add security annotation
+    public void createLoyaltyPoint(LoyaltyPoint loyaltyPoint) {
+        loyaltyPointRepository.save(loyaltyPoint);
+    }
+
     @Secured({"ROLE_CLIENT"})
     public void blockLoyaltyPoints(Account account, BigInteger prize) throws AppBaseException {
         ClientData publisher = extractClientData(account);

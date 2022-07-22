@@ -9,6 +9,7 @@ import pl.lodz.p.ks.it.neighbourlyhelp.advertmodule.domain.LoyaltyPoint;
 
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
@@ -29,6 +30,7 @@ public class ClientData extends Role {
     @Getter
     @Setter
     @OneToOne(optional = false)
+    @JoinColumn(name = "loyalty_point_id")
     private LoyaltyPoint loyaltyPoint;
 
     @Override

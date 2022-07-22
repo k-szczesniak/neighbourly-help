@@ -47,7 +47,7 @@ public class LoyaltyPoint extends AbstractEntity {
     private BigInteger blockedPoints = BigInteger.ZERO;
 
     @Setter
-    @OneToOne(cascade = {CascadeType.MERGE, CascadeType.REFRESH}, mappedBy = "loyaltyPoint")
+    @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH}, mappedBy = "loyaltyPoint")
     private ClientData client;
 
     @Builder
