@@ -32,7 +32,8 @@ public class ContractHelperImpl extends AbstractEndpoint implements ContractHelp
     public DetailContractDto get(Long contractId) throws AppBaseException {
         Contract contract = contractService.get(contractId);
 
-        if (getEmail().equals(contract.getExecutor().getEmail())) {
+        if (getEmail().equals(contract.getExecutor().getEmail()) ||
+                getEmail().equals(contract.getAdvert().getPublisher().getEmail())) {
             return Mappers.getMapper(ContractMapper.class).toDetailContractDto(contract);
         } else {
             throw ContractException.accessDenied();

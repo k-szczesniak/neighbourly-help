@@ -75,7 +75,6 @@ public class AdvertService {
     public List<Advert> getAllOwnAdverts() throws AppBaseException {
         Account executorAccount = accountService.getExecutorAccount();
         return advertRepository.findAll().stream()
-                .filter(Advert::isApproved)
                 .filter(advert -> advert.getPublisher() == executorAccount)
                 .collect(Collectors.toList());
     }
