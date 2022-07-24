@@ -136,6 +136,8 @@ public class AdvertService {
     public void deleteAdvert(Advert advert, String executorEmail) throws AppBaseException {
         verifyCanBeDisapprovedOrDelete(advert, executorEmail);
 
+        loyaltyPointService.unblockPoints(advert.getPublisher(), advert.getPrize());
+
         advertRepository.delete(advert);
     }
 
@@ -145,6 +147,7 @@ public class AdvertService {
                 AdvertException.advertIsInProgress());
     }
 
+//    todo: only moderator can delete advert
     private void verifyCanBeDisapprovedOrDelete(Advert advertToProcess, String executorEmail) throws AppBaseException {
         conditionVerifier(!verifyExecutorPrivileges(advertToProcess, executorEmail), AdvertException.accessDenied());
 
