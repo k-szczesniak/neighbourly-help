@@ -1,6 +1,7 @@
 package pl.lodz.p.ks.it.neighbourlyhelp.clientmodule.endpoint;
 
 import org.springframework.security.access.annotation.Secured;
+import pl.lodz.p.ks.it.neighbourlyhelp.advertmodule.dto.response.LoyaltyPointsDto;
 import pl.lodz.p.ks.it.neighbourlyhelp.clientmodule.domain.enums.AccessLevel;
 import pl.lodz.p.ks.it.neighbourlyhelp.clientmodule.dto.response.BasicAccountInformationDto;
 import pl.lodz.p.ks.it.neighbourlyhelp.clientmodule.dto.response.ModeratorDataDto;
@@ -42,4 +43,6 @@ public interface RoleEndpoint {
     List<BasicAccountInformationDto> getAllFreeModeratorsList();
 
     List<BasicAccountInformationDto> getModeratorsAssignedToCity(Long cityId);
+
+    LoyaltyPointsDto getLoyaltyPointsBalance() throws AppBaseException;
 }

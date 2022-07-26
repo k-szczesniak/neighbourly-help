@@ -126,20 +126,21 @@ public class LoyaltyPointService {
 
     }
 
+    @Secured({"ROLE_CLIENT"})
+    public ClientData extractClientData(Account account) throws NotFoundException {
+        return (ClientData) account.getRoleList().stream()
+                .filter(Role::isEnabled)
+                .filter(role -> role.getAccessLevel().equals(AccessLevel.CLIENT))
+                .findAny()
+                .orElseThrow(NotFoundException::enabledClientRoleNotFound);
+    }
+
     private void persistLoyaltyPoints(Account account, LoyaltyPoint publisherLoyaltyPoint, BigInteger newTotalPointsValue, BigInteger newBlockedPointsValue) {
         publisherLoyaltyPoint.setTotalPoints(newTotalPointsValue);
         publisherLoyaltyPoint.setBlockedPoints(newBlockedPointsValue);
         publisherLoyaltyPoint.setModifiedBy(account);
 
         loyaltyPointRepository.saveAndFlush(publisherLoyaltyPoint);
-    }
-
-    private ClientData extractClientData(Account account) throws NotFoundException {
-        return (ClientData) account.getRoleList().stream()
-                .filter(Role::isEnabled)
-                .filter(role -> role.getAccessLevel().equals(AccessLevel.CLIENT))
-                .findAny()
-                .orElseThrow(NotFoundException::enabledClientRoleNotFound);
     }
 
     private void conditionVerifier(boolean condition, LoyaltyPointException exception) throws LoyaltyPointException {
