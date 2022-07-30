@@ -152,7 +152,8 @@ public class Account extends AbstractEntity implements UserDetails {
     private ThemeColor themeColor = ThemeColor.LIGHT;
 
     @Setter
-    @OneToMany(cascade = {CascadeType.REMOVE, CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH}, mappedBy = "account", fetch = FetchType.EAGER) //TODO: fetchType changed to EAGER
+    @OneToMany(cascade = {CascadeType.REMOVE, CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH}, mappedBy = "account", fetch = FetchType.EAGER)
+    //TODO: fetchType changed to EAGER
     private Set<Role> roleList = new HashSet<>();
 
     @Setter
@@ -192,9 +193,11 @@ public class Account extends AbstractEntity implements UserDetails {
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         Collection<SimpleGrantedAuthority> authorities = new ArrayList<>();
-        roleList.stream().forEach(role -> {
-            authorities.add(new SimpleGrantedAuthority(ROLE_PREFIX + role.getAccessLevel().name()));
-        });
+        roleList.stream()
+                .filter(Role::isEnabled)
+                .forEach(role -> {
+                    authorities.add(new SimpleGrantedAuthority(ROLE_PREFIX + role.getAccessLevel().name()));
+                });
         return authorities;
     }
 
