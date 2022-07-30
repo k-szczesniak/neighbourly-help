@@ -34,6 +34,8 @@ public class AdvertDetailsResponseDto implements Signable {
 
     private BigInteger prize;
 
+    private boolean isActiveContract;
+
     private Long version;
 
     @Override

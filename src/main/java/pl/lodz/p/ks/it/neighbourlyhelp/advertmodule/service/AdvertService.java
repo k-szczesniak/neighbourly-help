@@ -47,9 +47,7 @@ public class AdvertService {
 
     @Secured({"ROLE_MODERATOR", "ROLE_CLIENT"})
     public List<Advert> getAllApprovedAdvertsToTake() {
-        Predicate<Advert> advertPredicate = advert -> advert.getContractList().stream()
-                .noneMatch(contract -> contract.getAdvert().getId().equals(advert.getId())
-                        && !contract.getStatus().equals(ContractStatus.CANCELLED));
+        Predicate<Advert> advertPredicate = getAdvertPredicate();
         return advertRepository.findAll().stream()
                 .filter(Advert::isApproved)
                 .filter(advertPredicate)
@@ -138,6 +136,18 @@ public class AdvertService {
         loyaltyPointService.unblockPoints(advert.getPublisher(), advert.getPrize());
 
         advertRepository.delete(advert);
+    }
+
+    @Secured({"ROLE_CLIENT"})
+    public boolean isActiveContract(Advert advert) {
+        Predicate<Advert> advertPredicate = getAdvertPredicate();
+        return advertPredicate.test(advert);
+    }
+
+    private Predicate<Advert> getAdvertPredicate() {
+        return advert -> advert.getContractList().stream()
+                .noneMatch(contract -> contract.getAdvert().getId().equals(advert.getId())
+                        && !contract.getStatus().equals(ContractStatus.CANCELLED));
     }
 
     private void verifyIfAdvertIsRelatedWithContractInProgress(Advert advertToProcess) throws AdvertException {

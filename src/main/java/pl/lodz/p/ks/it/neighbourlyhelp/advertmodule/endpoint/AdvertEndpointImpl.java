@@ -35,7 +35,10 @@ public class AdvertEndpointImpl extends AbstractEndpoint implements AdvertEndpoi
 
     @Override
     public AdvertDetailsResponseDto getDetails(Long advertId) throws AppBaseException {
-        return Mappers.getMapper(AdvertMapper.class).toAdvertDetailsDto(advertService.get(advertId));
+        Advert advert = advertService.get(advertId);
+        AdvertDetailsResponseDto detailsResponseDto = Mappers.getMapper(AdvertMapper.class).toAdvertDetailsDto(advert);
+        detailsResponseDto.setActiveContract(advertService.isActiveContract(advert));
+        return detailsResponseDto;
     }
 
     @Override
