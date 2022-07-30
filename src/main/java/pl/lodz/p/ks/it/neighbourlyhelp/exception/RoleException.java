@@ -7,6 +7,7 @@ public class RoleException extends AppBaseException {
     private static final String ACCOUNT_NOT_CONFIRMED = "exception.role_exception.account_not_confirmed";
     private static final String ALREADY_GRANTED = "exception.role_exception.already_granted";
     private static final String UNSUPPORTED_ACCESS_LEVEL = "exception.role_exception.unsupported_access_level";
+    private static final String UNSUPPORTED_ROLE_COMBINATION = "exception.role_exception.unsupported_role_combination";
 
     public RoleException() {
     }
@@ -57,5 +58,9 @@ public class RoleException extends AppBaseException {
      */
     public static RoleException unsupportedAccessLevel() {
         return new RoleException(UNSUPPORTED_ACCESS_LEVEL);
+    }
+
+    public static RoleException unsupportedRoleCombination() {
+        return new RoleException(UNSUPPORTED_ROLE_COMBINATION);
     }
 }

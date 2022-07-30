@@ -88,6 +88,16 @@ public class RoleService {
                 .map(Role::getAccessLevel)
                 .collect(Collectors.toSet());
 
+        if(accessLevel.equals(AccessLevel.ADMIN)
+                && (grantedRoles.contains(AccessLevel.CLIENT) || grantedRoles.contains(AccessLevel.MODERATOR))) {
+            throw RoleException.unsupportedRoleCombination();
+        }
+
+        if ((accessLevel.equals(AccessLevel.CLIENT) || accessLevel.equals(AccessLevel.MODERATOR))
+                && grantedRoles.contains(AccessLevel.ADMIN)) {
+            throw RoleException.unsupportedRoleCombination();
+        }
+
         Role role = account.getRoleList().stream()
                 .filter(x -> accessLevel.equals(x.getAccessLevel()))
                 .findFirst()
