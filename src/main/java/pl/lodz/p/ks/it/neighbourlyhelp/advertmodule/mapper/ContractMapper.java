@@ -19,6 +19,7 @@ public interface ContractMapper {
 
     @Mappings({
             @Mapping(target = "publisher", source = "advert.publisher"),
+            @Mapping(target = "rated", expression = "java(contract.getRating() != null)"),
             @Mapping(target = "contractStatus", source = "status")
     })
     ContractDto toContractDto(Contract contract);

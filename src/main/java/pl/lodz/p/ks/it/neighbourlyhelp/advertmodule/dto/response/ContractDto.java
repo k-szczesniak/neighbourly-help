@@ -25,6 +25,8 @@ public class ContractDto {
 
     private String contractStatus;
 
+    private boolean isRated;
+
     private Long version;
 
     @Data

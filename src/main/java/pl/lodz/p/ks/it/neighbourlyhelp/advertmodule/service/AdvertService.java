@@ -83,6 +83,7 @@ public class AdvertService {
         return advertRepository.findAll().stream()
                 .filter(Advert::isApproved)
                 .filter(advert -> advert.getPublisher() == account)
+                .filter(getAdvertPredicate())
                 .collect(Collectors.toList());
     }
 
