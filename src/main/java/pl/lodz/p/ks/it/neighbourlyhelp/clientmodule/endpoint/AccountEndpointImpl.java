@@ -175,8 +175,6 @@ public class AccountEndpointImpl extends AbstractEndpoint implements AccountEndp
     @Secured({"ROLE_ADMIN", "ROLE_MODERATOR", "ROLE_CLIENT"})
     public void editOwnLanguage(String language, String ifMatch) throws AppBaseException {
         Account editAccount = accountService.getExecutorAccount();
-        AccountDto accountIntegrity = Mappers.getMapper(AccountMapper.class).toAccountDto(editAccount);
-        verifyIntegrity(accountIntegrity, ifMatch);
 
         accountService.changeAccountLanguage(editAccount, language);
     }
@@ -185,8 +183,6 @@ public class AccountEndpointImpl extends AbstractEndpoint implements AccountEndp
     @Secured({"ROLE_ADMIN", "ROLE_MODERATOR", "ROLE_CLIENT"})
     public void changeThemeColor(ThemeColor themeColor, String ifMatch) throws AppBaseException {
         Account editAccount = accountService.getExecutorAccount();
-        AccountDto accountIntegrity = Mappers.getMapper(AccountMapper.class).toAccountDto(editAccount);
-        verifyIntegrity(accountIntegrity, ifMatch);
 
         accountService.changeThemeColor(editAccount, themeColor);
     }

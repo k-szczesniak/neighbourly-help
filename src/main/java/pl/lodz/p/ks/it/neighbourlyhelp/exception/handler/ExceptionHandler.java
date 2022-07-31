@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.MissingRequestHeaderException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
@@ -19,6 +20,11 @@ public class ExceptionHandler extends ResponseEntityExceptionHandler {
     @org.springframework.web.bind.annotation.ExceptionHandler(AppBaseException.class)
     public final ResponseEntity<ErrorResponse> handleAppBaseExceptions(AppBaseException ex, WebRequest request) {
         return errorResponse(ex, HttpStatus.BAD_REQUEST);
+    }
+
+    @org.springframework.web.bind.annotation.ExceptionHandler(AccessDeniedException.class)
+    public final ResponseEntity<ErrorResponse> accessDeniedException(Exception ex, WebRequest request) {
+        return errorResponse(ex, HttpStatus.FORBIDDEN);
     }
 
     @org.springframework.web.bind.annotation.ExceptionHandler({Exception.class, RuntimeException.class})

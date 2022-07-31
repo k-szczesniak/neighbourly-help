@@ -6,6 +6,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import pl.lodz.p.ks.it.neighbourlyhelp.advertmodule.domain.City;
+import pl.lodz.p.ks.it.neighbourlyhelp.advertmodule.domain.LoyaltyPoint;
+import pl.lodz.p.ks.it.neighbourlyhelp.advertmodule.dto.response.LoyaltyPointsDto;
+import pl.lodz.p.ks.it.neighbourlyhelp.advertmodule.service.LoyaltyPointService;
 import pl.lodz.p.ks.it.neighbourlyhelp.clientmodule.domain.Account;
 import pl.lodz.p.ks.it.neighbourlyhelp.clientmodule.domain.AdminData;
 import pl.lodz.p.ks.it.neighbourlyhelp.clientmodule.domain.ClientData;
@@ -34,6 +37,7 @@ public class RoleService {
     private final ModeratorDataRepository moderatorDataRepository;
     private final AccountService accountService;
     private final EmailService emailService;
+    private final LoyaltyPointService loyaltyPointService;
 
     /**
      * Revoke access level of user.
@@ -83,6 +87,16 @@ public class RoleService {
                 .filter(Role::isEnabled)
                 .map(Role::getAccessLevel)
                 .collect(Collectors.toSet());
+
+        if(accessLevel.equals(AccessLevel.ADMIN)
+                && (grantedRoles.contains(AccessLevel.CLIENT) || grantedRoles.contains(AccessLevel.MODERATOR))) {
+            throw RoleException.unsupportedRoleCombination();
+        }
+
+        if ((accessLevel.equals(AccessLevel.CLIENT) || accessLevel.equals(AccessLevel.MODERATOR))
+                && grantedRoles.contains(AccessLevel.ADMIN)) {
+            throw RoleException.unsupportedRoleCombination();
+        }
 
         Role role = account.getRoleList().stream()
                 .filter(x -> accessLevel.equals(x.getAccessLevel()))
@@ -174,6 +188,19 @@ public class RoleService {
             }
         }
         return result;
+    }
+
+    @Secured({"ROLE_CLIENT"})
+    public LoyaltyPointsDto getLoyaltyPointsBalance(Account account) throws AppBaseException {
+        ClientData clientData = loyaltyPointService.extractClientData(account);
+        LoyaltyPoint clientLoyaltyPoint = loyaltyPointService.get(clientData.getLoyaltyPoint().getId());
+
+        return LoyaltyPointsDto.builder()
+                .id(clientLoyaltyPoint.getId())
+                .totalPoints(clientLoyaltyPoint.getTotalPoints())
+                .blockedPoints(clientLoyaltyPoint.getBlockedPoints())
+                .version(clientLoyaltyPoint.getVersion())
+                .build();
     }
 
     private ModeratorData getById(Long roleId) {

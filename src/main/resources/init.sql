@@ -21,19 +21,29 @@ INSERT INTO city(id, creation_date, modification_date, version, name, created_by
 VALUES (-1, now(), null, 0, 'Łódź', -1, null),
        (-2, now(), null, 0, 'Białystok', -1, null);
 
-INSERT INTO admin_data(id) values (-1);
-INSERT INTO client_data(id) values (-2);
-INSERT INTO admin_data(id) values (-3);
-INSERT INTO moderator_data(id, city_id) VALUES (-4, -1);
-INSERT INTO client_data(id) values (-5);
+INSERT INTO loyalty_point(id, creation_date, modification_date, version, blocked_points, total_points, created_by,
+                          modified_by)
+VALUES (-1, now(), null, 0, 5, 10, -1, null),
+       (-2, now(), null, 0, 0, 20, -1, null);
 
-INSERT INTO advert(id, creation_date, modification_date, version, approved, category, description,
-                   preferable_settlement_list, publication_date, title, created_by, modified_by, city_id, publisher_id)
+INSERT INTO admin_data(id)
+values (-1);
+INSERT INTO client_data(id, loyalty_point_id)
+values (-2, -1);
+INSERT INTO admin_data(id)
+values (-3);
+INSERT INTO moderator_data(id, city_id)
+VALUES (-4, -1);
+INSERT INTO client_data(id, loyalty_point_id)
+values (-5, -2);
+
+INSERT INTO advert(id, creation_date, modification_date, version, approved, category, description, prize,
+                   publication_date, title, created_by, modified_by, city_id, publisher_id)
 VALUES (-1, now(), null, 0, true, 0, 'Szukam osoby która posprząta mi biurko. Będę niezwykle wdzięczny za szybką pomoc',
-        'PAYMENT,DIFFERENT', now(), 'Sprzątanie biurka', -1, null, -1, -1),
+        5, now(), 'Sprzątanie biurka', -1, null, -1, -1),
        (-2, now(), null, 0, false, 1, 'Szukam osoby która wypieli mi ogródek',
-        'PAYMENT', now(), 'Pielenie ogrodu', -1, null, -1, -1),
+        10, now(), 'Pielenie ogrodu', -1, null, -1, -1),
        (-3, now(), null, 0, true, 2, 'Szukam osoby która zaopiekuje się moim dzieckiem w piątek wieczorem.',
-        'PAYMENT,DIFFERENT', now(), 'Opieka nad dzieckiem', -1, null, -1, -1),
+        15, now(), 'Opieka nad dzieckiem', -1, null, -1, -1),
        (-4, now(), null, 0, false, 3, 'Szukam osoby będzie wyprowadzać mojego psa.',
-        'PAYMENT', now(), 'Wyprowadzanie psa', -1, null, -1, -1);
+        3, now(), 'Wyprowadzanie psa', -1, null, -1, -1);

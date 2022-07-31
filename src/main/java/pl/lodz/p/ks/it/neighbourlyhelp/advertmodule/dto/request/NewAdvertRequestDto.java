@@ -4,12 +4,13 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import pl.lodz.p.ks.it.neighbourlyhelp.advertmodule.domain.enums.AdvertCategory;
-import pl.lodz.p.ks.it.neighbourlyhelp.advertmodule.domain.enums.PreferableSettlement;
 import pl.lodz.p.ks.it.neighbourlyhelp.validator.ValueOfEnum;
 import pl.lodz.p.ks.it.neighbourlyhelp.validator.advertmodule.Description;
 import pl.lodz.p.ks.it.neighbourlyhelp.validator.advertmodule.Title;
 
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
+import java.math.BigInteger;
 
 @Data
 @AllArgsConstructor
@@ -26,10 +27,11 @@ public class NewAdvertRequestDto {
     @ValueOfEnum(enumClass = AdvertCategory.class, message = "validation.advert.status.pattern")
     private String category;
 
-    @ValueOfEnum(enumClass = PreferableSettlement.class, message = "validation.advert.preferableSettlement.pattern")
-    private String preferableSettlementList;
-
     @NotNull
     private Long cityId;
+
+    @NotNull
+    @Min(value = 0)
+    private BigInteger prize;
 
 }

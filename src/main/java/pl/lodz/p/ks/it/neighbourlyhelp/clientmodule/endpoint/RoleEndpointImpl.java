@@ -6,6 +6,7 @@ import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+import pl.lodz.p.ks.it.neighbourlyhelp.advertmodule.dto.response.LoyaltyPointsDto;
 import pl.lodz.p.ks.it.neighbourlyhelp.clientmodule.domain.Account;
 import pl.lodz.p.ks.it.neighbourlyhelp.clientmodule.domain.ModeratorData;
 import pl.lodz.p.ks.it.neighbourlyhelp.clientmodule.domain.enums.AccessLevel;
@@ -84,6 +85,12 @@ public class RoleEndpointImpl extends AbstractEndpoint implements RoleEndpoint {
         AccountMapper accountMapper = Mappers.getMapper(AccountMapper.class);
         List<Account> allModeratorsList = roleService.getModeratorsAssignedToCity(cityId);
         return allModeratorsList.stream().map(accountMapper::toBasicAccountInformationDto).collect(Collectors.toList());
+    }
+
+    @Override
+    @Secured({"ROLE_CLIENT"})
+    public LoyaltyPointsDto getLoyaltyPointsBalance() throws AppBaseException {
+        return roleService.getLoyaltyPointsBalance(accountService.getExecutorAccount());
     }
 
     private RolesDto mapToRolesDto(Account account) {

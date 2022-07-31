@@ -55,8 +55,7 @@ public class RatingService {
 
         Account executorAccount = accountService.getExecutorAccount();
         boolean isAdvertPublisher = ratedContract.getAdvert().getPublisher().equals(executorAccount);
-        boolean isContractExecutor = ratedContract.getExecutor().equals(executorAccount);
-        conditionVerifier(!isAdvertPublisher && !isContractExecutor, RatingException.accessDenied());
+        conditionVerifier(!isAdvertPublisher, RatingException.accessDenied());
 
         Rating rating = Rating.builder()
                 .rate(newRatingDto.getRate())
@@ -68,7 +67,7 @@ public class RatingService {
 
         ratingRepository.saveAndFlush(rating);
 
-        Account accountToRate = isAdvertPublisher ? ratedContract.getExecutor() : ratedContract.getAdvert().getPublisher();
+        Account accountToRate = ratedContract.getExecutor();
 
         BigDecimal averageRating = calculateAverageRating(accountToRate.getId());
         accountService.updateAccountRating(accountToRate.getId(), averageRating);

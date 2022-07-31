@@ -12,7 +12,6 @@ public interface ContractMapper {
 
     @Mappings({
             @Mapping(target = "ratingId", source = "rating.id"),
-            @Mapping(target = "loyaltyPointId", source = "loyaltyPoint.id"),
             @Mapping(target = "advertId", source = "advert.id"),
             @Mapping(target = "contractStatus", source = "status")
     })
@@ -20,6 +19,7 @@ public interface ContractMapper {
 
     @Mappings({
             @Mapping(target = "publisher", source = "advert.publisher"),
+            @Mapping(target = "rated", expression = "java(contract.getRating() != null)"),
             @Mapping(target = "contractStatus", source = "status")
     })
     ContractDto toContractDto(Contract contract);

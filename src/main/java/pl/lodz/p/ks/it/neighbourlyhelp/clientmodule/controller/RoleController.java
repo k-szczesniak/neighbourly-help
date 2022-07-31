@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import pl.lodz.p.ks.it.neighbourlyhelp.advertmodule.dto.response.LoyaltyPointsDto;
 import pl.lodz.p.ks.it.neighbourlyhelp.clientmodule.domain.enums.AccessLevel;
 import pl.lodz.p.ks.it.neighbourlyhelp.clientmodule.dto.response.BasicAccountInformationDto;
 import pl.lodz.p.ks.it.neighbourlyhelp.clientmodule.dto.response.ModeratorDataDto;
@@ -87,5 +88,15 @@ public class RoleController {
     @Secured({"ROLE_ADMIN"})
     public List<BasicAccountInformationDto> getModeratorsAssignedToCity(@NotNull @PathVariable("cityId") @Valid Long cityId) {
         return roleEndpoint.getModeratorsAssignedToCity(cityId);
+    }
+
+    @GetMapping("/loyaltyPoints")
+    @Secured({"ROLE_CLIENT"})
+    public ResponseEntity<LoyaltyPointsDto> getLoyaltyPointsBalance() throws AppBaseException {
+        LoyaltyPointsDto loyaltyPointsDto = roleEndpoint.getLoyaltyPointsBalance();
+
+        return ResponseEntity.ok()
+                .eTag(messageSigner.sign(loyaltyPointsDto))
+                .body(loyaltyPointsDto);
     }
 }

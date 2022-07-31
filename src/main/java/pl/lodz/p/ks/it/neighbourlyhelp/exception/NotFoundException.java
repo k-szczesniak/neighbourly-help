@@ -11,8 +11,10 @@ public class NotFoundException extends AppBaseException {
     private static final String ADVERT_NOT_FOUND = "exception.not_found_exception.advert_not_found";
     private static final String CONTRACT_NOT_FOUND = "exception.not_found_exception.contract_not_found";
     private static final String ENABLED_MODERATOR_ROLE_NOT_FOUND = "exception.not_found_exception.enabled_moderator_role_not_found";
-    private static final String MODERATOR_ASSIGNED_HOTEL_NOT_FOUND = "exception.not_found_exception.moderator_assigned_hotel_not_found";
+    private static final String MODERATOR_ASSIGNED_CITY_NOT_FOUND = "exception.not_found_exception.moderator_assigned_city_not_found";
     private static final String RATING_NOT_FOUND = "exception.not_found_exception.rating_not_found";
+    private static final String LOYALTY_POINT_NOT_FOUND = "exception.not_found_exception.loyalty_point_not_found";
+    private static final String ENABLED_CLIENT_ROLE_NOT_FOUND = "exception.not_found_exception.enabled_client_role_not_found";
 
     private NotFoundException(String message, Throwable cause) {
         super(message, cause);
@@ -68,7 +70,7 @@ public class NotFoundException extends AppBaseException {
     }
 
     public static NotFoundException moderatorAssignedCityNotFound() {
-        return new NotFoundException(MODERATOR_ASSIGNED_HOTEL_NOT_FOUND);
+        return new NotFoundException(MODERATOR_ASSIGNED_CITY_NOT_FOUND);
     }
 
     public static NotFoundException contractNotFound() {
@@ -77,5 +79,13 @@ public class NotFoundException extends AppBaseException {
 
     public static NotFoundException ratingNotFound() {
         return new NotFoundException(RATING_NOT_FOUND);
+    }
+
+    public static NotFoundException loyaltyPointNotFound() {
+        return new NotFoundException(LOYALTY_POINT_NOT_FOUND);
+    }
+
+    public static NotFoundException enabledClientRoleNotFound() {
+        return new NotFoundException(ENABLED_CLIENT_ROLE_NOT_FOUND);
     }
 }

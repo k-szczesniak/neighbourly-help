@@ -16,6 +16,7 @@ import pl.lodz.p.ks.it.neighbourlyhelp.exception.AppBaseException;
 import pl.lodz.p.ks.it.neighbourlyhelp.exception.NotFoundException;
 
 import javax.validation.constraints.NotNull;
+import java.math.BigInteger;
 import java.util.Date;
 import java.util.List;
 import java.util.function.Predicate;
@@ -32,6 +33,8 @@ public class AdvertService {
 
     private final AccountService accountService;
 
+    private final LoyaltyPointService loyaltyPointService;
+
     @Secured({"ROLE_ADMIN", "ROLE_MODERATOR", "ROLE_CLIENT"})
     public Advert get(Long advertId) throws AppBaseException {
         return advertRepository.findById(advertId).orElseThrow(NotFoundException::advertNotFound);
@@ -44,9 +47,7 @@ public class AdvertService {
 
     @Secured({"ROLE_MODERATOR", "ROLE_CLIENT"})
     public List<Advert> getAllApprovedAdvertsToTake() {
-        Predicate<Advert> advertPredicate = advert -> advert.getContractList().stream()
-                .noneMatch(contract -> contract.getAdvert().getId().equals(advert.getId())
-                        && !contract.getStatus().equals(ContractStatus.CANCELLED));
+        Predicate<Advert> advertPredicate = getAdvertPredicate();
         return advertRepository.findAll().stream()
                 .filter(Advert::isApproved)
                 .filter(advertPredicate)
@@ -72,7 +73,6 @@ public class AdvertService {
     public List<Advert> getAllOwnAdverts() throws AppBaseException {
         Account executorAccount = accountService.getExecutorAccount();
         return advertRepository.findAll().stream()
-                .filter(Advert::isApproved)
                 .filter(advert -> advert.getPublisher() == executorAccount)
                 .collect(Collectors.toList());
     }
@@ -83,6 +83,7 @@ public class AdvertService {
         return advertRepository.findAll().stream()
                 .filter(Advert::isApproved)
                 .filter(advert -> advert.getPublisher() == account)
+                .filter(getAdvertPredicate())
                 .collect(Collectors.toList());
     }
 
@@ -95,16 +96,21 @@ public class AdvertService {
         advert.setCreatedBy(publisher);
         advert.setPublicationDate(new Date());
         advertRepository.saveAndFlush(advert);
+
+        loyaltyPointService.blockLoyaltyPoints(publisher, advert.getPrize());
     }
 
     @Secured({"ROLE_CLIENT"})
-    public void updateAdvert(Advert advert, @NotNull Long cityId, String executorEmail) throws AppBaseException {
+    public void updateAdvert(Advert advert, @NotNull Long cityId, String executorEmail, BigInteger oldPrize) throws AppBaseException {
         verifyIfAdvertIsRelatedWithContractInProgress(advert);
         conditionVerifier(!advert.getPublisher().getEmail().equals(executorEmail), AdvertException.accessDenied());
 
-        advert.setModifiedBy(accountService.getExecutorAccount());
+        Account editor = accountService.getExecutorAccount();
+        advert.setModifiedBy(editor);
         advert.setCity(cityService.get(cityId));
         advert.setApproved(false);
+
+        loyaltyPointService.recalculatePointsBalance(editor, advert, oldPrize);
 
         advertRepository.saveAndFlush(advert);
     }
@@ -128,7 +134,21 @@ public class AdvertService {
     public void deleteAdvert(Advert advert, String executorEmail) throws AppBaseException {
         verifyCanBeDisapprovedOrDelete(advert, executorEmail);
 
+        loyaltyPointService.unblockPoints(advert.getPublisher(), advert.getPrize());
+
         advertRepository.delete(advert);
+    }
+
+    @Secured({"ROLE_CLIENT"})
+    public boolean isActiveContract(Advert advert) {
+        Predicate<Advert> advertPredicate = getAdvertPredicate();
+        return advertPredicate.test(advert);
+    }
+
+    private Predicate<Advert> getAdvertPredicate() {
+        return advert -> advert.getContractList().stream()
+                .noneMatch(contract -> contract.getAdvert().getId().equals(advert.getId())
+                        && !contract.getStatus().equals(ContractStatus.CANCELLED));
     }
 
     private void verifyIfAdvertIsRelatedWithContractInProgress(Advert advertToProcess) throws AdvertException {
@@ -137,6 +157,7 @@ public class AdvertService {
                 AdvertException.advertIsInProgress());
     }
 
+//    todo: only moderator can delete advert
     private void verifyCanBeDisapprovedOrDelete(Advert advertToProcess, String executorEmail) throws AppBaseException {
         conditionVerifier(!verifyExecutorPrivileges(advertToProcess, executorEmail), AdvertException.accessDenied());
 

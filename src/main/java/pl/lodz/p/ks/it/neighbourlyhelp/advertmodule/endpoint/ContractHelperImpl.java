@@ -32,7 +32,8 @@ public class ContractHelperImpl extends AbstractEndpoint implements ContractHelp
     public DetailContractDto get(Long contractId) throws AppBaseException {
         Contract contract = contractService.get(contractId);
 
-        if (getEmail().equals(contract.getExecutor().getEmail())) {
+        if (getEmail().equals(contract.getExecutor().getEmail()) ||
+                getEmail().equals(contract.getAdvert().getPublisher().getEmail())) {
             return Mappers.getMapper(ContractMapper.class).toDetailContractDto(contract);
         } else {
             throw ContractException.accessDenied();
@@ -114,20 +115,6 @@ public class ContractHelperImpl extends AbstractEndpoint implements ContractHelp
     public List<ContractDto> getUnratedFinishedContracts() throws AppBaseException {
         List<Contract> unratedFinishedContracts = contractService.getUnratedFinishedContracts();
         return toListOfContractResponseDto(unratedFinishedContracts);
-    }
-
-    @Override
-    @Secured({"ROLE_CLIENT"})
-    public List<ContractDto> getMyUnpaidFinishedContracts() throws AppBaseException {
-        List<Contract> unpaidFinishedContracts = contractService.getMyUnpaidFinishedContracts();
-        return toListOfContractResponseDto(unpaidFinishedContracts);
-    }
-
-    @Override
-    @Secured({"ROLE_CLIENT"})
-    public List<ContractDto> getDelegateUnpaidFinishedContracts() throws AppBaseException {
-        List<Contract> unpaidFinishedContracts = contractService.getDelegateUnpaidFinishedContracts();
-        return toListOfContractResponseDto(unpaidFinishedContracts);
     }
 
     private void verifyPrivilegesAndIntegrity(VoidMethodExecutor executor, Contract contract, String ifMatch) throws AppBaseException {

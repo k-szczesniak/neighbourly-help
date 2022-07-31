@@ -1,40 +1,29 @@
 package pl.lodz.p.ks.it.neighbourlyhelp.advertmodule.dto.response;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import pl.lodz.p.ks.it.neighbourlyhelp.utils.consistency.Signable;
 
 import java.math.BigInteger;
-import java.util.Date;
 
 @Data
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class AdvertResponseDto implements Signable {
+public class LoyaltyPointsDto implements Signable {
 
     private Long id;
 
-    private String title;
+    private BigInteger totalPoints;
 
-    private Date publicationDate;
-
-    private String description;
-
-    private String category;
-
-    private Long publisherId;
-
-    private Long cityId;
-
-    private boolean approved;
-
-    private BigInteger prize;
+    private BigInteger blockedPoints;
 
     private Long version;
 
     @Override
     public String getMessageToSign() {
-        return String.format("%d;%d;%s", id, version, category);
+        return String.format("%d", version);
     }
 }
