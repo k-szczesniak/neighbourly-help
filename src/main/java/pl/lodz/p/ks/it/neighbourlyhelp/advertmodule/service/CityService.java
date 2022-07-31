@@ -29,7 +29,7 @@ public class CityService {
         return cityRepository.findAll();
     }
 
-    @Secured({"ROLE_ADMIN"})
+    @Secured({"ROLE_ADMIN", "ROLE_MODERATOR", "ROLE_CLIENT"})
     public City get(Long cityId) throws AppBaseException {
         return cityRepository.findById(cityId).orElseThrow(NotFoundException::cityNotFound);
     }

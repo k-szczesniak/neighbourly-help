@@ -209,7 +209,7 @@ public class ContractService {
         Account executorAccount = accountService.getExecutorAccount();
 
         return contractRepository.findAll().stream()
-                .filter(contract -> contract.getExecutor().equals(executorAccount))
+                .filter(contract -> contract.getAdvert().getPublisher().equals(executorAccount))
                 .filter(contract -> contract.getStatus().equals(ContractStatus.FINISHED))
                 .filter(contract -> contract.getRating() == null)
                 .collect(Collectors.toList());
