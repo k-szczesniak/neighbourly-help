@@ -33,7 +33,7 @@ INSERT INTO loyalty_point(id, creation_date, modification_date, version, blocked
                           modified_by)
 VALUES (-1, now(), null, 0, 5, 15, -1, null),
        (-2, now(), null, 0, 0, 20, -1, null),
-       (-3, now(), null, 0, 0, 20, -1, null),
+       (-3, now(), null, 0, 5, 15, -1, null),
        (-4, now(), null, 0, 0, 20, -1, null);
 
 INSERT INTO admin_data(id)
@@ -72,7 +72,9 @@ VALUES (-1, now(), null, 0, true, 0, 'Szukam osoby która posprząta mi biurko. 
        (-9, now(), null, 0, true, 3, 'Ogłoszenie wykorzystywane do utworzenia testowego kontraktu negatywnego.',
         3, now(), 'Do kontraktu', -2, null, -1, -1),
        (-10, now(), null, 0, true, 3, 'Ogłoszenie powiązane z kontraktem toApprove.',
-        5, now(), 'Do kontraktu', -2, null, -1, -2);
+        5, now(), 'Do kontraktu', -2, null, -1, -2),
+       (-11, now(), null, 0, true, 3, 'Ogłoszenie do usunięcia',
+        5, now(), 'Do usunięcia', -4, null, -1, -4);
 
 INSERT INTO contract(id, creation_date, modification_date, version, finish_date, start_date, status, created_by,
                      modified_by, advert_id, contract_ended_by, executor_id)
