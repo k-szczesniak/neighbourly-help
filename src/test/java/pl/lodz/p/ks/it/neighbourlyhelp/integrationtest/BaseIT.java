@@ -17,7 +17,8 @@ public class BaseIT {
 
     public enum Resources {
         AUTH_ENDPOINT("/auth/login"),
-        REGISTRATION_ENDPOINT("/account/register");
+        REGISTRATION_ENDPOINT("/account/register"),
+        CONTRACT_ENDPOINT("/contract");
 
         private final String endpoint;
 
