@@ -67,8 +67,12 @@ VALUES (-1, now(), null, 0, true, 0, 'Szukam osoby która posprząta mi biurko. 
         3, now(), 'Klient nieaktywne', -2, null, -1, -1),
        (-7, now(), null, 0, false, 3, 'Szukam osoby będzie wyprowadzać mojego psa.',
         3, now(), 'Wyprowadzanie psa', -2, null, -1, -1),
-       (-8, now(), null, 0, false, 3, 'Ogłoszenie wykorzystywane do utworzenia testowego kontraktu.',
+       (-8, now(), null, 0, false, 3, 'Ogłoszenie wykorzystywane do utworzenia testowego kontraktu pozytywnego.',
+        3, now(), 'Do kontraktu', -2, null, -1, -1),
+       (-9, now(), null, 0, false, 3, 'Ogłoszenie wykorzystywane do utworzenia testowego kontraktu negatywnego.',
         3, now(), 'Do kontraktu', -2, null, -1, -1);
 
-INSERT INTO contract(id, creation_date, modification_date, version, finish_date, start_date, status, created_by, modified_by, advert_id, contract_ended_by, executor_id)
-VALUES (-1, now(), null, 0, null, null, 0, -2, null, -8, null, -4);
+INSERT INTO contract(id, creation_date, modification_date, version, finish_date, start_date, status, created_by,
+                     modified_by, advert_id, contract_ended_by, executor_id)
+VALUES (-1, now(), null, 0, null, null, 0, -2, null, -8, null, -4),
+       (-2, now(), null, 1, null, now(), 1, -2, null, -9, null, -4);

@@ -115,4 +115,28 @@ public class ContractControllerTestIT extends BaseIT {
                 .statusCode(HttpStatus.OK.value());
 
     }
+
+    @Test
+    public void shouldFailCancelInProgressContract() {
+
+        // given
+        final RequestSpecification requestSpecification = given()
+                .log().all()
+                .contentType(APPLICATION_JSON_VALUE)
+                .header(integrationTestTool.generateJwt("klient1@klient.pl"))
+                .header(integrationTestTool.getContractEtag(-2L));
+
+        // when
+        final Response response = requestSpecification
+                .when()
+                .patch(String.format("%s/cancel/-2", CONTRACT_ENDPOINT.build()));
+
+        // then
+        response
+                .then()
+                .log().all()
+                .statusCode(HttpStatus.BAD_REQUEST.value())
+                .body("message", equalTo("exception.contract.in_progress_cancel_contract"));
+
+    }
 }
