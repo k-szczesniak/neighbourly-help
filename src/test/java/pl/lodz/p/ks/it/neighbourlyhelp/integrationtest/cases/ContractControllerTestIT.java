@@ -93,4 +93,26 @@ public class ContractControllerTestIT extends BaseIT {
         assertEquals(beforeCreateSize, afterCreateSize);
     }
 
+    @Test
+    public void shouldCancelContractSuccessfully() {
+
+        // given
+        final RequestSpecification requestSpecification = given()
+                .log().all()
+                .contentType(APPLICATION_JSON_VALUE)
+                .header(integrationTestTool.generateJwt("klient1@klient.pl"))
+                .header(integrationTestTool.getContractEtag(-1L));
+
+        // when
+        final Response response = requestSpecification
+                .when()
+                .patch(String.format("%s/cancel/-1", CONTRACT_ENDPOINT.build()));
+
+        // then
+        response
+                .then()
+                .log().all()
+                .statusCode(HttpStatus.OK.value());
+
+    }
 }
