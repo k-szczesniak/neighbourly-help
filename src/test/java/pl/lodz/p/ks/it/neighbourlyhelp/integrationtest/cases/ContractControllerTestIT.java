@@ -6,9 +6,7 @@ import io.restassured.specification.RequestSpecification;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.jdbc.Sql;
 import pl.lodz.p.ks.it.neighbourlyhelp.advertmodule.domain.Contract;
 import pl.lodz.p.ks.it.neighbourlyhelp.advertmodule.domain.LoyaltyPoint;
 import pl.lodz.p.ks.it.neighbourlyhelp.advertmodule.domain.enums.ContractStatus;
@@ -30,8 +28,6 @@ import static pl.lodz.p.ks.it.neighbourlyhelp.integrationtest.BaseIT.Resources.C
 
 @ActiveProfiles("test")
 @IntegrationTest
-@DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
-@Sql("/test-init.sql")
 public class ContractControllerTestIT extends BaseIT {
 
     @Autowired

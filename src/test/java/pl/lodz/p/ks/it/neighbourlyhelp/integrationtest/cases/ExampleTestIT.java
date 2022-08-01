@@ -6,7 +6,6 @@ import io.restassured.specification.RequestSpecification;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.jdbc.Sql;
 import pl.lodz.p.ks.it.neighbourlyhelp.clientmodule.dto.request.LoginCredentials;
 import pl.lodz.p.ks.it.neighbourlyhelp.clientmodule.dto.request.RegisterAccountDto;
 import pl.lodz.p.ks.it.neighbourlyhelp.clientmodule.dto.response.AuthTokenResponseDto;
@@ -24,7 +23,6 @@ import static pl.lodz.p.ks.it.neighbourlyhelp.integrationtest.BaseIT.Resources.R
 public class ExampleTestIT extends BaseIT {
 
     @Test
-    @Sql("/test-init.sql")
     public void shouldAuthenticateCorrectly() {
         // given
 
