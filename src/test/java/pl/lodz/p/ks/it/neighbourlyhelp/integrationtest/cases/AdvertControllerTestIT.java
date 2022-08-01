@@ -131,7 +131,7 @@ public class AdvertControllerTestIT extends BaseIT {
 
     @ParameterizedTest(name = "[{index}]Edit advert: newAdvertPrize={0}, expectedBlocked={1}, expectedTotal={2}")
     @MethodSource("newAmounts")
-    public void shouldEditAdvertSuccessfully(BigInteger newAdvertPrize, BigInteger expectedBlocked, BigInteger expectedTotal) {
+    public void shouldEditAdvertSuccessfully(BigInteger newAdvertPrize, BigInteger expectedBlocked, BigInteger expectedTotal, int statusCode) {
 
         Long advertId = -11L;
         Long publisherLPId = -3L;
@@ -164,7 +164,7 @@ public class AdvertControllerTestIT extends BaseIT {
         response
                 .then()
                 .log().all()
-                .statusCode(HttpStatus.OK.value());
+                .statusCode(statusCode);
 
         int afterEditSize = advertRepository.findAll().size();
         assertEquals(beforeEditSize, afterEditSize);
@@ -179,9 +179,10 @@ public class AdvertControllerTestIT extends BaseIT {
     private static Stream<Arguments> newAmounts() {
         BigInteger advertPrize = BigInteger.valueOf(5);
         return Stream.of(
-                arguments(advertPrize.subtract(BigInteger.TWO), BigInteger.valueOf(3), BigInteger.valueOf(17)),
-                arguments(advertPrize.add(BigInteger.TWO), BigInteger.valueOf(7), BigInteger.valueOf(13)),
-                arguments(advertPrize, BigInteger.valueOf(5), BigInteger.valueOf(15))
+                arguments(advertPrize.subtract(BigInteger.TWO), BigInteger.valueOf(3), BigInteger.valueOf(17), 200),
+                arguments(advertPrize.add(BigInteger.TWO), BigInteger.valueOf(7), BigInteger.valueOf(13), 200),
+                arguments(advertPrize, BigInteger.valueOf(5), BigInteger.valueOf(15), 200),
+                arguments(advertPrize.add(BigInteger.valueOf(100)), BigInteger.valueOf(5), BigInteger.valueOf(15), 400)
         );
     }
 
