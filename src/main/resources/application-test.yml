@@ -4,8 +4,8 @@ server:
     include-binding-errors: always
 
 spring:
-  datasource:
-    url: jdbc:h2:mem:testdb
+#  datasource:
+#    url: jdbc:h2:mem:testdb
   jpa:
     hibernate:
       ddl-auto: create-drop
