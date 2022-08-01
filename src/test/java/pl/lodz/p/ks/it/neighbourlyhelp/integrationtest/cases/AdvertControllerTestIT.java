@@ -4,10 +4,14 @@ import io.restassured.http.Header;
 import io.restassured.response.Response;
 import io.restassured.specification.RequestSpecification;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.test.context.ActiveProfiles;
 import pl.lodz.p.ks.it.neighbourlyhelp.advertmodule.domain.LoyaltyPoint;
+import pl.lodz.p.ks.it.neighbourlyhelp.advertmodule.dto.request.EditAdvertRequestDto;
 import pl.lodz.p.ks.it.neighbourlyhelp.advertmodule.dto.request.NewAdvertRequestDto;
 import pl.lodz.p.ks.it.neighbourlyhelp.advertmodule.repository.AdvertRepository;
 import pl.lodz.p.ks.it.neighbourlyhelp.advertmodule.repository.LoyaltyPointRepository;
@@ -16,10 +20,12 @@ import pl.lodz.p.ks.it.neighbourlyhelp.integrationtest.IntegrationTestTool;
 import pl.lodz.p.ks.it.neighbourlyhelp.integrationtest.infrastructure.annotation.IntegrationTest;
 
 import java.math.BigInteger;
+import java.util.stream.Stream;
 
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.params.provider.Arguments.arguments;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static pl.lodz.p.ks.it.neighbourlyhelp.integrationtest.BaseIT.Resources.ADVERT_ENDPOINT;
 
@@ -121,6 +127,62 @@ public class AdvertControllerTestIT extends BaseIT {
         assertEquals(publisherLoyaltyPoint.getTotalPoints(), publisherNewLoyaltyPoint.getTotalPoints());
         assertEquals(publisherLoyaltyPoint.getBlockedPoints(), publisherNewLoyaltyPoint.getBlockedPoints());
 
+    }
+
+    @ParameterizedTest(name = "[{index}]Edit advert: newAdvertPrize={0}, expectedBlocked={1}, expectedTotal={2}")
+    @MethodSource("newAmounts")
+    public void shouldEditAdvertSuccessfully(BigInteger newAdvertPrize, BigInteger expectedBlocked, BigInteger expectedTotal) {
+
+        Long advertId = -11L;
+        Long publisherLPId = -3L;
+
+        int beforeEditSize = advertRepository.findAll().size();
+
+        // given
+        EditAdvertRequestDto requestDto = EditAdvertRequestDto.builder()
+                .id(advertId)
+                .title("Test advert modified")
+                .description("Modified the same as title")
+                .category("HOUSEWORK")
+                .prize(newAdvertPrize)
+                .cityId(-1L)
+                .build();
+
+        final RequestSpecification requestSpecification = given()
+                .log().all()
+                .contentType(APPLICATION_JSON_VALUE)
+                .header(integrationTestTool.generateJwt("klient1@klient.pl"))
+                .header(getAdvertEtag(advertId))
+                .body(requestDto);
+
+        // when
+        final Response response = requestSpecification
+                .when()
+                .put(ADVERT_ENDPOINT.build());
+
+        // then
+        response
+                .then()
+                .log().all()
+                .statusCode(HttpStatus.OK.value());
+
+        int afterEditSize = advertRepository.findAll().size();
+        assertEquals(beforeEditSize, afterEditSize);
+
+        LoyaltyPoint publisherNewLoyaltyPoint = loyaltyPointRepository.findById(publisherLPId).get();
+
+        assertEquals(expectedTotal, publisherNewLoyaltyPoint.getTotalPoints());
+        assertEquals(expectedBlocked, publisherNewLoyaltyPoint.getBlockedPoints());
+
+    }
+
+    private static Stream<Arguments> newAmounts() {
+        BigInteger advertPrize = BigInteger.valueOf(5);
+        return Stream.of(
+                arguments(advertPrize.subtract(BigInteger.TWO), BigInteger.valueOf(3), BigInteger.valueOf(17)),
+                arguments(advertPrize.add(BigInteger.TWO), BigInteger.valueOf(7), BigInteger.valueOf(13)),
+                arguments(advertPrize, BigInteger.valueOf(5), BigInteger.valueOf(15))
+        );
     }
 
     @Test
