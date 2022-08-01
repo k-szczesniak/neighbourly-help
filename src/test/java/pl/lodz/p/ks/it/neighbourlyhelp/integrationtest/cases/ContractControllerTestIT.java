@@ -1,5 +1,6 @@
 package pl.lodz.p.ks.it.neighbourlyhelp.integrationtest.cases;
 
+import io.restassured.http.Header;
 import io.restassured.response.Response;
 import io.restassured.specification.RequestSpecification;
 import org.junit.jupiter.api.Test;
@@ -91,6 +92,55 @@ public class ContractControllerTestIT extends BaseIT {
         int afterCreateSize = contractRepository.findAll().size();
 
         assertEquals(beforeCreateSize, afterCreateSize);
+    }
+
+    @Test
+    public void shouldFailForConcurrentCreateContract() {
+
+        int beforeCreateSize = contractRepository.findAll().size();
+
+        // given
+        NewContractRequestDto requestDto = new NewContractRequestDto(-7L);
+
+        Header jwtKlient1 = integrationTestTool.generateJwt("klient1@klient.pl");
+        Header jwtKlient2 = integrationTestTool.generateJwt("klient2@klient.pl");
+
+        final RequestSpecification requestSpecificationKlient1 = given()
+                .log().all()
+                .contentType(APPLICATION_JSON_VALUE)
+                .header(jwtKlient1)
+                .body(requestDto);
+
+        final RequestSpecification requestSpecificationKlient2 = given()
+                .log().all()
+                .contentType(APPLICATION_JSON_VALUE)
+                .header(jwtKlient2)
+                .body(requestDto);
+
+        // when
+        final Response responseKlient1 = requestSpecificationKlient1
+                .when()
+                .post(CONTRACT_ENDPOINT.build());
+
+        final Response responseKlient2 = requestSpecificationKlient2
+                .when()
+                .post(CONTRACT_ENDPOINT.build());
+
+        // then
+        responseKlient1
+                .then()
+                .log().all()
+                .statusCode(HttpStatus.OK.value());
+
+        responseKlient2
+                .then()
+                .log().all()
+                .statusCode(HttpStatus.BAD_REQUEST.value())
+                .body("message", equalTo("exception.contract.advert_has_been_already_taken"));
+
+        int afterCreateSize = contractRepository.findAll().size();
+
+        assertEquals(beforeCreateSize + 1, afterCreateSize);
     }
 
     @Test
