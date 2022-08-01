@@ -31,7 +31,7 @@ VALUES (-1, now(), null, 0, 'Łódź', -1, null),
 
 INSERT INTO loyalty_point(id, creation_date, modification_date, version, blocked_points, total_points, created_by,
                           modified_by)
-VALUES (-1, now(), null, 0, 10, 10, -1, null),
+VALUES (-1, now(), null, 0, 5, 15, -1, null),
        (-2, now(), null, 0, 0, 20, -1, null),
        (-3, now(), null, 0, 0, 20, -1, null),
        (-4, now(), null, 0, 0, 20, -1, null);
@@ -70,9 +70,12 @@ VALUES (-1, now(), null, 0, true, 0, 'Szukam osoby która posprząta mi biurko. 
        (-8, now(), null, 0, true, 3, 'Ogłoszenie wykorzystywane do utworzenia testowego kontraktu pozytywnego.',
         3, now(), 'Do kontraktu', -2, null, -1, -1),
        (-9, now(), null, 0, true, 3, 'Ogłoszenie wykorzystywane do utworzenia testowego kontraktu negatywnego.',
-        3, now(), 'Do kontraktu', -2, null, -1, -1);
+        3, now(), 'Do kontraktu', -2, null, -1, -1),
+       (-10, now(), null, 0, true, 3, 'Ogłoszenie powiązane z kontraktem toApprove.',
+        5, now(), 'Do kontraktu', -2, null, -1, -2);
 
 INSERT INTO contract(id, creation_date, modification_date, version, finish_date, start_date, status, created_by,
                      modified_by, advert_id, contract_ended_by, executor_id)
 VALUES (-1, now(), null, 0, null, null, 0, -2, null, -8, null, -4),
-       (-2, now(), null, 1, null, now(), 1, -2, null, -9, null, -4);
+       (-2, now(), null, 1, null, now(), 1, -2, null, -9, null, -4),
+       (-3, now(), now(), 4, now(), now() - INTERVAL '1 week', 2, -5, -5, -10, -5, -4);

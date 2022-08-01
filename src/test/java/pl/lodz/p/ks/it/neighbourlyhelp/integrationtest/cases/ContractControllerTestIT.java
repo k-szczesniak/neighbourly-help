@@ -9,11 +9,18 @@ import org.springframework.http.HttpStatus;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.jdbc.Sql;
+import pl.lodz.p.ks.it.neighbourlyhelp.advertmodule.domain.Contract;
+import pl.lodz.p.ks.it.neighbourlyhelp.advertmodule.domain.LoyaltyPoint;
+import pl.lodz.p.ks.it.neighbourlyhelp.advertmodule.domain.enums.ContractStatus;
+import pl.lodz.p.ks.it.neighbourlyhelp.advertmodule.dto.request.ApproveFinishedRequestDto;
 import pl.lodz.p.ks.it.neighbourlyhelp.advertmodule.dto.request.NewContractRequestDto;
 import pl.lodz.p.ks.it.neighbourlyhelp.advertmodule.repository.ContractRepository;
+import pl.lodz.p.ks.it.neighbourlyhelp.advertmodule.repository.LoyaltyPointRepository;
 import pl.lodz.p.ks.it.neighbourlyhelp.integrationtest.BaseIT;
 import pl.lodz.p.ks.it.neighbourlyhelp.integrationtest.IntegrationTestTool;
 import pl.lodz.p.ks.it.neighbourlyhelp.integrationtest.infrastructure.annotation.IntegrationTest;
+
+import java.math.BigInteger;
 
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.equalTo;
@@ -32,6 +39,9 @@ public class ContractControllerTestIT extends BaseIT {
 
     @Autowired
     private ContractRepository contractRepository;
+
+    @Autowired
+    private LoyaltyPointRepository loyaltyPointRepository;
 
     @Test
     public void shouldCreateContractSuccessfully() {
@@ -187,6 +197,104 @@ public class ContractControllerTestIT extends BaseIT {
                 .log().all()
                 .statusCode(HttpStatus.BAD_REQUEST.value())
                 .body("message", equalTo("exception.contract.in_progress_cancel_contract"));
+
+    }
+
+    @Test
+    public void shouldStartAndEndContractSuccessfully() {
+
+        Long contractId = -1L;
+
+        //starting contract
+        // given
+        final RequestSpecification requestStartSpecification = given()
+                .log().all()
+                .contentType(APPLICATION_JSON_VALUE)
+                .header(integrationTestTool.generateJwt("klient1@klient.pl"))
+                .header(integrationTestTool.getContractEtag(contractId));
+
+        // when
+        final Response responseStart = requestStartSpecification
+                .when()
+                .patch(String.format("%s/start/%d", CONTRACT_ENDPOINT.build(), contractId));
+
+        // then
+        responseStart
+                .then()
+                .log().all()
+                .statusCode(HttpStatus.OK.value());
+
+        Contract startedContract = contractRepository.findById(contractId).get();
+        assertEquals(ContractStatus.IN_PROGRESS, startedContract.getStatus());
+
+        //ending contract
+        // given
+        final RequestSpecification requestEndSpecification = given()
+                .log().all()
+                .contentType(APPLICATION_JSON_VALUE)
+                .header(integrationTestTool.generateJwt("klient1@klient.pl"))
+                .header(integrationTestTool.getContractEtag(contractId));
+
+        // when
+        final Response responseEnd = requestEndSpecification
+                .when()
+                .patch(String.format("%s/end/%d", CONTRACT_ENDPOINT.build(), contractId));
+
+        // then
+        responseEnd
+                .then()
+                .log().all()
+                .statusCode(HttpStatus.OK.value());
+
+        Contract endedContract = contractRepository.findById(contractId).get();
+        assertEquals(ContractStatus.TO_APPROVE, endedContract.getStatus());
+
+    }
+
+    @Test
+    public void shouldApproveContractTerminationSuccessfully() {
+
+        BigInteger advertPrize = BigInteger.valueOf(5);
+
+        Long publisherLPId = -1L;
+        Long executorLPId = -3L;
+        Long contractId = -3L;
+
+        LoyaltyPoint publisherLoyaltyPoint = loyaltyPointRepository.findById(publisherLPId).get();
+        LoyaltyPoint executorLoyaltyPoint = loyaltyPointRepository.findById(executorLPId).get();
+
+        // given
+        ApproveFinishedRequestDto requestDto = new ApproveFinishedRequestDto(contractId);
+
+        final RequestSpecification requestSpecification = given()
+                .log().all()
+                .contentType(APPLICATION_JSON_VALUE)
+                .header(integrationTestTool.generateJwt("klient1@klient.pl"))
+                .header(integrationTestTool.getContractEtag(contractId))
+                .body(requestDto);
+
+        // when
+        final Response response = requestSpecification
+                .when()
+                .patch(String.format("%s/approve", CONTRACT_ENDPOINT.build()));
+
+        // then
+        response
+                .then()
+                .log().all()
+                .statusCode(HttpStatus.OK.value());
+
+        Contract approvedContract = contractRepository.findById(contractId).get();
+
+        assertEquals(ContractStatus.FINISHED, approvedContract.getStatus());
+
+        LoyaltyPoint publisherNewLoyaltyPoint = loyaltyPointRepository.findById(publisherLPId).get();
+        assertEquals(publisherLoyaltyPoint.getBlockedPoints().subtract(advertPrize), publisherNewLoyaltyPoint.getBlockedPoints());
+        assertEquals(publisherLoyaltyPoint.getTotalPoints(), publisherNewLoyaltyPoint.getTotalPoints());
+
+        LoyaltyPoint executorNewLoyaltyPoint = loyaltyPointRepository.findById(executorLPId).get();
+        assertEquals(executorLoyaltyPoint.getTotalPoints().add(advertPrize), executorNewLoyaltyPoint.getTotalPoints());
+        assertEquals(executorLoyaltyPoint.getBlockedPoints(), executorNewLoyaltyPoint.getBlockedPoints());
 
     }
 }
