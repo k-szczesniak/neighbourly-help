@@ -63,7 +63,7 @@ VALUES (-1, now(), null, 0, true, 0, 'Szukam osoby która posprząta mi biurko. 
         3, now(), 'Wyprowadzanie psa', -1, null, -1, -1),
        (-5, now(), null, 0, true, 3, 'Zadanie aktywne testowe dla użytkownika klient1.',
         3, now(), 'Klient aktywne', -2, null, -1, -1),
-       (-6, now(), null, 0, false, 3, 'Zadanie nieaktywne testowe dla użytkownika klient1.',
+       (-6, now(), null, 0, false, 3, 'Zadanie nieaktywne testowe dla uzytkownika klient1.',
         3, now(), 'Klient nieaktywne', -2, null, -1, -1),
        (-7, now(), null, 0, true, 3, 'Zadanie do konkurencyjnego podjęcia przez 2 użytkowników',
         3, now(), 'Wyprowadzanie psa', -2, null, -1, -1),
@@ -73,8 +73,8 @@ VALUES (-1, now(), null, 0, true, 0, 'Szukam osoby która posprząta mi biurko. 
         3, now(), 'Do kontraktu', -2, null, -1, -1),
        (-10, now(), null, 0, true, 3, 'Ogłoszenie powiązane z kontraktem toApprove.',
         5, now(), 'Do kontraktu', -2, null, -1, -2),
-       (-11, now(), null, 0, true, 3, 'Ogłoszenie do usunięcia',
-        5, now(), 'Do usunięcia', -4, null, -1, -4);
+       (-11, now(), null, 0, true, 3, 'Ogloszenie do usuniecia',
+        5, now(), 'Do usuniecia', -4, null, -1, -4);
 
 INSERT INTO contract(id, creation_date, modification_date, version, finish_date, start_date, status, created_by,
                      modified_by, advert_id, contract_ended_by, executor_id)
