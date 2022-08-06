@@ -263,10 +263,6 @@ public class AccountService {
 
     @Secured({"ROLE_ADMIN", "ROLE_MODERATOR", "ROLE_CLIENT"})
     public void changeThemeColor(Account account, ThemeColor themeColor) throws AppBaseException {
-        if (account.getThemeColor().equals(themeColor)) {
-            throw AccountException.themeAlreadySet();
-        }
-
         account.setThemeColor(themeColor);
         account.setModifiedBy(account);
 
