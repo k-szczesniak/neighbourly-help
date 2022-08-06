@@ -1,6 +1,7 @@
 package pl.lodz.p.ks.it.neighbourlyhelp.methodsecurity;
 
 import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -19,6 +20,7 @@ import static org.junit.Assert.assertEquals;
 @RunWith(SpringRunner.class)
 @SpringBootTest
 @ActiveProfiles("test")
+@Disabled
 public class MethodSecurityTest {
 
     @Autowired

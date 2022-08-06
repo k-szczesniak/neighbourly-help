@@ -1,6 +1,7 @@
 package pl.lodz.p.ks.it.neighbourlyhelp.advertmodule.dto.request;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import pl.lodz.p.ks.it.neighbourlyhelp.advertmodule.domain.enums.AdvertCategory;
@@ -15,6 +16,7 @@ import java.math.BigInteger;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 public class EditAdvertRequestDto {
 
     @NotNull

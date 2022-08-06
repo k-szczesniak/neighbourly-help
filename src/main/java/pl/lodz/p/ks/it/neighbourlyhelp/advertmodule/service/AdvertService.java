@@ -124,7 +124,7 @@ public class AdvertService {
 
     @Secured({"ROLE_MODERATOR"})
     public void disapproveAdvert(Advert advert, String executorEmail) throws AppBaseException {
-        verifyCanBeDisapprovedOrDelete(advert, executorEmail);
+        verifyCanBeDisapproved(advert, executorEmail);
 
         advert.setApproved(false);
         advert.setModifiedBy(accountService.getExecutorAccount());
@@ -132,7 +132,7 @@ public class AdvertService {
 
     @Secured({"ROLE_CLIENT"})
     public void deleteAdvert(Advert advert, String executorEmail) throws AppBaseException {
-        verifyCanBeDisapprovedOrDelete(advert, executorEmail);
+        verifyCanBeDeleted(advert, executorEmail);
 
         loyaltyPointService.unblockPoints(advert.getPublisher(), advert.getPrize());
 
@@ -157,9 +157,16 @@ public class AdvertService {
                 AdvertException.advertIsInProgress());
     }
 
-//    todo: only moderator can delete advert
-    private void verifyCanBeDisapprovedOrDelete(Advert advertToProcess, String executorEmail) throws AppBaseException {
+    private void verifyCanBeDisapproved(Advert advertToProcess, String executorEmail) throws AppBaseException {
         conditionVerifier(!verifyExecutorPrivileges(advertToProcess, executorEmail), AdvertException.accessDenied());
+
+        verifyIfAdvertIsRelatedWithContractInProgress(advertToProcess);
+
+        conditionVerifier(!advertToProcess.isApproved(), AdvertException.advertIsDisapproved());
+    }
+
+    private void verifyCanBeDeleted(Advert advertToProcess, String executorEmail) throws AppBaseException {
+        conditionVerifier(!verifyUserIsAdvertPublisher(advertToProcess, executorEmail), AdvertException.accessDenied());
 
         verifyIfAdvertIsRelatedWithContractInProgress(advertToProcess);
 
@@ -170,6 +177,10 @@ public class AdvertService {
         return advertToProcess.getCity().getModeratorDataList().stream()
                 .filter(Role::isEnabled)
                 .anyMatch(moderator -> moderator.getAccount().getEmail().equals(executorEmail));
+    }
+
+    private boolean verifyUserIsAdvertPublisher(Advert advertToProcess, String executorEmail) {
+        return advertToProcess.getPublisher().getEmail().equals(executorEmail);
     }
 
     private void conditionVerifier(boolean condition, AdvertException exception) throws AdvertException {
