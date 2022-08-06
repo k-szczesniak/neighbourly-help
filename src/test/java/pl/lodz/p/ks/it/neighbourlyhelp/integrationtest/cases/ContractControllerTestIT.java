@@ -293,4 +293,77 @@ public class ContractControllerTestIT extends BaseIT {
         assertEquals(executorLoyaltyPoint.getBlockedPoints(), executorNewLoyaltyPoint.getBlockedPoints());
 
     }
+
+    @Test
+    public void shouldApproveTwoContractTerminationConnectedWithTheSameExecutorSuccessfully() {
+
+        BigInteger advertPrize = BigInteger.valueOf(5);
+
+        Long executorLPId = -3L; // klient1
+        Long publisher1LPId = -1L; //piotrnowak
+        Long publisher2LPId = -4L; //klient2
+        Long contract1Id = -3L;
+        Long contract2Id = -4L;
+
+        LoyaltyPoint publisher1LoyaltyPoint = loyaltyPointRepository.findById(publisher1LPId).get();
+        LoyaltyPoint publisher2LoyaltyPoint = loyaltyPointRepository.findById(publisher2LPId).get();
+        LoyaltyPoint executorLoyaltyPoint = loyaltyPointRepository.findById(executorLPId).get();
+
+        // given
+        ApproveFinishedRequestDto requestC1Dto = new ApproveFinishedRequestDto(contract1Id);
+        ApproveFinishedRequestDto requestC2Dto = new ApproveFinishedRequestDto(contract2Id);
+
+        final RequestSpecification requestC1Specification = given()
+                .log().all()
+                .contentType(APPLICATION_JSON_VALUE)
+                .header(integrationTestTool.generateJwt("klient1@klient.pl"))
+                .header(integrationTestTool.getContractEtag(contract1Id))
+                .body(requestC1Dto);
+
+        final RequestSpecification requestC2Specification = given()
+                .log().all()
+                .contentType(APPLICATION_JSON_VALUE)
+                .header(integrationTestTool.generateJwt("klient1@klient.pl"))
+                .header(integrationTestTool.getContractEtag(contract2Id))
+                .body(requestC2Dto);
+
+        // when
+        final Response responseC1 = requestC1Specification
+                .when()
+                .patch(String.format("%s/approve", CONTRACT_ENDPOINT.build()));
+
+        final Response responseC2 = requestC2Specification
+                .when()
+                .patch(String.format("%s/approve", CONTRACT_ENDPOINT.build()));
+
+        // then
+        responseC1
+                .then()
+                .log().all()
+                .statusCode(HttpStatus.OK.value());
+
+        responseC2
+                .then()
+                .log().all()
+                .statusCode(HttpStatus.OK.value());
+
+        Contract approvedContract1 = contractRepository.findById(contract1Id).get();
+        Contract approvedContract2 = contractRepository.findById(contract2Id).get();
+
+        assertEquals(ContractStatus.FINISHED, approvedContract1.getStatus());
+        assertEquals(ContractStatus.FINISHED, approvedContract2.getStatus());
+
+        LoyaltyPoint publisher1NewLoyaltyPoint = loyaltyPointRepository.findById(publisher1LPId).get();
+        assertEquals(publisher1LoyaltyPoint.getBlockedPoints().subtract(advertPrize), publisher1NewLoyaltyPoint.getBlockedPoints());
+        assertEquals(publisher2LoyaltyPoint.getTotalPoints(), publisher2LoyaltyPoint.getTotalPoints());
+
+        LoyaltyPoint publisher2NewLoyaltyPoint = loyaltyPointRepository.findById(publisher2LPId).get();
+        assertEquals(publisher1LoyaltyPoint.getBlockedPoints().subtract(advertPrize), publisher2NewLoyaltyPoint.getBlockedPoints());
+        assertEquals(publisher2LoyaltyPoint.getTotalPoints(), publisher2NewLoyaltyPoint.getTotalPoints());
+
+        LoyaltyPoint executorNewLoyaltyPoint = loyaltyPointRepository.findById(executorLPId).get();
+        assertEquals(executorLoyaltyPoint.getTotalPoints().add(advertPrize.multiply(BigInteger.TWO)), executorNewLoyaltyPoint.getTotalPoints());
+        assertEquals(executorLoyaltyPoint.getBlockedPoints(), executorNewLoyaltyPoint.getBlockedPoints());
+
+    }
 }

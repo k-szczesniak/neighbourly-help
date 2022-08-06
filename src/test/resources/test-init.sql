@@ -34,7 +34,7 @@ INSERT INTO loyalty_point(id, creation_date, modification_date, version, blocked
 VALUES (-1, now(), null, 0, 5, 15, -1, null),
        (-2, now(), null, 0, 0, 20, -1, null),
        (-3, now(), null, 0, 5, 15, -1, null),
-       (-4, now(), null, 0, 0, 20, -1, null);
+       (-4, now(), null, 0, 5, 15, -1, null);
 
 INSERT INTO admin_data(id)
 values (-1);
@@ -54,7 +54,7 @@ values (-7, -4);
 INSERT INTO advert(id, creation_date, modification_date, version, approved, category, description, prize,
                    publication_date, title, created_by, modified_by, city_id, publisher_id)
 VALUES (-1, now(), null, 0, true, 0, 'Szukam osoby która posprząta mi biurko. Będę niezwykle wdzięczny za szybką pomoc',
-        5, now(), 'Sprzątanie biurka', -1, null, -1, -1),
+        5, now(), 'Sprzątanie biurka', -5, null, -1, -5),
        (-2, now(), null, 0, false, 1, 'Szukam osoby która wypieli mi ogródek',
         10, now(), 'Pielenie ogrodu', -1, null, -1, -1),
        (-3, now(), null, 0, true, 2, 'Szukam osoby która zaopiekuje się moim dzieckiem w piątek wieczorem.',
@@ -80,4 +80,5 @@ INSERT INTO contract(id, creation_date, modification_date, version, finish_date,
                      modified_by, advert_id, contract_ended_by, executor_id)
 VALUES (-1, now(), null, 0, null, null, 0, -2, null, -8, null, -4),
        (-2, now(), null, 1, null, now(), 1, -2, null, -9, null, -4),
-       (-3, now(), now(), 4, now(), now() - INTERVAL '1 week', 2, -5, -5, -10, -5, -4);
+       (-3, now(), now(), 4, now(), now() - INTERVAL '1 week', 2, -5, -5, -10, -5, -4),
+       (-4, now(), now(), 4, now(), now() - INTERVAL '2 week', 2, -2, -2, -1, -2, -4);
