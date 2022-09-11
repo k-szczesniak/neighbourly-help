@@ -50,7 +50,7 @@ public class ContractController {
     @PatchMapping("/cancel/{contractId}")
     @Secured({"ROLE_CLIENT"})
     public void cancelContract(@RequestHeader("If-Match") String ifMatch,
-                                   @PathVariable("contractId") Long contractId)
+                                @PathVariable("contractId") Long contractId)
             throws AppBaseException {
         contractHelper.cancelContract(contractId, ifMatch);
     }
@@ -58,7 +58,7 @@ public class ContractController {
     @PatchMapping("/start/{contractId}")
     @Secured({"ROLE_CLIENT"})
     public void startContract(@RequestHeader("If-Match") String ifMatch,
-                               @PathVariable("contractId") Long contractId)
+                              @PathVariable("contractId") Long contractId)
             throws AppBaseException {
         contractHelper.startContract(contractId, ifMatch);
     }
@@ -66,7 +66,7 @@ public class ContractController {
     @PatchMapping("/end/{contractId}")
     @Secured({"ROLE_CLIENT"})
     public void endContract(@RequestHeader("If-Match") String ifMatch,
-                              @PathVariable("contractId") Long contractId)
+                            @PathVariable("contractId") Long contractId)
             throws AppBaseException {
         contractHelper.endContract(contractId, ifMatch);
     }

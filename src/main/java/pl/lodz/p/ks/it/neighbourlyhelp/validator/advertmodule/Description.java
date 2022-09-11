@@ -12,7 +12,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Adnotacja służąca do weryfikacji opisu boxu.
+ * Adnotacja służąca do weryfikacji opisu.
  */
 @Constraint(validatedBy = {})
 @Target({ElementType.FIELD, ElementType.PARAMETER})

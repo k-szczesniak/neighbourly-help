@@ -59,7 +59,7 @@ public class AdvertController {
     }
 
     @GetMapping("approved")
-    @Secured({"ROLE_ADMIN", "ROLE_MODERATOR", "ROLE_CLIENT"})
+    @Secured({"ROLE_MODERATOR", "ROLE_CLIENT"})
     public List<AdvertResponseDto> getAllApprovedAdvertsToTake() {
         return advertEndpoint.getAllApprovedAdvertsToTake();
     }

@@ -44,7 +44,7 @@ public class CityEndpointImpl extends AbstractEndpoint implements CityEndpoint {
     }
 
     @Override
-    @Secured({"ROLE_MODERATOR", "ROLE_ADMIN"})
+    @Secured({"ROLE_ADMIN"})
     public void addCity(NewCityDto newCityDto) throws AppBaseException {
         CityMapper cityMapper = Mappers.getMapper(CityMapper.class);
         cityService.addCity(cityMapper.toCity(newCityDto));

@@ -46,7 +46,7 @@ public class CityController {
     }
 
     @PostMapping
-    @Secured({"ROLE_MODERATOR", "ROLE_ADMIN"})
+    @Secured({"ROLE_ADMIN"})
     public void addCity(@Valid @RequestBody NewCityDto newCityDto) throws AppBaseException {
         cityEndpoint.addCity(newCityDto);
     }
