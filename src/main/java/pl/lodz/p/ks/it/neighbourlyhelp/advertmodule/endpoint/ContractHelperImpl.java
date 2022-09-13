@@ -6,11 +6,14 @@ import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+import pl.lodz.p.ks.it.neighbourlyhelp.advertmodule.domain.Advert;
 import pl.lodz.p.ks.it.neighbourlyhelp.advertmodule.domain.Contract;
 import pl.lodz.p.ks.it.neighbourlyhelp.advertmodule.dto.request.ApproveFinishedRequestDto;
 import pl.lodz.p.ks.it.neighbourlyhelp.advertmodule.dto.request.NewContractRequestDto;
+import pl.lodz.p.ks.it.neighbourlyhelp.advertmodule.dto.response.AdvertDetailsResponseDto;
 import pl.lodz.p.ks.it.neighbourlyhelp.advertmodule.dto.response.ContractDto;
 import pl.lodz.p.ks.it.neighbourlyhelp.advertmodule.dto.response.DetailContractDto;
+import pl.lodz.p.ks.it.neighbourlyhelp.advertmodule.mapper.AdvertMapper;
 import pl.lodz.p.ks.it.neighbourlyhelp.advertmodule.mapper.ContractMapper;
 import pl.lodz.p.ks.it.neighbourlyhelp.advertmodule.service.ContractService;
 import pl.lodz.p.ks.it.neighbourlyhelp.exception.AppBaseException;
@@ -42,8 +45,13 @@ public class ContractHelperImpl extends AbstractEndpoint implements ContractHelp
 
     @Override
     @Secured({"ROLE_CLIENT"})
-    public void createContract(NewContractRequestDto newContract) throws AppBaseException {
-        contractService.createContract(newContract);
+    public void createContract(NewContractRequestDto newContract, String ifMatch) throws AppBaseException {
+        Advert advert = contractService.getAdvertById(newContract.getAdvertId());
+
+        AdvertDetailsResponseDto advertIntegrity = Mappers.getMapper(AdvertMapper.class).toAdvertDetailsDto(advert);
+        verifyIntegrity(advertIntegrity, ifMatch);
+
+        contractService.createContract(advert);
     }
 
     @Override

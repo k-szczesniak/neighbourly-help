@@ -51,6 +51,7 @@ public class ContractControllerTestIT extends BaseIT {
                 .log().all()
                 .contentType(APPLICATION_JSON_VALUE)
                 .header(integrationTestTool.generateJwt("klient1@klient.pl"))
+                .header(integrationTestTool.getAdvertEtag(-5L))
                 .body(requestDto);
 
         // when
@@ -81,6 +82,7 @@ public class ContractControllerTestIT extends BaseIT {
                 .log().all()
                 .contentType(APPLICATION_JSON_VALUE)
                 .header(integrationTestTool.generateJwt("klient1@klient.pl"))
+                .header(integrationTestTool.getAdvertEtag(-6L))
                 .body(requestDto);
 
         // when
@@ -115,12 +117,14 @@ public class ContractControllerTestIT extends BaseIT {
                 .log().all()
                 .contentType(APPLICATION_JSON_VALUE)
                 .header(jwtKlient1)
+                .header(integrationTestTool.getAdvertEtag(-7L))
                 .body(requestDto);
 
         final RequestSpecification requestSpecificationKlient2 = given()
                 .log().all()
                 .contentType(APPLICATION_JSON_VALUE)
                 .header(jwtKlient2)
+                .header(integrationTestTool.getAdvertEtag(-7L))
                 .body(requestDto);
 
         // when
@@ -142,7 +146,7 @@ public class ContractControllerTestIT extends BaseIT {
                 .then()
                 .log().all()
                 .statusCode(HttpStatus.BAD_REQUEST.value())
-                .body("message", equalTo("exception.contract.advert_has_been_already_taken"));
+                .body("message", equalTo("exception.app_optimistic_lock.optimistic_lock"));
 
         int afterCreateSize = contractRepository.findAll().size();
 

@@ -10,7 +10,7 @@ import pl.lodz.p.ks.it.neighbourlyhelp.advertmodule.domain.Advert;
 import pl.lodz.p.ks.it.neighbourlyhelp.advertmodule.domain.Contract;
 import pl.lodz.p.ks.it.neighbourlyhelp.advertmodule.domain.enums.ContractStatus;
 import pl.lodz.p.ks.it.neighbourlyhelp.advertmodule.dto.request.ApproveFinishedRequestDto;
-import pl.lodz.p.ks.it.neighbourlyhelp.advertmodule.dto.request.NewContractRequestDto;
+import pl.lodz.p.ks.it.neighbourlyhelp.advertmodule.repository.AdvertRepository;
 import pl.lodz.p.ks.it.neighbourlyhelp.advertmodule.repository.ContractRepository;
 import pl.lodz.p.ks.it.neighbourlyhelp.clientmodule.domain.Account;
 import pl.lodz.p.ks.it.neighbourlyhelp.clientmodule.service.AccountService;
@@ -29,6 +29,7 @@ import java.util.stream.Collectors;
 public class ContractService {
 
     private final ContractRepository contractRepository;
+    private final AdvertRepository advertRepository;
 
     private final AdvertService advertService;
     private final AccountService accountService;
@@ -45,13 +46,11 @@ public class ContractService {
     }
 
     @Secured({"ROLE_CLIENT"})
-    public void createContract(NewContractRequestDto newContract) throws AppBaseException {
-        Long advertId = newContract.getAdvertId();
-        Advert advert = advertService.get(advertId);
+    public void createContract(Advert advert) throws AppBaseException {
         Account executorAccount = accountService.getExecutorAccount();
 
         List<Contract> allAssociatedContractsWithAdvert = contractRepository.findAll().stream()
-                .filter(contract -> contract.getAdvert().getId().equals(advertId))
+                .filter(contract -> contract.getAdvert().getId().equals(advert.getId()))
                 .collect(Collectors.toList());
 
         conditionVerifier(!advert.isApproved(), ContractException.advertIsDisapproved());
@@ -66,6 +65,8 @@ public class ContractService {
         conditionVerifier(advert.getPublisher().equals(executorAccount), ContractException.forbiddenToTakeOwnAdvert());
 
         // TODO: 16.05.2022 more validation cases
+        advert.setModifiedBy(executorAccount);
+        advertRepository.saveAndFlush(advert);
 
         Contract contract = Contract.builder()
                 .advert(advert)
@@ -213,6 +214,10 @@ public class ContractService {
                 .filter(contract -> contract.getStatus().equals(ContractStatus.FINISHED))
                 .filter(contract -> contract.getRating() == null)
                 .collect(Collectors.toList());
+    }
+
+    public Advert getAdvertById(Long advertId) throws AppBaseException {
+        return advertService.get(advertId);
     }
 
     private void conditionVerifier(boolean condition, ContractException exception) throws ContractException {

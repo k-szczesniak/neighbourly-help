@@ -155,7 +155,7 @@ public class AdvertControllerTestIT extends BaseIT {
                 .log().all()
                 .contentType(APPLICATION_JSON_VALUE)
                 .header(integrationTestTool.generateJwt("klient1@klient.pl"))
-                .header(getAdvertEtag(advertId))
+                .header(integrationTestTool.getAdvertEtag(advertId))
                 .body(requestDto);
 
         // when
@@ -211,7 +211,7 @@ public class AdvertControllerTestIT extends BaseIT {
                 .log().all()
                 .contentType(APPLICATION_JSON_VALUE)
                 .header(integrationTestTool.generateJwt("klient1@klient.pl"))
-                .header(getAdvertEtag(advertId));
+                .header(integrationTestTool.getAdvertEtag(advertId));
 
         // when
         final Response response = requestSpecification
@@ -246,7 +246,7 @@ public class AdvertControllerTestIT extends BaseIT {
                 .log().all()
                 .contentType(APPLICATION_JSON_VALUE)
                 .header(jwt)
-                .header(getAdvertEtag(advertId));
+                .header(integrationTestTool.getAdvertEtag(advertId));
 
         // when
         final Response responseApprove = requestApproveSpecification
@@ -275,7 +275,7 @@ public class AdvertControllerTestIT extends BaseIT {
                 .log().all()
                 .contentType(APPLICATION_JSON_VALUE)
                 .header(jwt)
-                .header(getAdvertEtag(advertId));
+                .header(integrationTestTool.getAdvertEtag(advertId));
 
         // when
         final Response responseDisapprove = requestDisapproveSpecification
@@ -290,26 +290,6 @@ public class AdvertControllerTestIT extends BaseIT {
 
         Advert disapproveAdvert = advertRepository.findById(advertId).get();
         assertFalse(disapproveAdvert.isApproved());
-    }
-
-    private Header getAdvertEtag(Long advertId) {
-
-        final RequestSpecification requestSpecification = given()
-                .contentType(APPLICATION_JSON_VALUE)
-                .header(integrationTestTool.generateJwt("klient1@klient.pl"));
-
-        final Response response = requestSpecification
-                .when()
-                .get(String.format("%s/%d", ADVERT_ENDPOINT.build(), advertId));
-
-        final String etag = response
-                .then()
-                .log().all()
-                .statusCode(HttpStatus.OK.value())
-                .contentType(APPLICATION_JSON_VALUE)
-                .extract().header("etag");
-
-        return new Header("If-Match", String.format("%s", etag));
     }
 
 }

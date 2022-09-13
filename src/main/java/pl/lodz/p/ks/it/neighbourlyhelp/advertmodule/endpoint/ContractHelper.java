@@ -9,7 +9,7 @@ import pl.lodz.p.ks.it.neighbourlyhelp.exception.AppBaseException;
 import java.util.List;
 
 public interface ContractHelper {
-    void createContract(NewContractRequestDto newContract) throws AppBaseException;
+    void createContract(NewContractRequestDto newContract, String ifMatch) throws AppBaseException;
 
     void cancelContract(Long contractId, String ifMatch) throws AppBaseException;
 

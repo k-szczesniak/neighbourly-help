@@ -12,6 +12,7 @@ import pl.lodz.p.ks.it.neighbourlyhelp.clientmodule.dto.response.AuthTokenRespon
 
 import static io.restassured.RestAssured.given;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+import static pl.lodz.p.ks.it.neighbourlyhelp.integrationtest.BaseIT.Resources.ADVERT_ENDPOINT;
 import static pl.lodz.p.ks.it.neighbourlyhelp.integrationtest.BaseIT.Resources.AUTH_ENDPOINT;
 import static pl.lodz.p.ks.it.neighbourlyhelp.integrationtest.BaseIT.Resources.CONTRACT_ENDPOINT;
 
@@ -62,6 +63,26 @@ public class IntegrationTestTool {
         final Response response = requestSpecification
                 .when()
                 .get(String.format("%s/%d", CONTRACT_ENDPOINT.build(), contractId));
+
+        final String etag = response
+                .then()
+                .log().all()
+                .statusCode(HttpStatus.OK.value())
+                .contentType(APPLICATION_JSON_VALUE)
+                .extract().header("etag");
+
+        return new Header("If-Match", String.format("%s", etag));
+    }
+
+    public Header getAdvertEtag(Long advertId) {
+
+        final RequestSpecification requestSpecification = given()
+                .contentType(APPLICATION_JSON_VALUE)
+                .header(generateJwt("klient1@klient.pl"));
+
+        final Response response = requestSpecification
+                .when()
+                .get(String.format("%s/%d", ADVERT_ENDPOINT.build(), advertId));
 
         final String etag = response
                 .then()

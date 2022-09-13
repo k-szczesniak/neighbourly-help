@@ -43,14 +43,16 @@ public class ContractController {
 
     @PostMapping
     @Secured({"ROLE_CLIENT"})
-    public void createContract(@NotNull @Valid @RequestBody NewContractRequestDto newContract) throws AppBaseException {
-        contractHelper.createContract(newContract);
+    public void createContract(@RequestHeader("If-Match") String ifMatch,
+                               @NotNull @Valid @RequestBody NewContractRequestDto newContract)
+            throws AppBaseException {
+        contractHelper.createContract(newContract, ifMatch);
     }
 
     @PatchMapping("/cancel/{contractId}")
     @Secured({"ROLE_CLIENT"})
     public void cancelContract(@RequestHeader("If-Match") String ifMatch,
-                                @PathVariable("contractId") Long contractId)
+                               @PathVariable("contractId") Long contractId)
             throws AppBaseException {
         contractHelper.cancelContract(contractId, ifMatch);
     }
